@@ -2,8 +2,10 @@
 title: "Building a IPS specific for Virtual Machines"
 summary: "Simple Intrustion Prevension System for understanding how IPS works"
 date: 2024-02-15
-tags: [Cybersecurity, Virtual Machine]
-category: "tools"
+stack: ["Python", "Flask", "React", "Scapy", "WebSocket", "Tailwind CSS", "VirtualBox"]
+link: "https://github.com/sayanth-sreekanth/vm-specific-ips"
+repo: "https://github.com/sayanth-sreekanth/vm-specific-ips"
+featured: true
 ---
 
 # Building a Live Network Intrusion Detection System with Python and React

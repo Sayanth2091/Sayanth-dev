@@ -1,20 +1,24 @@
-// One-time intro text morph overlay
+// Intro text morph overlay
 (function(){
   const KEY = 'intro_shown';
   const onHome = location.pathname === '/' || location.pathname === '/index.html';
-  const first = localStorage.getItem(KEY) !== '1';
+  
   if (!onHome){
     // Only show intro on home
     dispatchEvent(new CustomEvent('app:intro-done'));
     return;
   }
+  
+  // Always show intro for debugging - remove this line later if you want one-time only
+  localStorage.removeItem(KEY);
 
   const overlay = document.createElement('div');
   overlay.id = 'intro';
   overlay.innerHTML = '<div class="intro-inner"><div class="intro-text" id="introText"></div></div>';
   document.body.appendChild(overlay);
-  document.documentElement.classList.add('lock');
-  document.body.classList.add('lock');
+  // Remove screen lock for debugging
+  // document.documentElement.classList.add('lock');
+  // document.body.classList.add('lock');
 
   const el = overlay.querySelector('#introText');
   const from = 'Sayanth Sreekanth';
@@ -26,9 +30,10 @@
   for (let i = 0; i < chars; i++) {
     const fromCh = from[i] || ' ';
     const toCh = to[i] || ' ';
-    // Even longer morph: start 20–60, end 60–120 after start (~1.3s–3s)
-    const start = 20 + Math.floor(Math.random()*40);
-    const end = start + 60 + Math.floor(Math.random()*60);
+    // Slower, more visible morph: start 10-30, duration 30-60 frames
+    const start = 10 + Math.floor(Math.random()*20);
+    const duration = 30 + Math.floor(Math.random()*30);
+    const end = start + duration;
     queue.push({ from: fromCh, to: toCh, start, end, char: '' });
   }
 
@@ -48,6 +53,7 @@
       }
     }
     el.innerHTML = out;
+    console.log(`Frame ${frame}: "${out.replace(/<[^>]*>/g, '')}" (${complete}/${queue.length} complete)`);
     frame++;
     return complete === queue.length;
   }
@@ -60,8 +66,8 @@
     localStorage.setItem(KEY, '1');
     setTimeout(()=>{
       overlay.remove();
-      document.documentElement.classList.remove('lock');
-      document.body.classList.remove('lock');
+      // document.documentElement.classList.remove('lock');
+      // document.body.classList.remove('lock');
       dispatchEvent(new CustomEvent('app:intro-done'));
     }, 300);
   }
@@ -70,11 +76,19 @@
   overlay.addEventListener('click', finish, { passive: true });
   addEventListener('keydown', (e)=>{ if (e.key === 'Escape') finish(); });
 
+  // Show initial state
+  update();
+  
   // Always show morph on home; user can click/Esc to skip
   function tick(){
     const done = update();
-    if (!done){ requestAnimationFrame(tick); return; }
-    setTimeout(finish, 700);
+    if (!done){ 
+      setTimeout(tick, 50); // Slow down animation - 20fps instead of 60fps
+      return; 
+    }
+    setTimeout(finish, 1000); // Show final result longer
   }
-  requestAnimationFrame(tick);
+  
+  // Start animation after a brief delay
+  setTimeout(tick, 200);
 })();

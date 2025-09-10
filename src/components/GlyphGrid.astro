@@ -1,5 +1,5 @@
 ---
-// src/components/GlyphGrid.astro
+// Enhanced GlyphGrid with dynamic effects for all pages
 ---
 <div id="glyph-grid" aria-hidden="true"></div>
 
@@ -8,53 +8,191 @@
     position: fixed;
     inset: 0;
     z-index: 0; /* behind main content (z=1) */
-    opacity: .4;
+    opacity: .2;
     pointer-events: none; /* never block interactions */
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 14px;
-    line-height: 20px; /* aligns with 20px cell size */
+    font-size: 12px;
+    line-height: 18px;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 50%, rgba(7, 240, 255, 0.026) 0%, transparent 70%);
+  }
+  
+  .glyph-cell {
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .glyph-cell.pulse {
+    animation: glyphPulse 1.5s ease-in-out;
+  }
+  
+  .glyph-cell.wave {
+    animation: glyphWave 2s ease-in-out;
+  }
+  
+  @keyframes glyphPulse {
+    0%, 100% { transform: scale(1); opacity: 0.36; }
+    50% { transform: scale(1.5); opacity: 1; text-shadow: 0 0 12px currentColor; }
+  }
+  
+  @keyframes glyphWave {
+    0%, 100% { transform: translateY(0); opacity: 0.48; }
+    25% { transform: translateY(-3px); opacity: 0.96; }
+    75% { transform: translateY(3px); opacity: 0.72; }
+  }
+  
+  @keyframes matrixFall {
+    0% { transform: translateY(-20px); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(20px); opacity: 0; }
   }
 </style>
 
 <script>
   const grid = document.getElementById('glyph-grid');
-  // Mixed glyph set: programming symbols, latin, numerals, math, arrows, box-drawing, kana
+  
+  // Enhanced glyph sets with cyberpunk theme
+  const cyber = 'HACKR BYTEC0DE CYBERPHX 2091 SKYWALKR';
   const base = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]()<>+-/*=|&!?:;%$#~^.,_`"\'';
   const math = 'αβγΔΩπλµτφψΣ∞≠≈≤≥±∎∧∨⊕⊗⊙∈∉∅√∫∂∆∇°øØ';
-  const arrows = '←↑→↓⇐⇑⇒⇓';
-  const box = '─│┌┐└┘├┤┬┴┼╳╱╲';
+  const arrows = '←↑→↓⇐⇑⇒⇓⟨⟩⟪⟫';
+  const box = '─│┌┐└┘├┤┬┴┼╳╱╲▀▄█▌▐░▒▓';
   const kana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-  const glyphs = Array.from(base + math + arrows + box + kana);
-  const columns = Math.floor(window.innerWidth / 20);
-  const rows = Math.floor(window.innerHeight / 20);
-
-  grid.style.display = 'grid';
-  grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-  grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-
-  const cells = [];
-
-  for (let i = 0; i < columns * rows; i++) {
-    const cell = document.createElement('div');
-    cell.style.textAlign = 'center';
-    cell.style.userSelect = 'none';
-    grid.appendChild(cell);
-    cells.push(cell);
+  const glyphs = Array.from(cyber + base + math + arrows + box + kana);
+  
+  const cellSize = 18;
+  let columns = Math.floor(window.innerWidth / cellSize);
+  let rows = Math.floor(window.innerHeight / cellSize);
+  
+  let cells = [];
+  let mouseX = 0;
+  let mouseY = 0;
+  
+  function initGrid() {
+    grid.innerHTML = '';
+    cells = [];
+    columns = Math.floor(window.innerWidth / cellSize);
+    rows = Math.floor(window.innerHeight / cellSize);
+    
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = `repeat(${columns}, ${cellSize}px)`;
+    grid.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
+    
+    for (let i = 0; i < columns * rows; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'glyph-cell';
+      cell.style.userSelect = 'none';
+      grid.appendChild(cell);
+      cells.push({
+        element: cell,
+        x: i % columns,
+        y: Math.floor(i / columns),
+        lastUpdate: 0,
+        isActive: false
+      });
+    }
   }
-
+  
+  // Color schemes for different effects (20% brighter)
+  const colorSchemes = [
+    ['#29f2ff', '#2ccce6', '#66deff'],  // Cyan variations (brighter)
+    ['#b866ff', '#a355ff', '#d480ff'],  // Purple variations (brighter)
+    ['#1aff99', '#1ad67a', '#4dffbb'],  // Green variations (brighter)
+    ['#ff8585', '#ff6b6b', '#ff9999'],  // Red variations (brighter)
+  ];
+  
+  function getDistance(x1, y1, x2, y2) {
+    return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+  }
+  
   function updateGlyphs() {
-    for (const cell of cells) {
-      if (Math.random() > 0.98) {
+    const currentTime = Date.now();
+    const mouseGridX = Math.floor(mouseX / cellSize);
+    const mouseGridY = Math.floor(mouseY / cellSize);
+    
+    for (let i = 0; i < cells.length; i++) {
+      const cell = cells[i];
+      const distanceFromMouse = getDistance(cell.x, cell.y, mouseGridX, mouseGridY);
+      const isNearMouse = distanceFromMouse < 5;
+      
+      // Increased activity near mouse
+      const baseChance = isNearMouse ? 0.95 : 0.985;
+      
+      if (Math.random() > baseChance) {
         const randomGlyph = glyphs[Math.floor(Math.random() * glyphs.length)];
-        cell.textContent = randomGlyph;
-        const alpha = 0.35 + Math.random() * 0.55;
-        cell.style.color = `rgba(0, 255, 150, ${alpha})`;
+        const colorScheme = colorSchemes[Math.floor(Math.random() * colorSchemes.length)];
+        const color = colorScheme[Math.floor(Math.random() * colorScheme.length)];
+        
+        cell.element.textContent = randomGlyph;
+        cell.element.style.color = color;
+        cell.isActive = true;
+        cell.lastUpdate = currentTime;
+        
+        // Add random animation effects
+        const effects = ['pulse', 'wave'];
+        const effect = effects[Math.floor(Math.random() * effects.length)];
+        cell.element.classList.remove('pulse', 'wave');
+        cell.element.classList.add(effect);
+        
+        // Set opacity based on distance from mouse (30% brighter total)
+        const opacity = isNearMouse ? 1.0 : 0.4 + Math.random() * 0.5;
+        cell.element.style.opacity = opacity;
+        
+        // Clear the glyph after some time
+        const lifetime = isNearMouse ? 3000 + Math.random() * 2000 : 1500 + Math.random() * 1500;
         setTimeout(() => {
-          cell.textContent = '';
-        }, 2000);
+          if (cell.element) {
+            cell.element.textContent = '';
+            cell.element.classList.remove('pulse', 'wave');
+            cell.isActive = false;
+          }
+        }, lifetime);
       }
     }
   }
-
-  setInterval(updateGlyphs, 100);
+  
+  // Matrix-style falling characters effect
+  function createMatrixFall() {
+    if (Math.random() > 0.97) {
+      const column = Math.floor(Math.random() * columns);
+      const fallElement = document.createElement('div');
+      fallElement.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+      fallElement.style.position = 'absolute';
+      fallElement.style.left = `${column * cellSize}px`;
+      fallElement.style.top = '0px';
+      fallElement.style.color = '#29f2ff';
+      fallElement.style.fontSize = '14px';
+      fallElement.style.animation = 'matrixFall 3s linear forwards';
+      fallElement.style.pointerEvents = 'none';
+      fallElement.style.zIndex = '1';
+      
+      grid.appendChild(fallElement);
+      
+      setTimeout(() => {
+        if (fallElement.parentNode) {
+          fallElement.parentNode.removeChild(fallElement);
+        }
+      }, 3000);
+    }
+  }
+  
+  // Track mouse movement
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+  
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    initGrid();
+  });
+  
+  // Initialize and start animations
+  initGrid();
+  setInterval(updateGlyphs, 80);
+  setInterval(createMatrixFall, 200);
 </script>

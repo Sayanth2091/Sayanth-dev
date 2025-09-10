@@ -23,7 +23,7 @@ import GlyphGrid from "../components/GlyphGrid.astro";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body class="page-transition">
-    {showGlyphGrid && <GlyphGrid />}
+    <GlyphGrid />
     <div id="scroll-progress" aria-hidden="true"></div>
     <div id="preloader" aria-hidden="true">
       <div class="loader">
@@ -43,7 +43,6 @@ import GlyphGrid from "../components/GlyphGrid.astro";
     <script type="module">import "/src/scripts/code-typing.js";</script>
     <script type="module">import "/src/scripts/command-palette.js";</script>
     <script type="module">import "/src/scripts/cursor-trail.js";</script>
-  <script is:inline src="/scripts/scroll-animations.js"></script>
-    <script is:inline src="/scripts/theme-switcher.js"></script>
+    <script type="module">import "/src/scripts/scroll-animations.js";</script>
   </body>
 </html>
