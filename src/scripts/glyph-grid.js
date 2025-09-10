@@ -90,9 +90,7 @@ function initGlyphGrid() {
   document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
   window.addEventListener('resize', build);
 
-  build();
-  setInterval(updateGlyphs, 80);
-  setInterval(matrixFall, 200);
+  build();\n  const glyphTimer = setInterval(updateGlyphs, 80);\n  const fallTimer = setInterval(matrixFall, 200);\n\n  const stop = () => { try { clearInterval(glyphTimer); clearInterval(fallTimer); } catch {} };\n  window.addEventListener('pagehide', stop, { once: true });\n  window.addEventListener('beforeunload', stop, { once: true });
 }
 
 if (document.readyState === 'loading') {
@@ -100,4 +98,5 @@ if (document.readyState === 'loading') {
 } else {
   initGlyphGrid();
 }
+
 
