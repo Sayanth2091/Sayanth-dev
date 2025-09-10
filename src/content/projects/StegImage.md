@@ -2,9 +2,10 @@
 title: "Building a Steganography App with Node.js and Python"
 summary: "A Simple Stegnography App for Awarness"
 date: 2023-02-15
-tags: [Cybersecurity, Stegnography]
-category: "tools"
-link: https://github.com/Sayanth2091/Stegimage.git
+stack: ["Node.js", "Python", "Express.js", "React", "Cryptography", "Steganography"]
+link: "https://github.com/sayanth-sreekanth/stegimage"
+repo: "https://github.com/sayanth-sreekanth/stegimage"
+featured: true
 ---
 
 

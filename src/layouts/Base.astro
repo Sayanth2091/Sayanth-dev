@@ -23,7 +23,7 @@ import GlyphGrid from "../components/GlyphGrid.astro";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body class="page-transition">
-    {showGlyphGrid && <GlyphGrid />}
+    <GlyphGrid />
     <div id="scroll-progress" aria-hidden="true"></div>
     <div id="preloader" aria-hidden="true">
       <div class="loader">
@@ -36,6 +36,7 @@ import GlyphGrid from "../components/GlyphGrid.astro";
       <slot />
     </main>
     <MobileDock />
+    <script type="module">import "/src/scripts/glyph-grid.js";</script>
     <script type="module">import "/src/scripts/app-init.js";</script>
     <script is:inline>
 // Intro text morph overlay - shows every time on home page
