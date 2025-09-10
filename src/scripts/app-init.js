@@ -106,13 +106,21 @@ function setupViewTransitions() {
       ring.style.setProperty('--ring-r', r);
       document.body.appendChild(ring);
 
-      const vt = document.startViewTransition(() => {
+      let vt;
+      try {
+        vt = document.startViewTransition(() => {
+          location.href = url.href;
+        });
+      } catch (_) {
+        // Fallback: if VT throws, just navigate
         location.href = url.href;
-      });
+        return;
+      }
 
+      // After transition completes (new page), best effort cleanup
       vt.finished.finally(() => {
-        root.classList.remove('vt-clip');
-        ring.remove();
+        try { root.classList.remove('vt-clip'); } catch {}
+        try { if (ring && ring.isConnected) ring.remove(); } catch {}
       });
     } catch {}
   }, { capture: true });
