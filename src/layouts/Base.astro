@@ -1,0 +1,49 @@
+---
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  showGlyphGrid?: boolean;
+}
+
+const { title = 'Skywalkr_2091 — Portfolio', description = 'Cyber Security SOC Analyst • AI Automation • Full‑stack', showGlyphGrid = false } = Astro.props as Props;
+import "../styles/global.css";
+import MobileDock from "../components/MobileDock.astro";
+import GlyphGrid from "../components/GlyphGrid.astro";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#07f0ff" />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="page-transition">
+    {showGlyphGrid && <GlyphGrid />}
+    <div id="scroll-progress" aria-hidden="true"></div>
+    <div id="preloader" aria-hidden="true">
+      <div class="loader">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+    <main>
+      <slot />
+    </main>
+    <MobileDock />
+    <script type="module">import "/src/scripts/app-init.js";</script>
+    <script type="module">import "/src/scripts/intro-morph.js";</script>
+    <script type="module">import "/src/scripts/holo-init.js";</script>
+    <script type="module">import "/src/scripts/starfield-init.js";</script>
+    <script type="module">import "/src/scripts/code-typing.js";</script>
+    <script type="module">import "/src/scripts/command-palette.js";</script>
+    <script type="module">import "/src/scripts/cursor-trail.js";</script>
+  <script is:inline src="/scripts/scroll-animations.js"></script>
+    <script is:inline src="/scripts/theme-switcher.js"></script>
+  </body>
+</html>

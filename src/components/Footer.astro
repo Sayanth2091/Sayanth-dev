@@ -1,0 +1,31 @@
+<footer class="footer" id="contact">
+  <div class="grid">
+    <div>
+      <h3>Contact</h3>
+      <p>
+        <a href="mailto:hello@sayanth.dev">hello@sayanth.dev</a>
+      </p>
+      <p class="small">Security • AI Automations • Full‑stack</p>
+    </div>
+    <div>
+      <h3>Links</h3>
+      <p class="links">
+        <a href="https://github.com/Sayanth2091" target="_blank">GitHub</a>
+        <a href="https://www.linkedin.com/in/sayanth-sreekanth/" target="_blank">LinkedIn</a>
+        
+      </p>
+    </div>
+  </div>
+  <p class="copyright">© {new Date().getFullYear()} Sayanth Sreekanth</p>
+</footer>
+
+<style>
+  .footer { margin-top: 80px; padding: 48px 20px; border-top:1px solid var(--grid); background: color-mix(in oklab, var(--bg) 85%, transparent); }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 24px; }
+  h3 { margin: 0 0 8px 0; color: var(--text); }
+  a { color: var(--text); text-decoration: none; }
+  a:hover { color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); }
+  .links { display:flex; gap: 16px; }
+  .small { color: var(--text-dim); }
+  .copyright { margin-top: 18px; color: var(--text-dim); text-align:center; }
+</style>

@@ -1,0 +1,290 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Hero from "../components/Hero.astro";
+import Footer from "../components/Footer.astro";
+import HoloShape from "../components/HoloShape.astro";
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+
+// Optimized assets (moved from /public/images to /src/assets for astro:assets)
+import aiChat from "../assets/AI/AI Chat.png";
+import ai1 from "../assets/AI/Ai 1.png";
+import ai2 from "../assets/AI/Ai 2.png";
+import usm from "../assets/Cybersecurity/USM.jpg";
+import ossim from "../assets/Cybersecurity/Ossim.png";
+import elk from "../assets/Cybersecurity/Elk.png";
+
+const projects = (await getCollection('projects')).sort((a,b)=> b.data.date.getTime()-a.data.date.getTime());
+const featured = projects.filter(p=>p.data.featured).slice(0,3);
+---
+<Base showGlyphGrid={true}>
+  <Nav />
+  <main>
+    <Hero />
+
+    <section class="section" data-reveal>
+      <div class="container">
+        <h2>About</h2>
+        <div class="prose-wrap">
+          <div class="prose">
+            <p data-reveal="left">
+As a final-year Integrated M.Tech Cybersecurity student at VIT Bhopal, I have a strong foundation in securing digital infrastructures and defending against cyber threats. My practical experience as a SOC Analyst (L1) at Digital Insights in Dubai has allowed me to hone my skills in real-time threat monitoring, security alert analysis, and incident investigation within enterprise environments.
+            </p>
+            <p data-reveal="right">
+I am passionate about leveraging AI and automation to enhance security operations. I have hands-on experience with n8n workflows to streamline daily tasks and improve efficiency.
+            </p>
+            <p data-reveal="left">
+Key Skills:
+- SOC Monitoring & Incident Response
+- MITRE ATT&CK Framework
+- AlienVault USM, EDR Platforms
+- Windows Event Logs, SIEM Analysis
+- AI & n8n Automation
+            </p>
+          </div>
+        </div>
+        <a href="/about" class="btn">More About Me</a>
+      </div>
+    </section>
+
+    <section class="section" id="projects" data-reveal>
+      <div class="container">
+        <h2>Featured Projects</h2>
+        <div class="cards">
+          {featured.map(({ data, slug }) => (
+            <a class="card" href={`/projects/${slug}/`} style={`view-transition-name: project-${slug}`}>
+              <div class="cover-thumb" style={`view-transition-name: cover-project-${slug}`}></div>
+              <h3>{data.title}</h3>
+              <p class="muted">{data.summary}</p>
+              <p>{data.stack.map(s => (<span class="badge">{s}</span>))}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ai" data-reveal>
+      <div class="container split">
+        <div>
+          <h2>AI</h2>
+          <p class="muted">Agents, LLM ops and pragmatic automation. I design small, composable AI tools that remove toil, with guardrails and observability. Often paired with n8n, Python, and vector stores.</p>
+          <p>
+            <span class="badge">Agents</span>
+            <span class="badge">RAG</span>
+            <span class="badge">Prompt Engineering</span>
+            <span class="badge">Eval & Guardrails</span>
+          </p>
+          <div class="img-row tilt-row" data-tilt>
+            <Image src={aiChat} alt="AI chat interface mock" widths={[220, 440]} sizes="(max-width: 900px) 100vw, 220px" formats={["avif","webp","png"]} placeholder="blur" />
+            <Image src={ai1} alt="AI workflow visualization" widths={[220, 440]} sizes="(max-width: 900px) 100vw, 220px" formats={["avif","webp","png"]} placeholder="blur" />
+            <Image src={ai2} alt="AI dashboard snapshot" widths={[220, 440]} sizes="(max-width: 900px) 100vw, 220px" formats={["avif","webp","png"]} placeholder="blur" />
+          </div>
+        </div>
+        <HoloShape type="ico" color="#07f0ff" size={220} />
+      </div>
+    </section>
+
+    <section class="section" id="security" data-reveal>
+      <div class="container split">
+        <div>
+          <h2>Cyber Security</h2>
+          <p class="muted">SOC analysis, detection engineering and threat hunting. I like building visual tools and playbooks that speed up triage while staying auditable.</p>
+          <p>
+            <span class="badge">SIEM</span>
+            <span class="badge">Detection Eng</span>
+            <span class="badge">Threat Hunting</span>
+            <span class="badge">Forensics</span>
+          </p>
+          <div class="img-row tilt-row" data-tilt>
+            <Image src={usm} alt="AlienVault USM SIEM dashboard" widths={[220, 440]} sizes="(max-width: 900px) 100vw, 220px" formats={["avif","webp","jpeg"]} placeholder="blur" />
+            <Image src={ossim} alt="OSSIM interface" widths={[220, 440]} sizes="(max-width: 900px) 100vw, 220px" formats={["avif","webp","png"]} placeholder="blur" />
+            <Image src={elk} alt="ELK stack dashboard" widths={[220, 440]} sizes="(max-width: 900px) 100vw, 220px" formats={["avif","webp","png"]} placeholder="blur" />
+          </div>
+        </div>
+        <HoloShape type="knot" color="#a24cff" size={220} />
+      </div>
+    </section>
+
+    <section class="section" id="automations" data-reveal>
+      <div class="container split">
+        <div>
+          <h2>n8n Automations</h2>
+          <p class="muted">From alert intake to ticketing: modular n8n workflows with human-in-the-loop steps, webhook triggers and Slack/Teams integrations.</p>
+          <p>
+            <span class="badge">n8n</span>
+            <span class="badge">Webhooks</span>
+            <span class="badge">Approvals</span>
+            <span class="badge">Ticketing</span>
+          </p>
+          <div class="img-row">
+            <img src="/images/n8n-workflow.svg" alt="n8n-style workflow diagram" loading="lazy" decoding="async" />
+          </div>
+        </div>
+        <HoloShape type="ico" color="#5fe7ff" size={220} />
+      </div>
+    </section>
+
+    <section class="section" data-reveal>
+      <div class="container">
+        <h2>Stacks</h2>
+        <div class="stack-cards">
+          <div class="stack-card" style="--i:0">
+            <div class="stack-title">SOC • Detection Eng</div>
+            <div class="stack-sub">SIEM, detections, alert triage</div>
+          </div>
+          <div class="stack-card" style="--i:1">
+            <div class="stack-title">Threat Hunting</div>
+            <div class="stack-sub">Hypothesis → hunt → refine</div>
+          </div>
+          <div class="stack-card" style="--i:2">
+            <div class="stack-title">n8n • Automations</div>
+            <div class="stack-sub">Webhooks, approvals, ticketing</div>
+          </div>
+          <div class="stack-card" style="--i:3">
+            <div class="stack-title">Python</div>
+            <div class="stack-sub">Scripts, APIs, tooling</div>
+          </div>
+          <div class="stack-card" style="--i:4">
+            <div class="stack-title">Next.js</div>
+            <div class="stack-sub">App Router, SSR/ISR</div>
+          </div>
+          <div class="stack-card" style="--i:5">
+            <div class="stack-title">SvelteKit</div>
+            <div class="stack-sub">Lightweight apps</div>
+          </div>
+          <div class="stack-card" style="--i:6">
+            <div class="stack-title">Astro</div>
+            <div class="stack-sub">Content + islands</div>
+          </div>
+          <div class="stack-card" style="--i:7">
+            <div class="stack-title">Three.js</div>
+            <div class="stack-sub">3D visuals & FX</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+
+    
+
+    <Footer />
+  </main>
+</Base>
+
+<style>
+  .card { text-decoration: none; }
+  .orbit{ position:relative; height:220px; display:grid; place-items:center }
+  .orbit .core{ width:14px; height:14px; border-radius:999px; background: var(--neon-cyan); box-shadow: 0 0 18px color-mix(in oklab, var(--neon-cyan) 60%, transparent) }
+  .ring{ position:absolute; width: 60%; height: 60%; border-radius: 50%; border:1px dashed color-mix(in oklab, var(--neon-cyan) 40%, transparent); animation: spin 12s linear infinite }
+  .ring span{ position:absolute; width:10px; height:10px; border-radius:999px; background: var(--neon-purple); top:-5px; left:50%; transform: translateX(-50%); box-shadow: 0 0 12px color-mix(in oklab, var(--neon-purple) 60%, transparent) }
+  .ring.r2{ width: 80%; height: 80%; animation-duration: 18s; animation-direction: reverse; border-color: color-mix(in oklab, var(--neon-purple) 40%, transparent) }
+  .ring.r2 span{ background: var(--neon-cyan) }
+  .ring.r3{ width: 40%; height: 40%; animation-duration: 9s }
+  @keyframes spin{ to{ transform: rotate(360deg) } }
+
+  /* Stacks: big cards with domino animation */
+  .stack-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    perspective: 1000px;
+  }
+  .stack-card {
+    position: relative;
+    padding: 18px 16px 20px;
+    border-radius: 14px;
+    border: 1px solid var(--grid);
+    background: color-mix(in oklab, var(--bg) 78%, transparent);
+    box-shadow: 0 10px 28px rgba(7, 240, 255, 0.08);
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    will-change: transform, box-shadow;
+    overflow: hidden;
+    transform: translateZ(0) var(--magnet, translate(0));
+  }
+  .stack-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(120deg, var(--neon-cyan), var(--neon-purple), var(--neon-cyan));
+    background-size: 200% 200%;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: .0;
+    transition: opacity .4s ease, background-position .6s ease;
+    animation: spin-border 6s linear infinite;
+  }
+  .stack-card:hover::before { opacity: .9 }
+  .stack-card::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(380px 240px at var(--mx, -100px) var(--my, -100px), color-mix(in oklab, var(--neon-cyan) 20%, transparent) 0%, transparent 40%);
+    opacity: 0;
+    transition: opacity .35s ease;
+    mix-blend-mode: screen;
+  }
+  .stack-card:hover::after { opacity: .9 }
+  .stack-title { font-weight: 800; font-size: 18px; margin-bottom: 6px; }
+  .stack-sub { color: var(--text-dim); font-size: 13px; }
+
+  /* Domino entrance + gentle wave when in view */
+  @keyframes domino-enter {
+    0% { opacity: 0; transform: translateY(20px) rotateZ(0deg) rotateX(0deg); }
+    35% { opacity: 1; transform: translateY(0) rotateZ(-10deg) rotateX(3deg); }
+    65% { transform: rotateZ(6deg) rotateX(0deg); }
+    100% { transform: none; }
+  }
+  @keyframes domino-wave {
+    0%, 12%, 100% { transform: none; }
+    20% { transform: rotateZ(-3deg); }
+    30% { transform: rotateZ(2deg); }
+    40% { transform: rotateZ(-1deg); }
+  }
+  [data-reveal].in .stack-card {
+    animation: domino-enter .9s cubic-bezier(.22,.61,.36,1) both;
+    animation-delay: calc(var(--i, 0) * .12s);
+  }
+  .stack-card:hover {
+    transform: translateY(-4px) rotateZ(0deg) var(--magnet, translate(0)) !important;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 36px color-mix(in oklab, var(--neon-cyan) 28%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal].in .stack-card { animation: none !important; }
+  }
+
+  @media (max-width: 760px) {
+    .stack-cards { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Tilt row parallax */
+  .tilt-row { perspective: 800px; transform-style: preserve-3d; will-change: transform; }
+  .tilt-row { transform: rotateX(var(--tilt-rx, 0deg)) rotateY(var(--tilt-ry, 0deg)); transition: transform .25s ease; }
+  .tilt-row:hover { transition: transform .08s ease; }
+  .tilt-row > *:nth-child(1) { transform: translateZ(20px); }
+  .tilt-row > *:nth-child(2) { transform: translateZ(10px); }
+  .tilt-row > *:nth-child(3) { transform: translateZ(0px); }
+  /* Image sheen on hover */
+  .img-row :global(picture) { position: relative; border-radius: 10px; overflow: hidden; }
+  .img-row :global(picture)::after {
+    content: ""; position: absolute; inset: -2px; pointer-events: none;
+    background: linear-gradient(100deg, transparent 0%, color-mix(in oklab, var(--neon-cyan) 30%, transparent) 35%, color-mix(in oklab, var(--neon-purple) 30%, transparent) 50%, transparent 65%);
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  .img-row :global(picture):hover::after { animation: img-sheen 1.2s cubic-bezier(.22,.61,.36,1) both }
+  @keyframes img-sheen { 0% { opacity: 0; transform: translateX(-120%) } 15% { opacity: .9 } 100% { opacity: 0; transform: translateX(120%) } }
+
+  
+
+  
+</style>

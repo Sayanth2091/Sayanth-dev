@@ -1,0 +1,53 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Base title="Contact — Skywalkr_2091" description="Get in touch with Sayanth — security, AI automations, full‑stack.">
+  <Nav />
+  <main class="section" data-reveal>
+    <div class="container" style="max-width: 820px;">
+      <header>
+        <h1 class="vt-title">Contact</h1>
+        <p class="muted">I’m open to roles, collaborations and interesting problems.</p>
+      </header>
+
+      <section class="cards">
+        <a class="card" href="mailto:hello@sayanth.dev">
+          <h3>Email</h3>
+          <p class="muted">hello@sayanth.dev</p>
+        </a>
+        <a class="card" href="https://www.linkedin.com/in/sayanth-sreekanth/" target="_blank" rel="noopener noreferrer">
+          <h3>LinkedIn</h3>
+          <p class="muted">/in/sayanth-sreekanth</p>
+        </a>
+        <a class="card" href="https://github.com/Sayanth2091" target="_blank" rel="noopener noreferrer">
+          <h3>GitHub</h3>
+          <p class="muted">@Sayanth2091</p>
+        </a>
+      </section>
+
+      <section class="contact-note">
+        <h2>What to reach out about</h2>
+        <ul>
+          <li>SOC analysis, detection engineering and threat hunting</li>
+          <li>n8n automations (webhooks, approvals, ticketing)</li>
+          <li>Lightweight AI agents, RAG, and operational tooling</li>
+        </ul>
+      </section>
+    </div>
+    <Footer />
+  </main>
+</Base>
+
+<style>
+  header { margin-bottom: 14px; }
+  .cards { margin-top: 12px; }
+  .card { text-decoration: none; }
+  .contact-note { margin-top: 28px; }
+  .contact-note ul { margin: 8px 0 0 18px; line-height: 1.7; }
+  @media (max-width: 760px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>

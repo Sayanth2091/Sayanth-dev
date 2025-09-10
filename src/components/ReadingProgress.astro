@@ -1,0 +1,24 @@
+---
+// src/components/ReadingProgress.astro
+---
+<div id="reading-progress"></div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = window.scrollY;
+    const progress = (scrolled / scrollable) * 100;
+    document.getElementById('reading-progress').style.width = `${progress}%`;
+  });
+</script>
+
+<style>
+  #reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background-color: var(--neon-cyan);
+    z-index: 9999;
+  }
+</style>

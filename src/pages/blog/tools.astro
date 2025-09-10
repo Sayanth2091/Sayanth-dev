@@ -1,0 +1,52 @@
+---
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({data}) => {
+  return data.category === 'tools'
+})).sort((a,b)=> b.data.date.getTime()-a.data.date.getTime());
+---
+<Base title="Guides & Resources — Skywalkr_2091" description="Practical guides, tutorials, and recommendations for tools and technologies.">
+  <Nav />
+  <main class="section" data-reveal>
+    <div class="container">
+      <h1 style="view-transition-name: blog-cat-tools">Guides & Resources</h1>
+      <div class="cards">
+        {posts.map(({ data, slug, body }) => (
+          <a class="card blog-card" href={`/blog/${slug}/`} style={`view-transition-name: blog-${slug}`}>
+            <div class="cover-thumb" style={`view-transition-name: cover-blog-${slug}`}></div>
+            <h3>{data.title}</h3>
+            <p class="muted">{data.description ?? ''}</p>
+            <p class="muted date">{new Date(data.date).toDateString()}</p>
+            <span class="read-more">Read More →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+    <Footer />
+  </main>
+</Base>
+
+<style>
+  .blog-card {
+    text-decoration: none;
+  }
+  .date {
+    margin-top: auto;
+    padding-top: 12px;
+  }
+  .read-more {
+    margin-top: 12px;
+    color: var(--neon-cyan);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .blog-card:hover .read-more {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .cover-thumb { height: 120px; border-radius: 10px; border:1px solid var(--grid); margin-bottom: 12px; background: radial-gradient(180px 90px at 20% 30%, color-mix(in oklab, var(--neon-cyan) 25%, transparent), transparent), radial-gradient(160px 80px at 80% 70%, color-mix(in oklab, var(--neon-purple) 25%, transparent), transparent), #08121f; }
+</style>

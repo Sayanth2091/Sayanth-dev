@@ -1,0 +1,128 @@
+--- 
+import StarfieldCanvas from './StarfieldCanvas.astro';
+---
+<section class="hero">
+  <StarfieldCanvas />
+  <div class="inner stagger" data-reveal>
+    <h1 class="vt-title">
+      <span class="hello" data-ani="1">Hello, I’m</span>
+      <span class="name shimmer" data-ani="2">Sayanth Sreekanth</span>
+      <span class="alias" data-ani="3">aka <strong class="glitch">Skywalkr_2091</strong></span>
+    </h1>
+    <p class="roles" data-ani="4">
+      <span class="chip">Cyber Security — SOC Analyst</span>
+      <span class="chip">AI • n8n Automations</span>
+      <span class="chip">Full‑stack — Next.js & SvelteKit</span>
+    </p>
+    <p class="cta" data-ani="4">
+      <a class="btn primary" href="#projects">Explore Projects</a>
+      <a class="btn" href="/blog">Read the Blog</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 92vh;
+    display: grid;
+    place-items: center;
+    overflow: clip;
+    border-bottom: 1px solid var(--grid);
+  }
+  .inner {
+    position: relative;
+    z-index: 2;
+    padding: 120px 20px 80px;
+    text-align: center;
+    will-change: transform, filter;
+    transform: translateY(var(--hero-ty, 0px)) scale(var(--hero-scale, 1));
+    transform-origin: center top;
+    filter: blur(var(--hero-blur, 0px));
+  }
+  h1 { margin: 0; line-height: 1.15; }
+  .hello { display: block; color: var(--text-dim); letter-spacing: 1px; }
+  .name {
+    display: block;
+    font-size: clamp(36px, 8vw, 72px);
+    font-weight: 900;
+    color: var(--text);
+    text-shadow: 0 0 24px color-mix(in oklab, var(--neon-cyan) 35%, transparent);
+  }
+  .shimmer {
+    position: relative;
+    background: linear-gradient(90deg, var(--text) 0%, color-mix(in oklab, var(--neon-cyan) 45%, var(--text)) 50%, var(--text) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 200% 100%;
+    animation: shimmer 5s linear infinite;
+  }
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, color-mix(in oklab, var(--neon-purple) 25%, transparent) 50%, transparent 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-size: 200% 100%;
+    animation: shimmer 7s -2.5s linear infinite;
+  }
+  @keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+
+  .alias { display: block; margin-top: 6px; color: var(--neon-cyan); letter-spacing: 1.5px; text-shadow: 0 0 18px color-mix(in oklab, var(--neon-cyan) 60%, transparent); }
+  .glitch { position: relative; }
+  .glitch::before, .glitch::after {
+    content: 'Skywalkr_2091';
+    position: absolute;
+    left: 0;
+    top: 0;
+    text-shadow: -1px 0 #07f0ff;
+    clip-path: inset(0 0 0 0);
+    opacity: .6;
+    mix-blend-mode: screen;
+    animation: glitchy 4s infinite steps(8);
+  }
+  .glitch::after {
+    text-shadow: 1px 0 #a24cff;
+    opacity: .45;
+    animation-delay: .2s;
+  }
+  @keyframes glitchy {
+    0%, 5%, 100% { clip-path: inset(0 0 0 0) }
+    6% { clip-path: inset(40% 0 40% 0) }
+    7% { clip-path: inset(0 0 0 0) }
+    8% { clip-path: inset(80% 0 0 0) }
+    9% { clip-path: inset(0 0 0 0) }
+  }
+
+  .roles { margin: 18px auto 26px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .chip { border: 1px solid var(--grid); color: var(--text); background: color-mix(in oklab, var(--bg) 80%, transparent); padding: 8px 12px; border-radius: 999px; font-size: 14px; }
+  
+  .btn {
+    display: inline-block;
+    border: 1px solid var(--grid);
+    padding: 12px 16px;
+    border-radius: 10px;
+    color: var(--text);
+    text-decoration: none;
+    margin: 4px;
+    background: color-mix(in oklab, var(--bg) 80%, transparent);
+    transform: translateZ(0) var(--magnet, translate(0));
+    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px) var(--magnet, translate(0));
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 24px color-mix(in oklab, var(--neon-cyan) 35%, transparent);
+  }
+  .primary {
+    background: linear-gradient(135deg, color-mix(in oklab, var(--neon-cyan) 22%, transparent), color-mix(in oklab, var(--neon-purple) 22%, transparent));
+    transition: transform .3s ease, box-shadow .3s ease, background-size .4s ease;
+    background-size: 100% 100%;
+  }
+  .primary:hover {
+    background-size: 120% 120%;
+    box-shadow: 0 0 32px color-mix(in oklab, var(--neon-cyan) 40%, transparent), 0 0 32px color-mix(in oklab, var(--neon-purple) 20%, transparent);
+  }
+</style>

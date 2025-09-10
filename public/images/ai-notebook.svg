@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#061225"/>
+      <stop offset="1" stop-color="#0d1e39"/>
+    </linearGradient>
+    <linearGradient id="neon" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#07f0ff"/>
+      <stop offset="1" stop-color="#a24cff"/>
+    </linearGradient>
+    <style>
+      .t{font: 12px ui-sans-serif, system-ui; fill:#cfe9ff}
+      .mut{fill:#9cc}
+    </style>
+  </defs>
+  <rect width="100%" height="100%" rx="18" fill="url(#bg)"/>
+  <rect x="18" y="18" width="764" height="384" rx="12" fill="#0b1730" stroke="#18365e"/>
+  <rect x="18" y="18" width="764" height="42" rx="12" fill="#0e1d3a"/>
+  <circle cx="42" cy="39" r="6" fill="#ff5f57"/>
+  <circle cx="62" cy="39" r="6" fill="#febc2e"/>
+  <circle cx="82" cy="39" r="6" fill="#28c840"/>
+  <text x="110" y="43" class="t mut">notebook.ipynb — AI agent sketch</text>
+
+  <!-- sidebar -->
+  <rect x="32" y="74" width="160" height="312" rx="8" fill="#0f2144" stroke="#18365e"/>
+  <text x="48" y="98" class="t">Outline</text>
+  <rect x="44" y="112" width="128" height="22" rx="6" fill="#11264b" stroke="#1a3d6b"/>
+  <text x="54" y="128" class="t mut">Setup</text>
+  <rect x="44" y="142" width="128" height="22" rx="6" fill="#11264b" stroke="#1a3d6b"/>
+  <text x="54" y="158" class="t mut">Tools</text>
+  <rect x="44" y="172" width="128" height="22" rx="6" fill="#11264b" stroke="#1a3d6b"/>
+  <text x="54" y="188" class="t mut">Plan ➝ Execute</text>
+
+  <!-- cell 1 -->
+  <rect x="212" y="86" width="554" height="74" rx="8" fill="#0f2144" stroke="#18365e"/>
+  <text x="228" y="108" class="t mut"># Role & objective</text>
+  <rect x="228" y="118" width="520" height="32" rx="6" fill="#0f1c33" stroke="#18365e"/>
+  <text x="238" y="138" class="t">You are an analyst. Task: enrich IOCs…</text>
+
+  <!-- cell 2 -->
+  <rect x="212" y="170" width="554" height="120" rx="8" fill="#0f2144" stroke="#18365e"/>
+  <text x="228" y="192" class="t mut"># Tools</text>
+  <rect x="228" y="202" width="160" height="24" rx="6" fill="#0f1c33" stroke="#18365e"/>
+  <rect x="392" y="202" width="160" height="24" rx="6" fill="#0f1c33" stroke="#18365e"/>
+  <rect x="556" y="202" width="160" height="24" rx="6" fill="#0f1c33" stroke="#18365e"/>
+  <text x="236" y="218" class="t">VirusTotal</text>
+  <text x="400" y="218" class="t">Whois</text>
+  <text x="564" y="218" class="t">Slack</text>
+
+  <!-- cell 3 -->
+  <rect x="212" y="298" width="554" height="88" rx="8" fill="#0f2144" stroke="#18365e"/>
+  <text x="228" y="320" class="t mut"># Output schema</text>
+  <rect x="228" y="330" width="520" height="38" rx="6" fill="#0f1c33" stroke="#18365e"/>
+  <text x="238" y="350" class="t">{ "ioc": string, "score": number, "notes": string }</text>
+
+  <!-- accent -->
+  <rect x="212" y="86" width="6" height="74" rx="3" fill="url(#neon)"/>
+  <rect x="212" y="170" width="6" height="120" rx="3" fill="url(#neon)"/>
+  <rect x="212" y="298" width="6" height="88" rx="3" fill="url(#neon)"/>
+</svg>
+

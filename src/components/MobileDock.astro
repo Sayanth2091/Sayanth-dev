@@ -1,0 +1,79 @@
+---
+const items = [
+  { href: '/', label: 'Home', emoji: '⌂' },
+  { href: '/about', label: 'About', emoji: '👤' },
+  { href: '/projects', label: 'Projects', emoji: '📁' },
+  { href: '/blog', label: 'Blog', emoji: '✍️' },
+  { href: '/contact', label: 'Contact', emoji: '✉️' },
+];
+---
+<nav class="mobile-dock" role="navigation" aria-label="Quick Navigation">
+  {items.map((it) => (
+    <a href={it.href} class="dock-item" aria-label={it.label}>
+      <span class="icon" aria-hidden="true">{it.emoji}</span>
+      <span class="txt">{it.label}</span>
+    </a>
+  ))}
+  <div class="safe" />
+  <div class="glow" />
+  <div class="edge" />
+  <div class="edge r" />
+  <div class="divider" />
+</nav>
+
+<style>
+  @keyframes slide-up-bounce {
+    0% { transform: translateY(120%); opacity: 0; }
+    70% { transform: translateY(-8%); opacity: 1; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .mobile-dock {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    display: none;
+    z-index: 50;
+    padding: 8px;
+    border: 1px solid var(--grid);
+    border-radius: 16px;
+    background: color-mix(in oklab, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 6px 28px rgba(7, 240, 255, .08);
+    animation: slide-up-bounce .6s cubic-bezier(.22,.61,.36,1) both;
+  }
+  .dock-item {
+    flex: 1;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--text-dim);
+    font-weight: 700;
+    padding: 10px 8px;
+    border-radius: 12px;
+    position: relative;
+    transform: translateZ(0) var(--magnet, translate(0));
+    transition: transform .2s ease, color .2s ease, text-shadow .2s ease;
+  }
+  .dock-item:hover, .dock-item:focus {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px color-mix(in oklab, var(--neon-cyan) 45%, transparent);
+  }
+  .dock-item:active {
+    transform: scale(0.92) var(--magnet, translate(0));
+    color: var(--neon-purple);
+    text-shadow: 0 0 12px color-mix(in oklab, var(--neon-purple) 55%, transparent);
+  }
+  .icon { font-size: 16px }
+  .txt { font-size: 12px; letter-spacing: .3px }
+  .glow { position: absolute; inset: -2px; border-radius: 16px; pointer-events: none; box-shadow: 0 0 24px color-mix(in oklab, var(--neon-cyan) 20%, transparent) inset }
+  .edge, .edge.r { position: absolute; width: 24px; height: 100%; top: 0; background: linear-gradient(90deg, color-mix(in oklab, var(--neon-cyan) 25%, transparent), transparent); opacity: .3 }
+  .edge { left: 0; border-top-left-radius: 16px; border-bottom-left-radius: 16px }
+  .edge.r { right: 0; transform: scaleX(-1); border-top-right-radius: 16px; border-bottom-right-radius: 16px }
+  .divider { position: absolute; left: 50%; top: 6px; bottom: 6px; width: 1px; background: color-mix(in oklab, var(--grid) 80%, transparent); opacity: .6; display: none }
+  .safe { position: absolute; left: 0; right: 0; bottom: 0; height: env(safe-area-inset-bottom); }
+  
+  @media (max-width: 760px) { .mobile-dock { display: flex } }
+</style>

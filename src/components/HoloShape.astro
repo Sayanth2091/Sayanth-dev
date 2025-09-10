@@ -1,0 +1,16 @@
+---
+interface Props {
+  type?: 'knot' | 'ico';
+  color?: string;
+  size?: number; // pixels width/height
+}
+const { type = 'knot', color = '#07f0ff', size = 220 } = Astro.props as Props;
+---
+<div class="wrap holo-wrap" style={`--size:${size}px`} data-type={type} data-color={color} data-size={size} aria-hidden="true">
+  <canvas></canvas>
+</div>
+
+<style>
+  .wrap{ width: var(--size); height: var(--size); position: relative; filter: drop-shadow(0 0 24px color-mix(in oklab, var(--neon-cyan) 25%, transparent)); }
+  canvas{ width:100%; height:100%; display:block }
+</style>

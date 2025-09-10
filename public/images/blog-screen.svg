@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#081327"/>
+      <stop offset="1" stop-color="#0c1f3f"/>
+    </linearGradient>
+    <linearGradient id="neon" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#07f0ff"/>
+      <stop offset="1" stop-color="#a24cff"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <text x="60" y="110" fill="#cfe9ff" font-size="40" font-weight="800">Blog</text>
+  <g>
+    <rect x="60" y="140" width="520" height="120" rx="12" fill="#0e1b34" stroke="#18375f"/>
+    <text x="80" y="180" fill="#fff" font-size="22" font-weight="800">Best Tips for Prompting</text>
+    <text x="80" y="205" fill="#9cc" font-size="16">Practical, repeatable patterns</text>
+  </g>
+  <g>
+    <rect x="60" y="280" width="520" height="120" rx="12" fill="#0e1b34" stroke="#18375f"/>
+    <text x="80" y="320" fill="#fff" font-size="22" font-weight="800">Kicking Off — Skywalkr_2091</text>
+    <text x="80" y="345" fill="#9cc" font-size="16">Why security + automation</text>
+  </g>
+  <rect x="760" y="180" width="320" height="200" rx="16" fill="none" stroke="url(#neon)" stroke-width="6" opacity=".8"/>
+  <text x="778" y="406" fill="#8df" font-size="16">Markdown content</text>
+</svg>
+

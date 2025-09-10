@@ -1,0 +1,60 @@
+---
+// src/components/GlyphGrid.astro
+---
+<div id="glyph-grid" aria-hidden="true"></div>
+
+<style>
+  #glyph-grid {
+    position: fixed;
+    inset: 0;
+    z-index: 0; /* behind main content (z=1) */
+    opacity: .4;
+    pointer-events: none; /* never block interactions */
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 14px;
+    line-height: 20px; /* aligns with 20px cell size */
+  }
+</style>
+
+<script>
+  const grid = document.getElementById('glyph-grid');
+  // Mixed glyph set: programming symbols, latin, numerals, math, arrows, box-drawing, kana
+  const base = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]()<>+-/*=|&!?:;%$#~^.,_`"\'';
+  const math = 'αβγΔΩπλµτφψΣ∞≠≈≤≥±∎∧∨⊕⊗⊙∈∉∅√∫∂∆∇°øØ';
+  const arrows = '←↑→↓⇐⇑⇒⇓';
+  const box = '─│┌┐└┘├┤┬┴┼╳╱╲';
+  const kana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+  const glyphs = Array.from(base + math + arrows + box + kana);
+  const columns = Math.floor(window.innerWidth / 20);
+  const rows = Math.floor(window.innerHeight / 20);
+
+  grid.style.display = 'grid';
+  grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+  grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+  const cells = [];
+
+  for (let i = 0; i < columns * rows; i++) {
+    const cell = document.createElement('div');
+    cell.style.textAlign = 'center';
+    cell.style.userSelect = 'none';
+    grid.appendChild(cell);
+    cells.push(cell);
+  }
+
+  function updateGlyphs() {
+    for (const cell of cells) {
+      if (Math.random() > 0.98) {
+        const randomGlyph = glyphs[Math.floor(Math.random() * glyphs.length)];
+        cell.textContent = randomGlyph;
+        const alpha = 0.35 + Math.random() * 0.55;
+        cell.style.color = `rgba(0, 255, 150, ${alpha})`;
+        setTimeout(() => {
+          cell.textContent = '';
+        }, 2000);
+      }
+    }
+  }
+
+  setInterval(updateGlyphs, 100);
+</script>

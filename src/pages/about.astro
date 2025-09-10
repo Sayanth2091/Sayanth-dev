@@ -1,0 +1,148 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Base>
+  <Nav />
+  <main>
+    <section class="section">
+      <div class="container">
+        <h1 data-reveal>About Me</h1>
+        <p data-reveal>
+          By day, I'm a final-year Integrated M.Tech Cybersecurity student at VIT Bhopal, diving deep into the world of digital defense. By night, I'm a SOC Analyst (L1), holding the front line against cyber threats. You could say I'm passionate about securing digital infrastructure, but that's like saying a dragon is passionate about its hoard.
+        </p>
+        <p data-reveal>
+          Since March 2025, I've been a hybrid L1 SOC Analyst at Digital Insights in Dubai, where I've been monitoring real-time threats with AlienVault USM, dissecting security alerts, and investigating incidents. I'm the digital detective on the case, specializing in IOC hunting, log analysis, and alert investigation. I drink coffee and I find things.
+        </p>
+        <p data-reveal>
+          When I'm not chasing down digital bad guys, I'm exploring the world of AI and automation. I'm a big fan of making robots do the work, which is why I use n8n automations to streamline my daily workflows. This frees up my time for more important things, like... well, more cybersecurity.
+        </p>
+        <h2 data-reveal>Tech Stack</h2>
+        <div class="stack-cards" data-reveal>
+          <div class="stack-card" style="--i:0">
+            <div class="stack-title">SOC • Detection Eng</div>
+            <div class="stack-sub">SIEM, detections, alert triage</div>
+          </div>
+          <div class="stack-card" style="--i:1">
+            <div class="stack-title">Threat Hunting</div>
+            <div class="stack-sub">Hypothesis → hunt → refine</div>
+          </div>
+          <div class="stack-card" style="--i:2">
+            <div class="stack-title">n8n • Automations</div>
+            <div class="stack-sub">Webhooks, approvals, ticketing</div>
+          </div>
+          <div class="stack-card" style="--i:3">
+            <div class="stack-title">Python</div>
+            <div class="stack-sub">Scripts, APIs, tooling</div>
+          </div>
+          <div class="stack-card" style="--i:4">
+            <div class="stack-title">Next.js</div>
+            <div class="stack-sub">App Router, SSR/ISR</div>
+          </div>
+          <div class="stack-card" style="--i:5">
+            <div class="stack-title">SvelteKit</div>
+            <div class="stack-sub">Lightweight apps</div>
+          </div>
+          <div class="stack-card" style="--i:6">
+            <div class="stack-title">Astro</div>
+            <div class="stack-sub">Content + islands</div>
+          </div>
+          <div class="stack-card" style="--i:7">
+            <div class="stack-title">Three.js</div>
+            <div class="stack-sub">3D visuals & FX</div>
+          </div>
+        </div>
+        <p data-reveal>
+          I'm always up for a good chat about tech, so feel free to connect with me on <a href="https://www.linkedin.com/in/sayanth-sreekanth" target="_blank">LinkedIn</a>. Let's build the future, one secure and automated step at a time.
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  /* Stacks: big cards with domino animation (mirrors Home) */
+  .stack-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    perspective: 1000px;
+    margin-top: 10px;
+  }
+  .stack-card {
+    position: relative;
+    padding: 18px 16px 20px;
+    border-radius: 14px;
+    border: 1px solid var(--grid);
+    background: color-mix(in oklab, var(--bg) 78%, transparent);
+    box-shadow: 0 10px 28px rgba(7, 240, 255, 0.08);
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    will-change: transform, box-shadow;
+    overflow: hidden;
+    transform: translateZ(0) var(--magnet, translate(0));
+  }
+  .stack-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(120deg, var(--neon-cyan), var(--neon-purple), var(--neon-cyan));
+    background-size: 200% 200%;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: .0;
+    transition: opacity .4s ease, background-position .6s ease;
+    animation: spin-border 6s linear infinite;
+  }
+  .stack-card:hover::before { opacity: .9 }
+  .stack-card::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(380px 240px at var(--mx, -100px) var(--my, -100px), color-mix(in oklab, var(--neon-cyan) 20%, transparent) 0%, transparent 40%);
+    opacity: 0;
+    transition: opacity .35s ease;
+    mix-blend-mode: screen;
+  }
+  .stack-card:hover::after { opacity: .9 }
+  .stack-title { font-weight: 800; font-size: 18px; margin-bottom: 6px; }
+  .stack-sub { color: var(--text-dim); font-size: 13px; }
+
+  /* Domino entrance + gentle wave */
+  @keyframes about-domino-enter {
+    0% { opacity: 0; transform: translateY(20px) rotateZ(0deg) rotateX(0deg); }
+    35% { opacity: 1; transform: translateY(0) rotateZ(-10deg) rotateX(3deg); }
+    65% { transform: rotateZ(6deg) rotateX(0deg); }
+    100% { transform: none; }
+  }
+  @keyframes about-domino-wave {
+    0%, 12%, 100% { transform: none; }
+    20% { transform: rotateZ(-3deg); }
+    30% { transform: rotateZ(2deg); }
+    40% { transform: rotateZ(-1deg); }
+  }
+  [data-reveal].in .stack-card {
+    animation:
+      about-domino-enter .9s cubic-bezier(.22,.61,.36,1) both,
+      about-domino-wave 5s ease-in-out 1;
+    animation-delay: calc(var(--i, 0) * .12s), calc(.9s + var(--i, 0) * .12s);
+  }
+  .stack-card:hover {
+    transform: translateY(-4px) rotateZ(0deg) var(--magnet, translate(0)) !important;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 36px color-mix(in oklab, var(--neon-cyan) 28%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal].in .stack-card { animation: none !important; }
+  }
+  @media (max-width: 760px) { .stack-cards { grid-template-columns: 1fr 1fr } }
+</style>
