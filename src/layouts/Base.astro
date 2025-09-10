@@ -36,14 +36,17 @@ import GlyphGrid from "../components/GlyphGrid.astro";
       <slot />
     </main>
     <MobileDock />
-    <script src="/scripts/glyph-grid.js" is:inline></script>
-    <script src="/scripts/app-init.js" is:inline></script>
-    <script src="/scripts/holo-init.js" is:inline></script>
-    <script src="/scripts/starfield-init.js" is:inline></script>
-    <script src="/scripts/code-typing.js" is:inline></script>
-    <script src="/scripts/command-palette.js" is:inline></script>
-    <script src="/scripts/cursor-trail.js" is:inline></script>
-    <script src="/scripts/scroll-animations.js" is:inline></script>
+    <script src="/scripts/glyph-grid.js"  is:raw></script>
+    <script src="/scripts/app-init.js"  is:raw></script>
+    <script src="../scripts/holo-init.js"></script>
+    <script src="../scripts/starfield-init.js"></script>
+    <script src="/scripts/code-typing.js"  is:raw></script>
+    <script src="/scripts/command-palette.js"  is:raw></script>
+    <script src="/scripts/cursor-trail.js"  is:raw></script>
+    <script src="/scripts/scroll-animations.js"  is:raw></script>
   </body>
 </html>
+
+
+
 
