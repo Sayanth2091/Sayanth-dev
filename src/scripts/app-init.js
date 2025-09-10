@@ -57,74 +57,7 @@ function setupPrefetch() {
   });
 }
 
-function setupViewTransitions() {
-  const supportsVT = typeof document.startViewTransition === 'function';
-  if (!supportsVT) return;
-
-  function calcRadius(x, y) {
-    const w = innerWidth;
-    const h = innerHeight;
-    const r1 = Math.hypot(x, y);
-    const r2 = Math.hypot(w - x, y);
-    const r3 = Math.hypot(x, h - y);
-    const r4 = Math.hypot(w - x, h - y);
-    return Math.max(r1, r2, r3, r4);
-  }
-
-  document.addEventListener('click', (e) => {
-    const a = e.target && (e.target.closest ? e.target.closest('a[href]') : null);
-    if (!a) return;
-    if (a.target === '_blank' || a.hasAttribute('download')) return;
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    try {
-      const url = new URL(a.getAttribute('href') || a.href, location.href);
-      if (url.origin !== location.origin) return;
-      if (url.pathname === location.pathname && url.hash) return;
-
-      e.preventDefault();
-
-      // Determine reveal origin
-      const rect = a.getBoundingClientRect();
-      const clickX = (e.clientX || (rect.left + rect.width / 2));
-      const clickY = (e.clientY || (rect.top + rect.height / 2));
-
-      // Set CSS variables for reveal
-      const x = Math.round(clickX) + 'px';
-      const y = Math.round(clickY) + 'px';
-      const r = Math.ceil(calcRadius(clickX, clickY)) + 'px';
-      root.style.setProperty('--vt-x', x);
-      root.style.setProperty('--vt-y', y);
-      root.style.setProperty('--vt-r-start', '0px');
-      root.style.setProperty('--vt-r-end', r);
-      root.classList.add('vt-clip');
-
-      // Create neon ring overlay
-      const ring = document.createElement('div');
-      ring.id = 'vt-ring';
-      ring.style.setProperty('--ring-x', x);
-      ring.style.setProperty('--ring-y', y);
-      ring.style.setProperty('--ring-r', r);
-      document.body.appendChild(ring);
-
-      let vt;
-      try {
-        vt = document.startViewTransition(() => {
-          location.href = url.href;
-        });
-      } catch (_) {
-        // Fallback: if VT throws, just navigate
-        location.href = url.href;
-        return;
-      }
-
-      // After transition completes (new page), best effort cleanup
-      vt.finished.finally(() => {
-        try { root.classList.remove('vt-clip'); } catch {}
-        try { if (ring && ring.isConnected) ring.remove(); } catch {}
-      });
-    } catch {}
-  }, { capture: true });
-}
+function setupViewTransitions() {\n  const ENABLE_VT = false;\n  const supportsVT = typeof document.startViewTransition === 'function';\n  if (!ENABLE_VT || !supportsVT) return;\n\n  function calcRadius(x, y) {\n    const w = innerWidth;\n    const h = innerHeight;\n    const r1 = Math.hypot(x, y);\n    const r2 = Math.hypot(w - x, y);\n    const r3 = Math.hypot(x, h - y);\n    const r4 = Math.hypot(w - x, h - y);\n    return Math.max(r1, r2, r3, r4);\n  }\n\n  document.addEventListener('click', (e) => {\n    const a = e.target && (e.target.closest ? e.target.closest('a[href]') : null);\n    if (!a) return;\n    if (a.target === '_blank' || a.hasAttribute('download')) return;\n    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;\n    try {\n      const url = new URL(a.getAttribute('href') || a.href, location.href);\n      if (url.origin !== location.origin) return;\n      if (url.pathname === location.pathname && url.hash) return;\n\n      e.preventDefault();\n\n      const rect = a.getBoundingClientRect();\n      const clickX = (e.clientX || (rect.left + rect.width / 2));\n      const clickY = (e.clientY || (rect.top + rect.height / 2));\n\n      const x = Math.round(clickX) + 'px';\n      const y = Math.round(clickY) + 'px';\n      const r = Math.ceil(calcRadius(clickX, clickY)) + 'px';\n      root.style.setProperty('--vt-x', x);\n      root.style.setProperty('--vt-y', y);\n      root.style.setProperty('--vt-r-start', '0px');\n      root.style.setProperty('--vt-r-end', r);\n      root.classList.add('vt-clip');\n\n      const ring = document.createElement('div');\n      ring.id = 'vt-ring';\n      ring.style.setProperty('--ring-x', x);\n      ring.style.setProperty('--ring-y', y);\n      ring.style.setProperty('--ring-r', r);\n      document.body.appendChild(ring);\n\n      // VT disabled: fallback navigation\n      location.href = url.href;\n    } catch {}\n  }, { capture: true });\n}\n
 
 function setupNav() {
   document.querySelectorAll('.nav').forEach(nav => {
@@ -223,3 +156,4 @@ addEventListener('astro:page-load', () => {
   setupNav();
   setupScrollUX();
 });
+
