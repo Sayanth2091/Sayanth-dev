@@ -1,3 +1,11 @@
+---
+title: "Building a IPS specific for Virtual Machines"
+description: "Simple Intrustion Prevension System for understanding how IPS works"
+date: 2024-02-15
+tags: [Cybersecurity, Virtual Machine]
+category: "tools"
+---
+
 # Building a Live Network Intrusion Detection System with Python and React
 
 In the world of cybersecurity, understanding network traffic is paramount. What if you could build your own watchdog to monitor a network, detect suspicious activity in real-time, and display alerts on a modern web dashboard?

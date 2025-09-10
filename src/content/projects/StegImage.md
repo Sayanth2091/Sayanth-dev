@@ -1,3 +1,12 @@
+---
+title: "Building a Steganography App with Node.js and Python"
+description: "A Simple Stegnography App for Awarness"
+date: 2023-02-15
+tags: [Cybersecurity, Stegnography]
+category: "tools"
+---
+
+
 # Deep Dive: Building a Steganography App with Node.js and Python
 
 Have you ever wanted to send a secret message, hidden in plain sight? That's the magic of steganography, the art of concealing a message within another, non-secret file. Today, we're taking a deep dive into **StegImage**, a web application that lets you hide secret text inside images and audio files.
