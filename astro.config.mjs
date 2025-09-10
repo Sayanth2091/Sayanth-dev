@@ -5,5 +5,4 @@ export default defineConfig({
   site: 'https://example.com',
   output: 'static',
   scopedStyleStrategy: 'where',
-  inlineScripts: 'never',
 });
