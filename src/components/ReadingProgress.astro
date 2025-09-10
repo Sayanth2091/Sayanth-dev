@@ -3,14 +3,7 @@
 ---
 <div id="reading-progress"></div>
 
-<script>
-  window.addEventListener('scroll', () => {
-    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-    const scrolled = window.scrollY;
-    const progress = (scrolled / scrollable) * 100;
-    document.getElementById('reading-progress').style.width = `${progress}%`;
-  });
-</script>
+<script src="/scripts/reading-progress.js" is:inline></script>
 
 <style>
   #reading-progress {
@@ -22,3 +15,4 @@
     z-index: 9999;
   }
 </style>
+
