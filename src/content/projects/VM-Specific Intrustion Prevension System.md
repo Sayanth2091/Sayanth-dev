@@ -1,6 +1,6 @@
 ---
 title: "Building a IPS specific for Virtual Machines"
-description: "Simple Intrustion Prevension System for understanding how IPS works"
+summary: "Simple Intrustion Prevension System for understanding how IPS works"
 date: 2024-02-15
 tags: [Cybersecurity, Virtual Machine]
 category: "tools"

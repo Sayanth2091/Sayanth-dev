@@ -1,6 +1,6 @@
 ---
 title: "Building a Steganography App with Node.js and Python"
-description: "A Simple Stegnography App for Awarness"
+summary: "A Simple Stegnography App for Awarness"
 date: 2023-02-15
 tags: [Cybersecurity, Stegnography]
 category: "tools"
