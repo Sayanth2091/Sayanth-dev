@@ -188,10 +188,19 @@ function init() {
   setupNav();
   setupScrollUX();
   setupCardShine();
-  if (localStorage.getItem('intro_shown') === '1') {
-    markReady();
-  } else {
+  
+  // Check if we're on home page - if so, wait for intro, otherwise mark ready immediately
+  const onHome = location.pathname === '/' || location.pathname === '/index.html';
+  if (onHome) {
     addEventListener('app:intro-done', () => markReady(), { once: true });
+    // Safety timeout in case intro doesn't fire
+    setTimeout(() => {
+      if (!document.body.classList.contains('ready')) {
+        markReady();
+      }
+    }, 5000);
+  } else {
+    markReady();
   }
 }
 

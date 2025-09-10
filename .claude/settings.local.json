@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\content/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\layouts/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\.github\\workflows/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\pages/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\scripts/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\scripts/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\scripts/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\components/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\layouts/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\public/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\scripts/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\scripts/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\scripts/**)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\styles/**)",
+      "Bash(npm run build:*)",
+      "Read(/C:\\Users\\sayan\\Documents\\Work\\sidegigs\\portfolio\\src\\layouts/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

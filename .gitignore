@@ -21,3 +21,4 @@ pnpm-debug.log*
 # Gemini specific files
 AGENTS.md
 GEMINI.md
+CLAUDE.md
