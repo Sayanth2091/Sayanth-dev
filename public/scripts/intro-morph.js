@@ -9,14 +9,6 @@
     return;
   }
   
-  // If already shown once, skip and proceed
-  try {
-    if (localStorage.getItem(KEY) === '1') {
-      dispatchEvent(new CustomEvent('app:intro-done'));
-      return;
-    }
-  } catch {}
-  
   // Respect one-time display using localStorage (remove KEY to force again)
 
   const overlay = document.createElement('div');
