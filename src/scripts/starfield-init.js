@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-function initCanvas(canvas){
+function initCanvas(canvas){`r`n  if (document.documentElement.classList.contains("reduced-effects")) return;
   if (canvas.dataset.init) return; canvas.dataset.init = '1';
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   const scene = new THREE.Scene();

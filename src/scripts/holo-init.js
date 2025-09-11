@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-function initElement(root){
+function initElement(root){`r`n  if (document.documentElement.classList.contains("reduced-effects")) return;
   if (root.dataset.init) return;
   root.dataset.init = '1';
   const type = root.dataset.type || 'knot';
