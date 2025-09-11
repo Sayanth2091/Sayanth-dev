@@ -9,14 +9,6 @@
     return;
   }
   
-  // If already shown once, skip and proceed
-  try {
-    if (localStorage.getItem(KEY) === '1') {
-      dispatchEvent(new CustomEvent('app:intro-done'));
-      return;
-    }
-  } catch {}
-  
   // Respect one-time display using localStorage (remove KEY to force again)
 
   const overlay = document.createElement('div');
@@ -30,7 +22,7 @@
   const el = overlay.querySelector('#introText');
   const from = 'Sayanth Sreekanth';
   const to = 'SKYWALKR_2091';
-  const glyphs = '!<>-_\/[]{}—=+*^?#________CYBERHEX2091';
+  const glyphs = '!<>-_\\/[]{}=+*^?#CYBERHEX2091_';
   let frame = 0;
   const chars = Math.max(from.length, to.length);
   const queue = [];
@@ -98,4 +90,5 @@
   // Start animation after a brief delay
   setTimeout(tick, 200);
 })();
+
 
