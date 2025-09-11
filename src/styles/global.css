@@ -206,7 +206,7 @@ a:hover { color: var(--text) }
 
 *::-webkit-scrollbar { width: 10px; height: 10px }
 *::-webkit-scrollbar-track { background: #0b1220 }
-*::-webkit-scrollbar-thumb { :root {
+*::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple)); border-radius: 10px }
   --bg: #050910;
   --text: #e6f3ff;
   --text-dim: #a2b3c7;
