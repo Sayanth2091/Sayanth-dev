@@ -19,7 +19,7 @@ const projects = (await getCollection('projects')).sort((a,b)=> b.data.date.getT
             <p class="muted">{data.summary}</p>
             <p class="badges">{data.stack.map(s => (<span class="badge">{s}</span>))}</p>
             <div class="links">
-              {data.link && <span class="btn">Live Demo</span>}
+              {data.link && <span class="btn">Read About</span>}
               {data.repo && <span class="btn secondary">Repo</span>}
             </div>
           </a>

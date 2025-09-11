@@ -23,6 +23,12 @@ const { Content } = await project.render();
         <h1 class="vt-title">{project.data.title}</h1>
         <p class="muted">{project.data.summary}</p>
         <p class="badges">{project.data.stack.map(s => (<span class="badge">{s}</span>))}</p>
+        {(project.data.link || project.data.repo) && (
+          <div class="btn-row">
+            {project.data.link && (<a class="btn" href={project.data.link} target="_blank" rel="noopener noreferrer">Read About</a>)}
+            {project.data.repo && (<a class="btn secondary" href={project.data.repo} target="_blank" rel="noopener noreferrer">GitHub Repo</a>)}
+          </div>
+        )}
       </header>
       <article class="prose">
         <Content />
@@ -42,6 +48,12 @@ const { Content } = await project.render();
   .prose pre { position: relative; background: #0d1320; padding: 16px; border-radius: 12px; overflow:auto; border:1px solid var(--grid)}
   .prose img { max-width:100%; height:auto; display:block; border-radius: 12px; border:1px solid var(--grid); margin: 16px auto; box-shadow: 0 10px 28px rgba(7, 240, 255, 0.08) }
   .prose blockquote { border-left: 3px solid var(--neon-cyan); padding-left: 1.5em; margin-left: 0; font-style: italic; color: var(--text-dim); }
+
+  .btn-row { display:flex; gap:10px; margin-top: 12px; }
+  .btn { display:inline-block; border:1px solid var(--grid); padding:8px 14px; border-radius:8px; color: var(--text); text-decoration:none; background: color-mix(in oklab, var(--neon-cyan) 15%, transparent); transition: transform .3s ease, box-shadow .3s ease, background-color .3s ease; }
+  header:hover .btn { transform: translateY(-2px); box-shadow: 0 0 16px color-mix(in oklab, var(--neon-cyan) 30%, transparent); }
+  .btn.secondary { background: transparent; }
+  header:hover .btn.secondary { border-color: var(--neon-purple); color: var(--neon-purple); box-shadow: 0 0 16px color-mix(in oklab, var(--neon-purple) 25%, transparent); }
 
   .prose pre .copy-btn {
     position: absolute;
