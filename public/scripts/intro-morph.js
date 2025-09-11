@@ -30,7 +30,7 @@
   const el = overlay.querySelector('#introText');
   const from = 'Sayanth Sreekanth';
   const to = 'SKYWALKR_2091';
-  const glyphs = '!<>-_\/[]{}—=+*^?#________CYBERHEX2091';
+  const glyphs = '!<>-_\\/[]{}=+*^?#CYBERHEX2091_';
   let frame = 0;
   const chars = Math.max(from.length, to.length);
   const queue = [];
