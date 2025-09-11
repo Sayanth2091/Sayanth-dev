@@ -402,8 +402,9 @@ body.ready .stagger > [data-ani] { animation: fadeUp .8s cubic-bezier(.22,.61,.3
 
 .prose pre {
   font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
-  background: color-mix(in oklab, var(--bg) 80%, transparent);
-  padding: 16px;
+  position: relative;
+  background: linear-gradient(180deg, #0d1424, #0a111e);
+  padding: 22px 16px 16px;
   border-radius: 14px;
   border: 1px solid var(--grid);
   white-space: pre-wrap;
@@ -411,10 +412,20 @@ body.ready .stagger > [data-ani] { animation: fadeUp .8s cubic-bezier(.22,.61,.3
   overflow-x: auto;
   word-break: break-all;
 }
+.prose pre::before {
+  content: '● ● ●';
+  position: absolute;
+  top: 6px;
+  left: 12px;
+  color: #6b7280;
+  letter-spacing: 6px;
+  font-size: 12px;
+}
 
 .prose pre code {
   display: block;
-  font-family: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color: #d7e9ff;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
