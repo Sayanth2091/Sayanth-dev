@@ -98,3 +98,4 @@
   // Start animation after a brief delay
   setTimeout(tick, 200);
 })();
+
