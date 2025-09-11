@@ -22,7 +22,10 @@ import GlyphGrid from "../components/GlyphGrid.astro";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    </noscript>
   </head>
   <body class="page-transition">
     <GlyphGrid />
@@ -31,15 +34,15 @@ import GlyphGrid from "../components/GlyphGrid.astro";
       <slot />
     </main>
     <MobileDock />
-    <script src="/scripts/glyph-grid.js" is:raw></script>
-    <script src="/scripts/app-init.js"  is:raw></script>
-    <script src="../scripts/holo-init.js"></script>
-    <script src="../scripts/starfield-init.js"></script>
-    <script src="/scripts/code-typing.js"  is:raw></script>
+    <script src="/scripts/glyph-grid.js" is:raw defer></script>
+    <script src="/scripts/app-init.js"  is:raw defer></script>
+    <script src="../scripts/holo-init.js" defer></script>
+    <script src="../scripts/starfield-init.js" defer></script>
+    <script src="/scripts/code-typing.js"  is:raw defer></script>
     <!-- command palette removed -->
     <script src="/scripts/reduce-effects.js" is:raw></script>
-    <script src="/scripts/cursor-trail.js"  is:raw></script>
-    <script src="/scripts/scroll-animations.js"  is:raw></script>
+    <script src="/scripts/cursor-trail.js"  is:raw defer></script>
+    <script src="/scripts/scroll-animations.js"  is:raw defer></script>
   </body>
 </html>
 
