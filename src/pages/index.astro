@@ -18,7 +18,7 @@ import elk from "../assets/Cybersecurity/Elk.png";
 const projects = (await getCollection('projects')).sort((a,b)=> b.data.date.getTime()-a.data.date.getTime());
 const featured = projects.filter(p=>p.data.featured).slice(0,3);
 ---
-<Base showGlyphGrid={true}>
+<Base>
   <Nav />
   <main>
     <Hero />
@@ -291,3 +291,4 @@ Key Skills:
 
   
 </style>
+

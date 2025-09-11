@@ -4,12 +4,12 @@ import Footer from '../components/Footer.astro';
 interface Props {
   title?: string;
   description?: string;
-  showGlyphGrid?: boolean;
-}
+  }
 
-const { title = 'Skywalkr_2091 — Portfolio', description = 'Cyber Security SOC Analyst • AI Automation • Full‑stack', showGlyphGrid = false } = Astro.props as Props;
+const { title = 'Skywalkr_2091 — Portfolio', description = 'Cyber Security SOC Analyst • AI Automation • Full‑stack' } = Astro.props as Props;
 import "../styles/global.css";
 import MobileDock from "../components/MobileDock.astro";
+import GlyphGrid from "../components/GlyphGrid.astro";
 ---
 <!doctype html>
 <html lang="en">
@@ -20,13 +20,18 @@ import MobileDock from "../components/MobileDock.astro";
     <meta name="theme-color" content="#07f0ff" />
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   </head>
   <body class="page-transition">
+    <GlyphGrid />
     <div id="scroll-progress" aria-hidden="true"></div>
     <main>
       <slot />
     </main>
     <MobileDock />
+    <script src="/scripts/glyph-grid.js" is:raw></script>
     <script src="/scripts/app-init.js"  is:raw></script>
     <script src="../scripts/holo-init.js"></script>
     <script src="../scripts/starfield-init.js"></script>
@@ -36,6 +41,7 @@ import MobileDock from "../components/MobileDock.astro";
     <script src="/scripts/scroll-animations.js"  is:raw></script>
   </body>
 </html>
+
 
 
 

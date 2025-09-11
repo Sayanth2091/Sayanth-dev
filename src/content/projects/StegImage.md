@@ -3,8 +3,8 @@ title: "Building a Steganography App with Node.js and Python"
 summary: "A Simple Stegnography App for Awarness"
 date: 2023-02-15
 stack: ["Node.js", "Python", "Express.js", "React", "Cryptography", "Steganography"]
-link: "https://github.com/sayanth-sreekanth/stegimage"
-repo: "https://github.com/sayanth-sreekanth/stegimage"
+link: "https://github.com/Sayanth2091/stegimage"
+repo: "https://github.com/Sayanth2091/stegimage"
 featured: true
 ---
 

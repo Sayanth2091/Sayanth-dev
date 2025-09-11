@@ -3,8 +3,8 @@ title: "Building a IPS specific for Virtual Machines"
 summary: "Simple Intrustion Prevension System for understanding how IPS works"
 date: 2024-02-15
 stack: ["Python", "Flask", "React", "Scapy", "WebSocket", "Tailwind CSS", "VirtualBox"]
-link: "https://github.com/sayanth-sreekanth/vm-specific-ips"
-repo: "https://github.com/sayanth-sreekanth/vm-specific-ips"
+link: "https://github.com/Sayanth2091/VM-Specific-IPS"
+repo: "https://github.com/Sayanth2091/VM-Specific-IPS"
 featured: true
 ---
 
