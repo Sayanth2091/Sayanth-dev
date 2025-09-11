@@ -10,7 +10,6 @@ interface Props {
 const { title = 'Skywalkr_2091 — Portfolio', description = 'Cyber Security SOC Analyst • AI Automation • Full‑stack', showGlyphGrid = false } = Astro.props as Props;
 import "../styles/global.css";
 import MobileDock from "../components/MobileDock.astro";
-import GlyphGrid from "../components/GlyphGrid.astro";
 ---
 <!doctype html>
 <html lang="en">
@@ -23,7 +22,6 @@ import GlyphGrid from "../components/GlyphGrid.astro";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body class="page-transition">
-    <GlyphGrid />
     <div id="scroll-progress" aria-hidden="true"></div>
     <div id="preloader" aria-hidden="true">
       <div class="loader">
@@ -36,7 +34,7 @@ import GlyphGrid from "../components/GlyphGrid.astro";
       <slot />
     </main>
     <MobileDock />
-    <script src="/scripts/glyph-grid.js"  is:raw></script>
+    <script src="/scripts/intro-morph.js" is:raw></script>
     <script src="/scripts/app-init.js"  is:raw></script>
     <script src="../scripts/holo-init.js"></script>
     <script src="../scripts/starfield-init.js"></script>

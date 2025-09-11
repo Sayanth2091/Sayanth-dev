@@ -9,8 +9,15 @@
     return;
   }
   
-  // Always show intro for debugging - remove this line later if you want one-time only
-  localStorage.removeItem(KEY);
+  // If already shown once, skip and proceed
+  try {
+    if (localStorage.getItem(KEY) === '1') {
+      dispatchEvent(new CustomEvent('app:intro-done'));
+      return;
+    }
+  } catch {}
+  
+  // Respect one-time display using localStorage (remove KEY to force again)
 
   const overlay = document.createElement('div');
   overlay.id = 'intro';
@@ -53,7 +60,6 @@
       }
     }
     el.innerHTML = out;
-    console.log(`Frame ${frame}: "${out.replace(/<[^>]*>/g, '')}" (${complete}/${queue.length} complete)`);
     frame++;
     return complete === queue.length;
   }
