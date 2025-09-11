@@ -13,13 +13,26 @@
 
   const overlay = document.createElement('div');
   overlay.id = 'intro';
-  overlay.innerHTML = '<div class="intro-inner"><div class="intro-text" id="introText"></div></div>';
+  const inner = document.createElement('div');
+  inner.className = 'intro-inner';
+  const textWrap = document.createElement('div');
+  textWrap.className = 'intro-text';
+  textWrap.id = 'introText';
+  const textSpan = document.createElement('span');
+  textSpan.id = 'introContent';
+  const cursor = document.createElement('span');
+  cursor.className = 'typing-cursor';
+  cursor.setAttribute('aria-hidden', 'true');
+  textWrap.appendChild(textSpan);
+  textWrap.appendChild(cursor);
+  inner.appendChild(textWrap);
+  overlay.appendChild(inner);
   document.body.appendChild(overlay);
   // Remove screen lock for debugging
   // document.documentElement.classList.add('lock');
   // document.body.classList.add('lock');
 
-  const el = overlay.querySelector('#introText');
+  const el = overlay.querySelector('#introContent');
   const from = 'Sayanth Sreekanth';
   const to = 'SKYWALKR_2091';
   const glyphs = '!<>-_\\/[]{}=+*^?#CYBERHEX2091_';
