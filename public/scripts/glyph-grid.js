@@ -10,14 +10,22 @@ function initGlyphGrid() {
   const extra = 'CYBERHEX2091<>[]{}+-=*/\\|_^~';
   const glyphs = Array.from(cyber + ' ' + base + ' ' + extra);
 
-  const cellSize = 18;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let cellSize = 18;
   let columns = 0, rows = 0;
   let cells = [];
   let mouseX = 0, mouseY = 0;
 
+  function computeCellSize(){
+    const base = Math.max(18, Math.min(30, Math.round(window.innerWidth / 72)));
+    // Larger cells on smaller screens to reduce DOM size
+    cellSize = (window.innerWidth < 920 || reduceMotion) ? Math.max(base, 24) : base;
+  }
+
   function build() {
     grid.innerHTML = '';
     cells = [];
+    computeCellSize();
     columns = Math.max(1, Math.floor(window.innerWidth / cellSize));
     rows = Math.max(1, Math.floor(window.innerHeight / cellSize));
     grid.style.display = 'grid';
@@ -43,34 +51,36 @@ function initGlyphGrid() {
     const dx = bx - ax, dy = by - ay; return Math.hypot(dx, dy);
   }
 
-  function updateGlyphs() {
+  function updateGlyphsSampled() {
     const gx = Math.floor(mouseX / cellSize);
     const gy = Math.floor(mouseY / cellSize);
-    for (let i = 0; i < cells.length; i++) {
+    // Update only a small random subset per tick
+    const total = cells.length;
+    const rate = reduceMotion ? 0.02 : 0.06; // 2% on RM, 6% otherwise
+    const count = Math.max(1, Math.floor(total * rate));
+    for (let k = 0; k < count; k++) {
+      const i = (Math.random() * total) | 0;
       const c = cells[i];
       const near = dist(c.x, c.y, gx, gy) < 5;
-      const chance = near ? 0.95 : 0.985;
-      if (Math.random() > chance) {
-        const char = glyphs[(Math.random() * glyphs.length) | 0];
-        const scheme = colorSchemes[(Math.random() * colorSchemes.length) | 0];
-        const color = scheme[(Math.random() * scheme.length) | 0];
-        c.element.textContent = char;
-        c.element.style.color = color;
-        const fx = Math.random() < 0.5 ? 'pulse' : 'wave';
+      const char = glyphs[(Math.random() * glyphs.length) | 0];
+      const scheme = colorSchemes[(Math.random() * colorSchemes.length) | 0];
+      const color = scheme[(Math.random() * scheme.length) | 0];
+      c.element.textContent = char;
+      c.element.style.color = color;
+      const fx = Math.random() < 0.5 ? 'pulse' : 'wave';
+      c.element.classList.remove('pulse', 'wave');
+      c.element.classList.add(fx);
+      c.element.style.opacity = near ? '1' : String(0.4 + Math.random() * 0.5);
+      const life = (near ? 2600 : 1200) + Math.random() * (near ? 1600 : 1200);
+      setTimeout(() => {
+        c.element.textContent = '';
         c.element.classList.remove('pulse', 'wave');
-        c.element.classList.add(fx);
-        c.element.style.opacity = near ? '1' : String(0.4 + Math.random() * 0.5);
-        const life = (near ? 3000 : 1500) + Math.random() * (near ? 2000 : 1500);
-        setTimeout(() => {
-          c.element.textContent = '';
-          c.element.classList.remove('pulse', 'wave');
-        }, life);
-      }
+      }, life);
     }
   }
 
   function matrixFall() {
-    if (Math.random() > 0.97) {
+    if (Math.random() > (reduceMotion ? 0.992 : 0.97)) {
       const column = (Math.random() * columns) | 0;
       const el = document.createElement('div');
       el.textContent = glyphs[(Math.random() * glyphs.length) | 0];
@@ -90,9 +100,12 @@ function initGlyphGrid() {
   document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
   window.addEventListener('resize', build);
 
+  let running = true;
+  document.addEventListener('visibilitychange', ()=> { running = !document.hidden; });
+
   build();
-  setInterval(updateGlyphs, 80);
-  setInterval(matrixFall, 200);
+  const glyphTimer = setInterval(()=> { if (running) updateGlyphsSampled(); }, reduceMotion ? 160 : 120);
+  const fallTimer = setInterval(()=> { if (running) matrixFall(); }, reduceMotion ? 300 : 220);
 }
 
 if (document.readyState === 'loading') {
@@ -100,4 +113,3 @@ if (document.readyState === 'loading') {
 } else {
   initGlyphGrid();
 }
-

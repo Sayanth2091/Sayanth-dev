@@ -16,7 +16,7 @@ function initCanvas(canvas){
   };
   resize(); addEventListener('resize', resize);
 
-  const starCount = 2000;
+  const starCount = (window.innerWidth < 900) ? 900 : 1600;
   const positions = new Float32Array(starCount * 3);
   for (let i = 0; i < starCount; i++) {
     const r = 120 * Math.pow(Math.random(), 0.5);
@@ -115,7 +115,7 @@ function initCanvas(canvas){
       pos.needsUpdate = true;
       if (boostT >= 1.0) { streaks.visible = false; }
     }
-    if (running){ renderer.setClearColor(0, 0); renderer.render(scene, camera); }
+    if (running){ renderer.setPixelRatio(Math.min(1.5, devicePixelRatio)); renderer.setClearColor(0, 0); renderer.render(scene, camera); }
     requestAnimationFrame(animate);
   }
   animate();
@@ -124,3 +124,4 @@ function initCanvas(canvas){
 function initAll(){ document.querySelectorAll('canvas[data-starfield]').forEach(initCanvas); }
 if (document.readyState === 'loading') addEventListener('DOMContentLoaded', initAll, { once:true }); else initAll();
 addEventListener('astro:page-load', initAll);
+
