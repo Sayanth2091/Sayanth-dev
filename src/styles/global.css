@@ -374,8 +374,8 @@ a:hover { color: var(--text) }
 
 @keyframes barPulse { 0%, 100% { transform: scaleY(.6) } 50% { transform: scaleY(1) } }
 
-body:not(.ready) main { opacity: 0; transform: translateY(6px) }
-body.ready main { animation: fadeUp .7s cubic-bezier(.22,.61,.36,1) both }
+
+
 @keyframes fadeUp { 0% { opacity: 0; transform: translateY(10px) } 60% { opacity: .9; transform: translateY(2px) } 100% { opacity: 1; transform: none } }
 
 .stagger > [data-ani] { opacity: 0; transform: translateY(8px) }
@@ -474,8 +474,8 @@ body.ready .stagger > [data-ani] { animation: fadeUp .8s cubic-bezier(.22,.61,.3
 
 @keyframes barPulse { 0%, 100% { transform: scaleY(.6) } 50% { transform: scaleY(1) } }
 
-body:not(.ready) main { opacity: 0; transform: translateY(6px) }
-body.ready main { animation: fadeUp .7s cubic-bezier(.22,.61,.36,1) both }
+
+
 @keyframes fadeUp { 0% { opacity: 0; transform: translateY(10px) } 60% { opacity: .9; transform: translateY(2px) } 100% { opacity: 1; transform: none } }
 
 .stagger > [data-ani] { opacity: 0; transform: translateY(8px) }
@@ -563,4 +563,5 @@ body.ready .stagger > [data-ani] { animation: fadeUp .8s cubic-bezier(.22,.61,.3
     opacity: 1;
   }
 }
+
 
