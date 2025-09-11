@@ -2,6 +2,9 @@
 import Base from "../../layouts/Base.astro";
 import Nav from "../../components/Nav.astro";
 import Footer from "../../components/Footer.astro";
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort((a,b)=> b.data.date.getTime()-a.data.date.getTime());
 ---
 <Base title="Blog — Skywalkr_2091" description="Notes on security, automation and dev by Sayanth.">
   <Nav />
@@ -17,8 +20,31 @@ import Footer from "../../components/Footer.astro";
           <h3>Guides & Resources</h3>
           <p class="muted">Practical guides, tutorials, and recommendations for tools and technologies.</p>
         </a>
+        <a class="card" href="/blog/all" style="view-transition-name: blog-cat-all">
+          <h3>All Posts</h3>
+          <p class="muted">Browse every post in chronological order.</p>
+        </a>
+      </div>
+
+      <h2 style="margin-top:24px">Latest Posts</h2>
+      <div class="cards">
+        {posts.map(({ data, slug }) => (
+          <a class="card blog-card" href={`/blog/${slug}/`} style={`view-transition-name: blog-${slug}`}>
+            <div class="cover-thumb" style={`view-transition-name: cover-blog-${slug}`}></div>
+            <h3>{data.title}</h3>
+            <p class="muted">{data.description ?? ''}</p>
+            <p class="muted date">{new Date(data.date).toDateString()}</p>
+          </a>
+        ))}
       </div>
     </div>
     <Footer />
   </main>
 </Base>
+
+<style>
+  .blog-card { text-decoration: none; display: flex; flex-direction: column; }
+  .date { margin-top: auto; padding-top: 12px; }
+  .cover-thumb { height: 120px; border-radius: 10px; border:1px solid var(--grid); margin-bottom: 12px; background: radial-gradient(180px 90px at 20% 30%, color-mix(in oklab, var(--neon-cyan) 25%, transparent), transparent), radial-gradient(160px 80px at 80% 70%, color-mix(in oklab, var(--neon-purple) 25%, transparent), transparent), #08121f; }
+</style>
+
