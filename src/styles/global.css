@@ -426,6 +426,23 @@ body.ready .stagger > [data-ani] { animation: fadeUp .8s cubic-bezier(.22,.61,.3
   word-wrap: break-word;
 }
 
+/* Blog/report typography improvements */
+.prose h1, .prose h2 {
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.prose h3 { color: var(--text); font-weight: 800; }
+.prose a { color: var(--neon-cyan); }
+.prose a:hover { color: var(--text); text-shadow: 0 0 8px color-mix(in oklab, var(--neon-cyan) 60%, transparent); }
+
+/* Blog cards heading emphasis */
+.blog-card h3 { color: var(--text); transition: color .3s ease, text-shadow .3s ease; }
+.blog-card:hover h3 { color: var(--neon-cyan); text-shadow: 0 0 10px color-mix(in oklab, var(--neon-cyan) 40%, transparent); }
+
 .typing-cursor {
   display: inline-block;
   width: 2px;
