@@ -1,4 +1,8 @@
 const root = document.documentElement;
+const START_TS = Date.now();
+const MIN_LOADER_MS = 4500; // target intro (fade adds ~500ms ≈ 5s total)
+let loadTimer = null;
+let started = false;
 
 function onPointerMove(e) {
   root.style.setProperty('--cursor-x', e.clientX + 'px');
@@ -79,27 +83,37 @@ function setupNav() {
 
 function setupScrollUX() {
   const bar = document.getElementById('scroll-progress');
-  const update = () => {
-    const scrollY = window.scrollY;
+  let ticking = false;
+  let lastY = window.scrollY;
+  const render = () => {
+    ticking = false;
+    const scrollY = lastY;
     const sh = document.documentElement.scrollHeight - innerHeight;
     const p = sh > 0 ? Math.min(1, Math.max(0, scrollY / sh)) : 0;
     if (bar) bar.style.transform = `scaleX(${p})`;
     const alpha = 65 + Math.min(23, Math.round((scrollY / 140) * 23));
     root.style.setProperty('--nav-a', alpha + '%');
     root.style.setProperty('--scroll-y', scrollY);
-    // Hero depth: translate + scale + subtle blur
     const h = innerHeight || 1;
     const heroP = Math.min(1, Math.max(0, scrollY / (h * 0.9)));
-    const ty = (scrollY * 0.25).toFixed(2) + 'px';
-    const scale = (1 - heroP * 0.25).toFixed(4); // down to ~0.75
-    const blur = (heroP * 1.6).toFixed(2) + 'px';
+    const ty = (scrollY * 0.22).toFixed(2) + 'px';
+    const scale = (1 - heroP * 0.22).toFixed(4);
+    const blur = (heroP * 1.2).toFixed(2) + 'px';
     root.style.setProperty('--hero-ty', ty);
     root.style.setProperty('--hero-scale', scale);
     root.style.setProperty('--hero-blur', blur);
   };
-  update();
-  addEventListener('scroll', update, { passive: true });
-  addEventListener('resize', update);
+  const onScroll = () => {
+    lastY = window.scrollY;
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(render);
+    }
+  };
+  const onResize = () => { lastY = window.scrollY; render(); };
+  render();
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onResize);
 }
 
 function setupCardShine() {
@@ -116,22 +130,63 @@ function setupCardShine() {
 }
 
 function markReady() {
-  document.body.classList.add('ready');
+  document.body.classList.remove('app-loading');
   const pl = document.getElementById('preloader');
-  if (pl) { pl.classList.add('hide'); setTimeout(() => pl.remove(), 400); }
+  const finish = () => {
+    if (pl) pl.remove();
+    // Now allow page animations
+    document.body.classList.add('ready');
+    window.dispatchEvent(new Event('app:ready'));
+  };
+  if (pl) {
+    pl.classList.add('hide');
+    setTimeout(finish, 500);
+  } else {
+    finish();
+  }
+}
+
+function bootApp() {
+  if (started) return; // guard
+  started = true;
+  // After preloader fades and body becomes ready, initialize UI pieces
+  const afterReady = () => {
+    addEventListener('pointermove', onPointerMove, { passive: true });
+    setupReveals();
+    setupPrefetch();
+    setupViewTransitions();
+    setupNav();
+    setupScrollUX();
+    setupCardShine();
+  };
+  addEventListener('app:ready', afterReady, { once: true });
+  markReady();
 }
 
 function init() {
-  addEventListener('pointermove', onPointerMove, { passive: true });
-  setupReveals();
-  setupPrefetch();
-  setupViewTransitions();
-  setupNav();
-  setupScrollUX();
-  setupCardShine();
-  
-  // No intro overlay: mark the app ready immediately
-  markReady();
+  // While loading, block animations by omitting body.ready
+  document.body.classList.add('app-loading');
+  // Wait for full load and minimum loader time
+  const onLoad = () => {
+    const elapsed = Date.now() - START_TS;
+    const delay = Math.max(0, MIN_LOADER_MS - elapsed);
+    loadTimer = setTimeout(bootApp, delay);
+  };
+  if (document.readyState === 'complete') onLoad(); else addEventListener('load', onLoad, { once: true });
+
+  // Expose skip function and click-to-skip on overlay
+  window.skipIntro = () => {
+    if (loadTimer) { try { clearTimeout(loadTimer); } catch {}
+      loadTimer = null;
+    }
+    bootApp();
+  };
+  const pl = () => {
+    const el = document.getElementById('preloader');
+    if (!el) return;
+    el.addEventListener('click', () => window.skipIntro(), { once: true });
+  };
+  if (document.readyState === 'loading') addEventListener('DOMContentLoaded', pl, { once: true }); else pl();
 }
 
 if (document.readyState === 'complete' || document.readyState === 'interactive') {

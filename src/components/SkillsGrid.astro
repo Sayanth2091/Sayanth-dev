@@ -1,0 +1,107 @@
+---
+interface Skill { name: string; level: number }
+interface Category { title: string; note?: string; icon: string; skills: Skill[] }
+
+const categories: Category[] = [
+  {
+    title: 'Cybersecurity',
+    note: 'Monitoring, detections, incident response',
+    icon: '🛡️',
+    skills: [
+      { name: 'SOC Monitoring', level: 90 },
+      { name: 'Incident Response', level: 85 },
+      { name: 'MITRE ATT&CK', level: 82 },
+      { name: 'Threat Analysis', level: 80 },
+      { name: 'EDR', level: 78 },
+    ],
+  },
+  {
+    title: 'Network Security',
+    note: 'Devices, policies, observability',
+    icon: '🌐',
+    skills: [
+      { name: 'AlienVault USM', level: 86 },
+      { name: 'SIEM Tuning', level: 82 },
+      { name: 'IDS/IPS', level: 75 },
+      { name: 'Log Analysis', level: 88 },
+    ],
+  },
+  {
+    title: 'Automation & AI',
+    note: 'Reduce toil, keep guardrails',
+    icon: '🤖',
+    skills: [
+      { name: 'n8n', level: 88 },
+      { name: 'Agents & RAG', level: 76 },
+      { name: 'Prompting', level: 84 },
+      { name: 'Eval/Guardrails', level: 72 },
+    ],
+  },
+  {
+    title: 'Web & Scripting',
+    note: 'Small tools, dashboards, APIs',
+    icon: '💻',
+    skills: [
+      { name: 'Astro', level: 80 },
+      { name: 'Next.js', level: 74 },
+      { name: 'SvelteKit', level: 70 },
+      { name: 'Python', level: 82 },
+      { name: 'Node', level: 76 },
+    ],
+  },
+  {
+    title: 'Systems',
+    note: 'Platform fundamentals',
+    icon: '🧰',
+    skills: [
+      { name: 'Linux', level: 78 },
+      { name: 'Windows Event Logs', level: 82 },
+      { name: 'Docker', level: 70 },
+      { name: 'Git', level: 85 },
+    ],
+  },
+];
+---
+<section class="section" id="tech-stats" data-reveal>
+  <div class="container">
+    <h2>Tech Stats</h2>
+    <p class="muted">A clear view of the tools and skills I use most.</p>
+
+    <div class="skills-grid">
+      {categories.map((cat) => (
+        <div class="skill-card">
+          <div class="head">
+            <h3><span class="ico" aria-hidden="true">{cat.icon}</span>{cat.title}</h3>
+            {cat.note && <p class="muted small">{cat.note}</p>}
+          </div>
+          <div class="skills">
+            {cat.skills.map((s) => (
+              <div class="skill">
+                <div class="row">
+                  <span class="name">{s.name}</span>
+                  <span class="val" aria-label={`${s.name} proficiency`}>{s.level}%</span>
+                </div>
+                <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={s.level}><span style={`--p:${s.level}%`}></span></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <style>
+    .skills-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 12px; }
+    .skill-card { border: 1px solid var(--grid); border-radius: 14px; padding: 14px; background: color-mix(in oklab, var(--bg) 78%, transparent); box-shadow: 0 10px 28px rgba(7,240,255,.06); }
+    .head h3 { margin: 0 0 6px; display:flex; align-items:center; gap: 8px; }
+    .ico { font-size: 18px; }
+    .small { font-size: 13px; }
+    .skill { margin: 10px 0; }
+    .row { display:flex; align-items:center; justify-content: space-between; margin-bottom: 6px; }
+    .name { font-weight: 600; }
+    .val { color: var(--text-dim); font-size: 12px; }
+    .bar { height: 8px; border-radius: 999px; background: color-mix(in oklab, var(--bg) 85%, transparent); border: 1px solid var(--grid); overflow: hidden; }
+    .bar span { display:block; height: 100%; width: var(--p); background: linear-gradient(90deg, color-mix(in oklab, var(--neon-cyan) 40%, transparent), color-mix(in oklab, var(--neon-purple) 40%, transparent)); box-shadow: 0 0 12px color-mix(in oklab, var(--neon-cyan) 25%, transparent); transition: width .6s ease; }
+  </style>
+</section>
+

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
-function initElement(root){`r`n  if (document.documentElement.classList.contains("reduced-effects")) return;
+function initElement(root){
+  if (document.documentElement.classList.contains("reduced-effects")) return;
   if (root.dataset.init) return;
   root.dataset.init = '1';
   const type = root.dataset.type || 'knot';
@@ -119,5 +120,13 @@ function initElement(root){`r`n  if (document.documentElement.classList.contains
 
 function initAll(){ document.querySelectorAll('.holo-wrap').forEach(initElement); }
 
-if (document.readyState === 'loading') { addEventListener('DOMContentLoaded', initAll, { once:true }); } else { initAll(); }
-addEventListener('astro:page-load', initAll);
+function readyOrWait(cb){
+  if (document.body.classList.contains('app-loading')) {
+    addEventListener('app:ready', () => cb(), { once:true });
+  } else { cb(); }
+}
+
+if (document.readyState === 'loading') {
+  addEventListener('DOMContentLoaded', () => readyOrWait(initAll), { once:true });
+} else { readyOrWait(initAll); }
+addEventListener('astro:page-load', () => readyOrWait(initAll));

@@ -4,13 +4,11 @@
 function initGlyphGrid() {
   const grid = document.getElementById('glyph-grid');
   if (!grid) return;
+  if (document.documentElement.classList.contains('reduced-effects')) return;
 
-  const cyber = 'HACKR BYTECODE CYBERPHX 2091 SKYWALKR';
-  const base = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]()<>+-/*=|&!?:;%$#~^.,_`"\'';
-  const extra = 'CYBERHEX2091<>[]{}+-=*/\\|_^~';
-  const glyphs = Array.from(cyber + ' ' + base + ' ' + extra);
+  const glyphs = Array.from('SKYWALKR_2091');
 
-  const cellSize = 18;
+  const cellSize = 22;
   let columns = 0, rows = 0;
   let cells = [];
   let mouseX = 0, mouseY = 0;
@@ -48,8 +46,8 @@ function initGlyphGrid() {
     const gy = Math.floor(mouseY / cellSize);
     for (let i = 0; i < cells.length; i++) {
       const c = cells[i];
-      const near = dist(c.x, c.y, gx, gy) < 5;
-      const chance = near ? 0.95 : 0.985;
+      const near = dist(c.x, c.y, gx, gy) < 4;
+      const chance = near ? 0.975 : 0.993;
       if (Math.random() > chance) {
         const char = glyphs[(Math.random() * glyphs.length) | 0];
         const scheme = colorSchemes[(Math.random() * colorSchemes.length) | 0];
@@ -59,8 +57,8 @@ function initGlyphGrid() {
         const fx = Math.random() < 0.5 ? 'pulse' : 'wave';
         c.element.classList.remove('pulse', 'wave');
         c.element.classList.add(fx);
-        c.element.style.opacity = near ? '1' : String(0.4 + Math.random() * 0.5);
-        const life = (near ? 3000 : 1500) + Math.random() * (near ? 2000 : 1500);
+        c.element.style.opacity = near ? '0.9' : String(0.3 + Math.random() * 0.4);
+        const life = (near ? 1600 : 900) + Math.random() * (near ? 800 : 600);
         setTimeout(() => {
           c.element.textContent = '';
           c.element.classList.remove('pulse', 'wave');
@@ -70,7 +68,7 @@ function initGlyphGrid() {
   }
 
   function matrixFall() {
-    if (Math.random() > 0.97) {
+    if (Math.random() > 0.995) {
       const column = (Math.random() * columns) | 0;
       const el = document.createElement('div');
       el.textContent = glyphs[(Math.random() * glyphs.length) | 0];
@@ -79,11 +77,11 @@ function initGlyphGrid() {
       el.style.top = '0px';
       el.style.color = '#29f2ff';
       el.style.fontSize = '14px';
-      el.style.animation = 'matrixFall 3s linear forwards';
+      el.style.animation = 'matrixFall 2.2s linear forwards';
       el.style.pointerEvents = 'none';
       el.style.zIndex = '1';
       grid.appendChild(el);
-      setTimeout(() => el.remove(), 3000);
+      setTimeout(() => el.remove(), 2400);
     }
   }
 
@@ -93,10 +91,18 @@ function initGlyphGrid() {
   build();\n  const glyphTimer = setInterval(updateGlyphs, 80);\n  const fallTimer = setInterval(matrixFall, 200);\n\n  const stop = () => { try { clearInterval(glyphTimer); clearInterval(fallTimer); } catch {} };\n  window.addEventListener('pagehide', stop, { once: true });\n  window.addEventListener('beforeunload', stop, { once: true });
 }
 
+function readyOrWait(cb){
+  if (document.body && document.body.classList.contains('app-loading')) {
+    window.addEventListener('app:ready', () => cb(), { once: true });
+  } else {
+    cb();
+  }
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initGlyphGrid, { once: true });
+  document.addEventListener('DOMContentLoaded', () => readyOrWait(initGlyphGrid), { once: true });
 } else {
-  initGlyphGrid();
+  readyOrWait(initGlyphGrid);
 }
 
 

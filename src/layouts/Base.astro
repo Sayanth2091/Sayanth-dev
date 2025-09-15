@@ -27,6 +27,33 @@ import GlyphGrid from "../components/GlyphGrid.astro";
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" /></noscript>
   </head>
   <body class="page-transition">
+    <style is:global>
+      #preloader { position: fixed; inset: 0; display: grid; place-items: center; z-index: 120; background: #000; backdrop-filter: none; opacity: 1; transition: opacity .45s ease; }
+      #preloader.hide { opacity: 0; pointer-events: none }
+      #preloader .intro-inner { text-align: center; padding: 20px }
+      #preloader .intro-text { font-weight: 900; letter-spacing: 2px; font-size: clamp(28px, 8vw, 56px); color: #07f0ff; background: linear-gradient(90deg, #07f0ff, #a24cff, #07f0ff); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none; filter: none; margin-top: 10px; animation: gradShift 3s ease-in-out infinite; }
+      #preloader .d { color: rgba(7, 240, 255, 0.8); opacity: 1 }
+      .intro-typing { display: inline-flex; align-items: center; gap: 2px; }
+      .pre-cursor { display:inline-block; width:8px; height:1.2em; background:#07f0ff; border-radius:1px; box-shadow:0 0 8px #07f0ff; margin-left:4px; opacity:.9; animation: blink-cursor 1s steps(2) infinite; }
+      @keyframes blink-cursor { 0%,100% { opacity: 0 } 50% { opacity: 1 } }
+      .spinner { width: 72px; height: 72px; border-radius: 50%; border: 2px solid color-mix(in oklab, var(--neon-cyan) 25%, transparent); position: relative; margin: 0 auto 16px; box-shadow: 0 0 20px rgba(7,240,255,.15) inset; }
+      .spinner::before, .spinner::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 2px solid transparent; }
+      .spinner::before { border-top-color: var(--neon-cyan); border-left-color: color-mix(in oklab, var(--neon-cyan) 60%, transparent); filter: drop-shadow(0 0 10px var(--neon-cyan)); animation: spin360 1s linear infinite; }
+      .spinner::after { border-right-color: var(--neon-purple); border-bottom-color: color-mix(in oklab, var(--neon-purple) 60%, transparent); filter: drop-shadow(0 0 8px var(--neon-purple)); animation: spin360 1.8s linear infinite reverse; }
+      @keyframes spin360 { to { transform: rotate(360deg) } }
+      @keyframes gradShift { 0%,100% { background-position: 0% 0 } 50% { background-position: 100% 0 } }
+      .skip { margin-top: 12px; background: transparent; color: #9fb8ff; border: 1px solid rgba(255,255,255,.2); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+      .skip:hover { border-color: rgba(255,255,255,.4); color: #cfe0ff; }
+    </style>
+    <div id="preloader" aria-live="polite" aria-busy="true">
+      <div class="intro-inner">
+        <div class="spinner" aria-hidden="true"></div>
+        <div class="intro-typing" aria-label="Loading">
+          <span id="pre-text" class="intro-text">Sayanth <span class="d">Sreekanth</span></span><span class="pre-cursor" aria-hidden="true"></span>
+        </div>
+        <button id="skip-intro" class="skip" type="button" onclick="window.skipIntro && window.skipIntro()" aria-label="Skip intro">Skip</button>
+      </div>
+    </div>
     <GlyphGrid />
     <div id="scroll-progress" aria-hidden="true"></div>
     <main>
@@ -42,6 +69,52 @@ import GlyphGrid from "../components/GlyphGrid.astro";
     <script src="/scripts/reduce-effects.js" is:raw></script>
     <script src="/scripts/cursor-trail.js"  is:raw defer></script>
     <script src="/scripts/scroll-animations.js"  is:raw defer></script>
+    <script is:raw>
+      // ~4.5s scramble morph: starts at "Sayanth Sreekanth" and ends at "Skywalkr_2091"
+      (function(){
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const el = document.getElementById('pre-text');
+        const cur = document.querySelector('.pre-cursor');
+        if (!el) return;
+        const SRC = 'Sayanth Sreekanth';
+        const DST = 'Skywalkr_2091';
+        if (reduce) { el.textContent = DST; return; }
+        const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
+        const DURATION = 4200; // ms (preloader min ~4.5s + 0.5s fade ≈ 5s)
+        const PHASE_STABLE = 450; // show exact source for a brief moment
+        const N = Math.max(SRC.length, DST.length);
+        const srcArr = Array.from(SRC.padEnd(N, ' '));
+        const dstArr = Array.from(DST.padEnd(N, ' '));
+        const settle = new Array(N);
+        const now0 = performance.now();
+        // Distribute settle times across duration with slight jitter
+        for (let i = 0; i < N; i++) {
+          const base = PHASE_STABLE + (i / N) * (DURATION - PHASE_STABLE - 200);
+          settle[i] = base + Math.random() * 140;
+        }
+        function r(){ return CHARS[(Math.random() * CHARS.length) | 0]; }
+        function render(ts){
+          const t = ts - now0;
+          if (t < PHASE_STABLE) {
+            el.innerHTML = srcArr.join('').replace(/ /g,'&nbsp;');
+            requestAnimationFrame(render);
+            return;
+          }
+          const out = new Array(N);
+          for (let i = 0; i < N; i++) {
+            if (t >= settle[i]) out[i] = dstArr[i];
+            else {
+              // Occasionally show source char to feel like morph, mostly scramble
+              out[i] = (Math.random() < 0.25) ? srcArr[i] : r();
+            }
+          }
+          el.innerHTML = out.join('').replace(/ /g,'&nbsp;');
+          if (t < DURATION) requestAnimationFrame(render); else el.innerHTML = dstArr.join('').replace(/ /g,'&nbsp;');
+        }
+        if (cur) setInterval(()=> cur.classList.toggle('on'), 420);
+        requestAnimationFrame(render);
+      })();
+    </script>
   </body>
 </html>
 

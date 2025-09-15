@@ -6,25 +6,39 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
   <div class="cyber-overlay" aria-hidden="true"></div>
   <div class="scan-lines" aria-hidden="true"></div>
   <div class="inner stagger" data-reveal>
+    <div class="avatar" aria-hidden="true">
+      <img class="avatar-img" src="/images/profile%20pfp.jpg" alt="Profile photo of Sayanth Sreekanth" loading="eager" decoding="async" width="128" height="128" />
+    </div>
     <h1 class="vt-title">
       <span class="hello typing-effect" data-ani="1">Hello, I'm</span>
       <span class="name holographic" data-ani="2">Sayanth Sreekanth</span>
-      <span class="alias slide-in" data-ani="3">aka <strong class="glitch neon-border">Skywalkr_2091</strong></span>
+      <span class="alias slide-in" data-ani="3">aka <strong class="glitch neon-border" data-text="Skywalkr_2091">Skywalkr_2091</strong></span>
     </h1>
     <div class="roles-container" data-ani="4">
       <p class="roles">
-        <span class="chip pulse-glow" data-delay="100">Cyber Security — SOC Analyst</span>
-        <span class="chip pulse-glow" data-delay="300">AI • n8n Automations</span>
-        <span class="chip pulse-glow" data-delay="500">Full‑stack — Next.js & SvelteKit</span>
+        <span class="chip pulse-glow" data-delay="100">Cybersecurity • SOC Analyst</span>
+        <span class="chip pulse-glow" data-delay="300">AI automation with n8n</span>
+        <span class="chip pulse-glow" data-delay="500">Full‑stack web apps</span>
       </p>
     </div>
+    <p class="hero-sub" data-ani="4">
+      I help teams secure systems and automate the boring stuff.
+    </p>
     <p class="cta magnetic-container" data-ani="4">
-      <a class="btn primary hover-morph" href="#projects">
-        <span class="btn-text">Explore Projects</span>
+      <a class="btn primary hover-morph" href="/contact" aria-label="Go to contact page">
+        <span class="btn-text">Contact Me</span>
         <span class="btn-bg"></span>
       </a>
-      <a class="btn hover-morph" href="/blog">
-        <span class="btn-text">Read the Blog</span>
+      <a class="btn hover-morph" href="https://www.linkedin.com/in/sayanth-sreekanth-289950188/" target="_blank" rel="noopener" aria-label="LinkedIn profile">
+        <span class="btn-text">LinkedIn</span>
+        <span class="btn-bg"></span>
+      </a>
+      <a class="btn hover-morph" href="https://github.com/Sayanth2091" target="_blank" rel="noopener" aria-label="GitHub profile">
+        <span class="btn-text">GitHub</span>
+        <span class="btn-bg"></span>
+      </a>
+      <a class="btn hover-morph" href="/Sayanth_Sreekanth_Resume.md" download aria-label="Download resume">
+        <span class="btn-text">Download Resume</span>
         <span class="btn-bg"></span>
       </a>
     </p>
@@ -49,8 +63,9 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
     background: 
       repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(7, 240, 255, 0.02) 2px, rgba(7, 240, 255, 0.02) 4px),
       repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(164, 76, 255, 0.015) 2px, rgba(164, 76, 255, 0.015) 4px);
-    animation: cyberGrid 20s linear infinite;
+    animation: none;
   }
+  :global(body.ready) .cyber-overlay { animation: cyberGrid 20s linear infinite; }
   
   .scan-lines {
     position: absolute;
@@ -60,8 +75,9 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
       rgba(7, 240, 255, 0.1) 50%, 
       transparent 100%);
     height: 3px;
-    animation: scanLine 4s ease-in-out infinite;
+    animation: none;
   }
+  :global(body.ready) .scan-lines { animation: scanLine 4s ease-in-out infinite; }
   
   @keyframes cyberGrid {
     0% { transform: translateY(0); }
@@ -85,15 +101,24 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
   }
   
   h1 { margin: 0; line-height: 1.15; }
-  
-  /* Enhanced typing effect */
-  .hello { 
-    display: block; 
-    color: var(--text-dim); 
-    letter-spacing: 1px; 
-    opacity: 0;
-    animation: typeIn 1s ease-out 0.5s forwards;
+
+  .avatar {
+    height: 128px;
+    width: 128px;
+    margin: 0 auto 14px;
+    border-radius: 999px;
+    border: 2px solid var(--grid);
+    background: color-mix(in oklab, var(--bg) 80%, transparent);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 6px 24px rgba(7, 240, 255, 0.12);
+    overflow: hidden;
   }
+  .avatar-img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; display: block; }
+
+  /* Enhanced typing effect */
+  .hello { display: block; color: var(--text-dim); letter-spacing: 1px; opacity: 0; }
+  :global(body.ready) .hello { animation: typeIn 1s ease-out 0.5s forwards; }
   
   @keyframes typeIn {
     0% { opacity: 0; transform: translateX(-20px); }
@@ -120,7 +145,7 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
     -webkit-background-clip: unset !important;
     background-clip: unset !important;
     -webkit-text-fill-color: #07f0ff !important;
-    animation: colorCycle 4s ease-in-out infinite;
+    animation: none;
     filter: drop-shadow(0 0 25px rgba(7, 240, 255, 0.6));
     position: relative;
   }
@@ -140,13 +165,8 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
   
 
   /* Enhanced alias with slide-in effect */
-  .alias { 
-    display: block; 
-    margin-top: 6px; 
-    letter-spacing: 1.5px;
-    opacity: 0;
-    animation: slideInUp 1s ease-out 1.5s forwards;
-  }
+  .alias { display: block; margin-top: 6px; letter-spacing: 1.5px; opacity: 0; }
+  :global(body.ready) .alias { animation: slideInUp 1s ease-out 1.5s forwards; }
   
   .slide-in {
     color: var(--neon-cyan);
@@ -158,11 +178,7 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
     100% { opacity: 1; transform: translateY(0); }
   }
   
-  /* Enhanced glitch effect */
-  .glitch { 
-    position: relative;
-  }
-  
+  /* Subtle neon border */
   .neon-border {
     padding: 2px 8px;
     border: 1px solid transparent;
@@ -170,44 +186,41 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
     background: linear-gradient(45deg, rgba(7, 240, 255, 0.1), rgba(164, 76, 255, 0.1));
     animation: neonPulse 2s ease-in-out infinite alternate;
   }
+  :global(body.ready) .holographic { animation: colorCycle 4s ease-in-out infinite; }
   
   @keyframes neonPulse {
     0% { box-shadow: 0 0 5px rgba(7, 240, 255, 0.5); }
     100% { box-shadow: 0 0 20px rgba(7, 240, 255, 0.8), 0 0 30px rgba(164, 76, 255, 0.4); }
   }
   
+  /* Clean, low-jitter glitch effect */
+  .glitch { position: relative; display: inline-block; }
   .glitch::before, .glitch::after {
-    content: 'Skywalkr_2091';
-    position: absolute;
-    left: 0;
-    top: 0;
-    text-shadow: -2px 0 #07f0ff;
-    clip-path: inset(0 0 0 0);
-    opacity: .7;
+    content: attr(data-text);
+    position: absolute; left: 0; top: 0;
+    pointer-events: none; will-change: transform, opacity, filter;
     mix-blend-mode: screen;
-    animation: glitchy 6s infinite steps(10);
   }
-  .glitch::after {
-    text-shadow: 2px 0 #a24cff;
-    opacity: .5;
-    animation-delay: .3s;
+  .glitch::before { color: #07f0ff; opacity: .55; filter: drop-shadow(0 0 6px rgba(7,240,255,.4)); animation: glitchShift 4s steps(24) infinite; }
+  .glitch::after  { color: #a24cff; opacity: .45; filter: drop-shadow(0 0 6px rgba(162,76,255,.35)); animation: glitchShift 4s steps(24) infinite reverse; }
+
+  @keyframes glitchShift {
+    0%, 92%, 100% { transform: translate(0, 0); opacity: .4; }
+    10% { transform: translate(-1px, 1px); opacity: .6; }
+    11% { transform: translate(1px, -1px); }
+    12% { transform: translate(-0.5px, 0.5px); }
+    20% { transform: translate(0.5px, -0.5px); }
+    50% { transform: translate(0.6px, 0.6px); }
+    70% { transform: translate(-0.6px, -0.4px); }
   }
-  
-  @keyframes glitchy {
-    0%, 5%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
-    10% { clip-path: inset(10% 0 85% 0); transform: translate(-2px, 2px); }
-    15% { clip-path: inset(0 0 0 0); transform: translate(0); }
-    20% { clip-path: inset(40% 0 40% 0); transform: translate(2px, -2px); }
-    25% { clip-path: inset(0 0 0 0); transform: translate(0); }
-    30% { clip-path: inset(80% 0 5% 0); transform: translate(-1px, 1px); }
-    35% { clip-path: inset(0 0 0 0); transform: translate(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glitch::before, .glitch::after { animation: none; opacity: .35; }
   }
 
   /* Enhanced roles container */
-  .roles-container {
-    opacity: 0;
-    animation: fadeInUp 1s ease-out 2s forwards;
-  }
+  .roles-container { opacity: 0; }
+  :global(body.ready) .roles-container { animation: fadeInUp 1s ease-out 2s forwards; }
   
   @keyframes fadeInUp {
     0% { opacity: 0; transform: translateY(20px); }
@@ -237,9 +250,8 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
     transition: all 0.3s ease;
   }
   
-  .pulse-glow {
-    animation: chipReveal 0.8s ease-out forwards;
-  }
+  .pulse-glow { animation: none; }
+  :global(body.ready) .pulse-glow { animation: chipReveal 0.8s ease-out forwards; }
   
   .pulse-glow[data-delay="100"] { animation-delay: 2.1s; }
   .pulse-glow[data-delay="300"] { animation-delay: 2.3s; }
@@ -270,10 +282,8 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
   }
   
   /* Enhanced magnetic buttons */
-  .cta {
-    opacity: 0;
-    animation: fadeIn 1s ease-out 2.7s forwards;
-  }
+  .cta { opacity: 0; }
+  :global(body.ready) .cta { animation: fadeIn 1s ease-out 2.7s forwards; }
   
   @keyframes fadeIn {
     0% { opacity: 0; }
@@ -351,5 +361,11 @@ import StarfieldCanvas from './StarfieldCanvas.astro';
   @keyframes magneticFloat {
     0% { transform: translateZ(0); }
     100% { transform: translateZ(10px); }
+  }
+
+  .hero-sub {
+    margin: 10px 0 18px;
+    color: var(--text-dim);
+    font-size: 16px;
   }
 </style>

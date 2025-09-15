@@ -1,8 +1,8 @@
 ---
-title: "Building a IPS specific for Virtual Machines"
-summary: "Simple Intrustion Prevension System for understanding how IPS works"
-date: 2024-02-15
-stack: ["Python", "Flask", "React", "Scapy", "WebSocket", "Tailwind CSS", "VirtualBox"]
+title: "VM‑Specific Intrusion Prevention System"
+summary: "Web dashboard + Python backend that monitors VM networks, detects scans/ping floods, and blocks with iptables."
+date: 2023-11-01
+stack: ["Python", "nmap", "React", "Linux", "iptables", "Flask"]
 link: "https://github.com/Sayanth2091/VM-Specific-IPS"
 repo: "https://github.com/Sayanth2091/VM-Specific-IPS"
 featured: true
