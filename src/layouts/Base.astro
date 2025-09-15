@@ -21,10 +21,7 @@ import GlyphGrid from "../components/GlyphGrid.astro";
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" /></noscript>
+    
   </head>
   <body class="page-transition">
     <style is:global>
@@ -59,61 +56,15 @@ import GlyphGrid from "../components/GlyphGrid.astro";
       <slot />
     </main>
     <MobileDock />
-    <script src="/scripts/glyph-grid.js" is:raw defer></script>
-    <script src="/scripts/app-init.js"  is:raw defer></script>
-    <script src="../scripts/holo-init.js" defer></script>
-    <script src="../scripts/starfield-init.js" defer></script>
-    <script src="/scripts/code-typing.js"  is:raw defer></script>
+    <script src="/scripts/glyph-grid.js" defer></script>
+    <script src="/scripts/app-init.js" defer></script>
+    <script src="/scripts/holo-init.js" defer></script>
+    <script src="/scripts/starfield-init.js" defer></script>
+    <script src="/scripts/code-typing.js" defer></script>
     <!-- command palette removed -->
-    <script src="/scripts/reduce-effects.js" is:raw></script>
-    <script src="/scripts/cursor-trail.js"  is:raw defer></script>
-    <script src="/scripts/scroll-animations.js"  is:raw defer></script>
-    <script is:raw>
-      // ~4.5s scramble morph: starts at "Sayanth Sreekanth" and ends at "Skywalkr_2091"
-      (function(){
-        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const el = document.getElementById('pre-text');
-        const cur = document.querySelector('.pre-cursor');
-        if (!el) return;
-        const SRC = 'Sayanth Sreekanth';
-        const DST = 'Skywalkr_2091';
-        if (reduce) { el.textContent = DST; return; }
-        const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
-        const DURATION = 4200; // ms (preloader min ~4.5s + 0.5s fade ≈ 5s)
-        const PHASE_STABLE = 450; // show exact source for a brief moment
-        const N = Math.max(SRC.length, DST.length);
-        const srcArr = Array.from(SRC.padEnd(N, ' '));
-        const dstArr = Array.from(DST.padEnd(N, ' '));
-        const settle = new Array(N);
-        const now0 = performance.now();
-        // Distribute settle times across duration with slight jitter
-        for (let i = 0; i < N; i++) {
-          const base = PHASE_STABLE + (i / N) * (DURATION - PHASE_STABLE - 200);
-          settle[i] = base + Math.random() * 140;
-        }
-        function r(){ return CHARS[(Math.random() * CHARS.length) | 0]; }
-        function render(ts){
-          const t = ts - now0;
-          if (t < PHASE_STABLE) {
-            el.innerHTML = srcArr.join('').replace(/ /g,'&nbsp;');
-            requestAnimationFrame(render);
-            return;
-          }
-          const out = new Array(N);
-          for (let i = 0; i < N; i++) {
-            if (t >= settle[i]) out[i] = dstArr[i];
-            else {
-              // Occasionally show source char to feel like morph, mostly scramble
-              out[i] = (Math.random() < 0.25) ? srcArr[i] : r();
-            }
-          }
-          el.innerHTML = out.join('').replace(/ /g,'&nbsp;');
-          if (t < DURATION) requestAnimationFrame(render); else el.innerHTML = dstArr.join('').replace(/ /g,'&nbsp;');
-        }
-        if (cur) setInterval(()=> cur.classList.toggle('on'), 420);
-        requestAnimationFrame(render);
-      })();
-    </script>
+    <script src="/scripts/cursor-trail.js" defer></script>
+    <script src="/scripts/scroll-animations.js" defer></script>
+    <script src="/scripts/intro-morph.js" defer></script>
   </body>
 </html>
 

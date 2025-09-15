@@ -1,16 +1,11 @@
-// src/scripts/scroll-animations.js
-document.addEventListener('DOMContentLoaded', () => {
-  const animatedElements = document.querySelectorAll('[data-animate]');
+// basic reveal: respects body.ready
+(function(){
+  function setupReveals(){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('[data-reveal]').forEach(el=> io.observe(el));
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupReveals, { once:true }); else setupReveals();
+})();
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in');
-      }
-    });
-  }, { threshold: 0.5 });
-
-  animatedElements.forEach(element => {
-    observer.observe(element);
-  });
-});
