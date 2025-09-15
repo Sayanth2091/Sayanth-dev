@@ -28,7 +28,7 @@ import GlyphGrid from "../components/GlyphGrid.astro";
   </head>
   <body class="page-transition">
     <style is:global>
-      #preloader { position: fixed; inset: 0; display: grid; place-items: center; z-index: 120; background: #000; backdrop-filter: none; opacity: 1; transition: opacity .45s ease; }
+      #preloader { position: fixed; inset: 0; display: grid; place-items: center; z-index: 120; background: #000; backdrop-filter: none; opacity: 1; transition: opacity .45s ease; cursor: pointer; }
       #preloader.hide { opacity: 0; pointer-events: none }
       #preloader .intro-inner { text-align: center; padding: 20px }
       #preloader .intro-text { font-weight: 900; letter-spacing: 2px; font-size: clamp(28px, 8vw, 56px); color: #07f0ff; background: linear-gradient(90deg, #07f0ff, #a24cff, #07f0ff); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none; filter: none; margin-top: 10px; animation: gradShift 3s ease-in-out infinite; }
@@ -51,7 +51,6 @@ import GlyphGrid from "../components/GlyphGrid.astro";
         <div class="intro-typing" aria-label="Loading">
           <span id="pre-text" class="intro-text">Sayanth <span class="d">Sreekanth</span></span><span class="pre-cursor" aria-hidden="true"></span>
         </div>
-        <button id="skip-intro" class="skip" type="button" onclick="window.skipIntro && window.skipIntro()" aria-label="Skip intro">Skip</button>
       </div>
     </div>
     <GlyphGrid />
