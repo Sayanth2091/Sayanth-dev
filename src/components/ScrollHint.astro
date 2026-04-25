@@ -1,0 +1,33 @@
+---
+// ScrollHint.astro — bottom-center mono scroll prompt
+// Hidden on mobile (<768px) per bible spec
+---
+
+<div
+  id="scroll-hint"
+  class="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 hidden md:block pointer-events-none"
+  aria-hidden="true"
+>
+  <span
+    class="font-mono text-fg-low animate-pulse-slow"
+    style="
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: var(--tracking-mono-wide);
+      text-transform: uppercase;
+    "
+  >
+    [ SCROLL TO BEGIN ▾ ]
+  </span>
+</div>
+
+<style>
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 0.35; }
+    50%       { opacity: 0.7; }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 3s var(--ease-cinematic) infinite;
+  }
+</style>

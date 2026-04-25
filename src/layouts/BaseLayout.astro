@@ -1,6 +1,8 @@
 ---
 import Cursor from '../components/Cursor.astro';
 import GrainOverlay from '../components/GrainOverlay.astro';
+import SideNav from '../components/SideNav.astro';
+import ScrollHint from '../components/ScrollHint.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -45,6 +47,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <body class="bg-void text-fg-high min-h-screen">
     <GrainOverlay />
     <Cursor />
+    <SideNav />
+    <ScrollHint />
 
     <main>
       <slot />

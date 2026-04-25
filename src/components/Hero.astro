@@ -1,0 +1,105 @@
+---
+// Hero.astro — Section 01: THE BLOCK
+// "The unread surface." No shard yet. Shard mounts into #shard-mount in step 03.
+---
+
+<section
+  id="section-block"
+  class="relative min-h-screen w-full grid md:grid-cols-2 grid-cols-1"
+  style="padding: 48px;"
+>
+  <!-- TOP BAR: mono labels -->
+  <div class="absolute top-0 left-0 right-0 flex justify-between items-start" style="padding: 48px 48px 0;">
+    <span
+      id="hero-label-left"
+      style="
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: var(--tracking-mono-default);
+        color: var(--color-fg-low);
+        text-transform: uppercase;
+      "
+    >
+      SKYWALKR_2091 //
+    </span>
+
+    <span
+      id="hero-label-right"
+      style="
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: var(--tracking-mono-default);
+        color: var(--color-fg-low);
+        text-transform: uppercase;
+      "
+    >
+      CH.00 — THE BLOCK
+    </span>
+  </div>
+
+  <!-- LEFT COLUMN: type stack -->
+  <div class="flex flex-col justify-center z-10 order-2 md:order-1 mt-16 md:mt-0">
+    <!-- pre-headline -->
+    <p
+      id="hero-pre-headline"
+      class="mb-4"
+      style="
+        font-family: var(--font-mono);
+        font-size: 12px;
+        letter-spacing: var(--tracking-mono-default);
+        color: var(--color-accent);
+        text-transform: uppercase;
+      "
+    >
+      &gt; CHANNEL ESTABLISHED.
+    </p>
+
+    <!-- headline -->
+    <h1
+      class="leading-[1.05] mb-8"
+      style="
+        font-family: var(--font-serif);
+        font-size: clamp(40px, 7vw, 96px);
+        letter-spacing: -0.02em;
+        color: var(--color-fg-high);
+      "
+    >
+      <span id="hero-headline-1" class="block" style="font-weight: 400; font-style: normal;">
+        He finds the ghosts
+      </span>
+      <span id="hero-headline-2" class="block" style="font-weight: 400; font-style: italic;">
+        in your machines.
+      </span>
+    </h1>
+
+    <!-- sub-headline -->
+    <p
+      id="hero-sub"
+      style="
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: var(--tracking-mono-wide);
+        color: var(--color-fg-mid);
+        text-transform: uppercase;
+      "
+    >
+      SOC ANALYST · RESEARCHER · BUILDER
+    </p>
+  </div>
+
+  <!-- RIGHT COLUMN: shard mount (populated in step 03) -->
+  <div
+    id="shard-mount"
+    class="order-1 md:order-2 w-full"
+    style="
+      min-height: 60vh;
+      z-index: 0;
+    "
+    aria-hidden="true"
+  />
+</section>
+
+<script>
+  import { initHeroAnimation } from '../scripts/hero';
+  initHeroAnimation();
+</script>

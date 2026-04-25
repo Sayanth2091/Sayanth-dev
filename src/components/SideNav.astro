@@ -1,0 +1,85 @@
+---
+// SideNav.astro — fixed left-edge vertical nav, six dots, one per section
+// Active dot: accent cyan. IntersectionObserver wires active state as sections are added.
+
+const sections = [
+  { id: 'section-block',      label: '01 // THE BLOCK'    },
+  { id: 'section-dossier',    label: '02 // FIRST CUT'    },
+  { id: 'section-operations', label: '03 // OPERATIONS'   },
+  { id: 'section-arsenal',    label: '04 // THE ARSENAL'  },
+  { id: 'section-transmission', label: '05 // TRANSMISSION' },
+  { id: 'section-signoff',    label: '06 // SIGNOFF'      },
+];
+---
+
+<nav
+  id="side-nav"
+  class="fixed left-8 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-8"
+  aria-label="Section navigation"
+>
+  {sections.map((section, i) => (
+    <div class="relative group flex items-center">
+      <a
+        href={`#${section.id}`}
+        data-section={section.id}
+        class="nav-dot block rounded-full transition-all duration-200"
+        style={`
+          width: 6px;
+          height: 6px;
+          background-color: ${i === 0 ? 'var(--color-accent)' : 'rgba(255,255,255,0.25)'};
+          transition: background-color 200ms var(--ease-cinematic);
+        `}
+        aria-label={section.label}
+      />
+
+      <span
+        class="nav-tooltip absolute left-5 whitespace-nowrap pointer-events-none
+               opacity-0 group-hover:opacity-100
+               transition-opacity duration-200"
+        style="
+          font-family: var(--font-mono);
+          font-size: 10px;
+          letter-spacing: var(--tracking-mono-default);
+          color: var(--color-fg-mid);
+          text-transform: uppercase;
+        "
+      >
+        {section.label}
+      </span>
+    </div>
+  ))}
+</nav>
+
+<script>
+  // wire IntersectionObserver to highlight active dot
+  const dots = document.querySelectorAll<HTMLAnchorElement>('.nav-dot');
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        dots.forEach((dot) => {
+          const isActive = dot.dataset.section === id;
+          dot.style.backgroundColor = isActive
+            ? 'var(--color-accent)'
+            : 'rgba(255, 255, 255, 0.25)';
+        });
+      });
+    },
+    { threshold: 0.5 }
+  );
+
+  document.querySelectorAll('section[id]').forEach((section) => {
+    observer.observe(section);
+  });
+
+  // smooth-scroll on dot click
+  dots.forEach((dot) => {
+    dot.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.getElementById(dot.dataset.section ?? '');
+      target?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
