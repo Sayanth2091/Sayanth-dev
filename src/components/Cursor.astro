@@ -1,0 +1,12 @@
+---
+// Cursor.astro — custom cursor: ring + crosshair + accent dot
+// replaces OS cursor entirely; see global.css for CSS definitions
+---
+
+<div id="cursor-ring" aria-hidden="true"></div>
+<div id="cursor-dot" aria-hidden="true"></div>
+
+<script>
+  import { initCursor } from '../scripts/cursor';
+  initCursor();
+</script>

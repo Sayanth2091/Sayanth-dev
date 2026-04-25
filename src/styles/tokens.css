@@ -1,0 +1,36 @@
+/* NULL_SECTOR — design tokens as CSS custom properties */
+/* mirrors tailwind.config.ts exactly */
+
+:root {
+  /* canvas */
+  --color-void: #0A0A0F;
+
+  /* single accent */
+  --color-accent: #7DF9FF;
+
+  /* foreground tiers */
+  --color-fg-high: rgba(255, 255, 255, 0.92);
+  --color-fg-mid: rgba(255, 255, 255, 0.60);
+  --color-fg-low: rgba(255, 255, 255, 0.35);
+
+  /* typography */
+  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Inter Tight", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* letter-spacing */
+  --tracking-mono-tight: 0.05em;
+  --tracking-mono-default: 0.15em;
+  --tracking-mono-wide: 0.2em;
+
+  /* motion */
+  --ease-cinematic: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-hover: 200ms;
+  --duration-section: 800ms;
+  --duration-cut: 1200ms;
+  --stagger: 60ms;
+
+  /* cursor */
+  --cursor-size: 20px;
+  --cursor-expanded-size: 40px;
+}
