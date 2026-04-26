@@ -1,0 +1,139 @@
+---
+// Transmission.astro — Section 05: THE FOURTH CUT
+// The channel opens. Shard → State 4 on enter.
+import ContactForm from './ContactForm.tsx';
+---
+
+<section id="transmission" class="transmission-section relative">
+  <div class="transmission-grid">
+
+    <!-- LEFT: copy + direct channels -->
+    <div class="transmission-left">
+      <p class="section-label">&gt; SECTION 05 // THE TRANSMISSION</p>
+
+      <h2 class="transmission-headline">The channel is open.</h2>
+      <h2 class="transmission-headline" style="font-style: italic;">Use it carefully.</h2>
+
+      <div class="transmission-protocol">
+        <p>&gt; RESPONSE TIME: ~24 HOURS</p>
+        <p>&gt; TIMEZONE: UTC+5:30</p>
+        <p>&gt; PREFERRED USE: COLLABORATION, OPPORTUNITY, CURIOSITY.</p>
+        <p>&gt; NOT FOR: COLD SALES, RECRUITER SPRAYS, "QUICK SYNCS".</p>
+      </div>
+
+      <div class="direct-channels">
+        <div class="channel-row">
+          <span class="channel-key">EMAIL.....</span>
+          <a href="mailto:sayanthsreekanth5@gmail.com" class="channel-link">sayanthsreekanth5@gmail.com</a>
+        </div>
+        <div class="channel-row">
+          <span class="channel-key">LINKEDIN..</span>
+          <a href="https://linkedin.com/in/sayanth-sreekanth-289950188" target="_blank" rel="noopener" class="channel-link">/sayanth-sreekanth</a>
+        </div>
+        <div class="channel-row">
+          <span class="channel-key">GITHUB....</span>
+          <a href="https://github.com/Sayanth2091" target="_blank" rel="noopener" class="channel-link">/Sayanth2091</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: form -->
+    <div class="transmission-right">
+      <ContactForm client:visible />
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .transmission-section {
+    min-height: 100vh;
+    padding: 96px 64px;
+    background-color: var(--color-void);
+    display: flex;
+    align-items: center;
+  }
+
+  .transmission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: var(--tracking-mono-wide);
+    color: var(--color-fg-low);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .transmission-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(40px, 5vw, 68px);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--color-fg-high);
+    margin-bottom: 4px;
+  }
+
+  .transmission-protocol {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: var(--tracking-mono-default);
+    color: var(--color-fg-mid);
+    line-height: 2;
+    text-transform: uppercase;
+    margin-top: 48px;
+    margin-bottom: 48px;
+    max-width: 440px;
+  }
+
+  .transmission-protocol p { margin: 0; }
+
+  .direct-channels {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: var(--tracking-mono-default);
+    line-height: 2.4;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.12);
+    padding-top: 24px;
+    max-width: 440px;
+  }
+
+  .channel-row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .channel-key {
+    color: var(--color-fg-low);
+    white-space: nowrap;
+  }
+
+  .channel-link {
+    color: var(--color-fg-mid);
+    text-decoration: none;
+    transition: color 200ms var(--ease-cinematic);
+  }
+
+  .channel-link:hover {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 768px) {
+    .transmission-section {
+      padding: 96px 24px 64px;
+      align-items: flex-start;
+    }
+
+    .transmission-grid {
+      grid-template-columns: 1fr;
+      gap: 64px;
+    }
+  }
+</style>

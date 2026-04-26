@@ -1,0 +1,156 @@
+---
+// Signoff.astro — Section 06: THE FINAL CUT
+// The gem is complete. The visitor has seen everything.
+---
+
+<section id="signoff" class="signoff-section relative flex flex-col items-center justify-center">
+
+  <div class="signoff-content">
+    <!-- typed mono lines fire on scroll-in -->
+    <div id="signoff-typer" class="signoff-typer" aria-live="polite"></div>
+
+    <!-- serif closing statement -->
+    <p class="signoff-serif" style="font-style: italic; margin-top: 48px;">
+      Every system has a ghost.
+    </p>
+    <p class="signoff-serif">
+      You just met one.
+    </p>
+  </div>
+
+  <!-- footer bar -->
+  <div class="signoff-footer">
+    <div class="signoff-credit">SAYANTH SREEKANTH · 2026</div>
+    <div class="signoff-links">
+      <a
+        href="https://github.com/Sayanth2091/null-sector"
+        target="_blank"
+        rel="noopener"
+        class="signoff-link"
+      >
+        // VIEW SOURCE
+      </a>
+      <a href="#hero" class="signoff-link">↑ RETURN TO TOP</a>
+    </div>
+  </div>
+
+</section>
+
+<style>
+  .signoff-section {
+    min-height: 100vh;
+    padding: 96px 24px 96px;
+    background-color: var(--color-void);
+  }
+
+  .signoff-content {
+    text-align: center;
+    max-width: 640px;
+  }
+
+  .signoff-typer {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: var(--tracking-mono-default);
+    color: var(--color-accent);
+    line-height: 2.2;
+    min-height: 180px;
+    text-align: left;
+    display: inline-block;
+  }
+
+  .signoff-serif {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 400;
+    color: var(--color-fg-high);
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+
+  .signoff-footer {
+    position: absolute;
+    bottom: 32px;
+    left: 0;
+    right: 0;
+    padding: 0 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .signoff-credit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: var(--tracking-mono-wide);
+    color: var(--color-fg-low);
+    text-transform: uppercase;
+  }
+
+  .signoff-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .signoff-link {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: var(--tracking-mono-wide);
+    color: var(--color-fg-low);
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 200ms var(--ease-cinematic);
+  }
+
+  .signoff-link:hover {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 768px) {
+    .signoff-footer {
+      position: static;
+      margin-top: 64px;
+      padding: 0 16px;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  const target = document.getElementById('signoff-typer') as HTMLElement | null;
+
+  if (target) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !target.dataset.played) {
+            target.dataset.played = '1';
+            observer.disconnect();
+            typeLines(target, [
+              '> END OF TRANSMISSION.',
+              '> CONNECTION CLOSING IN 03... 02... 01...',
+              '> THANK YOU FOR VISITING.',
+              '> — S.S.',
+            ]);
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(target);
+  }
+
+  async function typeLines(el: HTMLElement, lines: string[]) {
+    for (const line of lines) {
+      const div = document.createElement('div');
+      el.appendChild(div);
+      for (const char of line) {
+        div.textContent += char;
+        await new Promise<void>((r) => setTimeout(r, 22));
+      }
+      await new Promise<void>((r) => setTimeout(r, 400));
+    }
+  }
+</script>

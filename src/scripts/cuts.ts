@@ -8,8 +8,9 @@ const cutSections = [
   { id: 'hero', cut: 0 },
   { id: 'dossier', cut: 1 },
   { id: 'operations', cut: 2 },
-  { id: 'arsenal',    cut: 3 },
-  // step 07 adds cut 4, step 08 adds cut 5
+  { id: 'arsenal',      cut: 3 },
+  { id: 'transmission', cut: 4 },
+  { id: 'signoff',      cut: 5 },
 ];
 
 cutSections.forEach(({ id, cut }) => {
