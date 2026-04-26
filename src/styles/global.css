@@ -3,6 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* astro-island is invisible in layout — children behave as direct children of parent */
+astro-island {
+  display: contents;
+}
+
 /* — base reset — */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -132,6 +137,29 @@ body {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+
+/* — prose: case detail pages — */
+.prose-dossier {}
+
+.case-body h2 {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: var(--tracking-mono-default);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
+
+.case-body p {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--color-fg-high);
+  margin-bottom: 1.25rem;
 }
 
 /* — typography utilities — */

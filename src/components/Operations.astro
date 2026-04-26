@@ -1,0 +1,123 @@
+---
+// Operations.astro — Section 03: THE SECOND CUT
+// Six case files. Horizontal-scroll archive. Shard → State 2 on enter.
+import { getCollection } from 'astro:content';
+import CaseCard from './CaseCard.tsx';
+
+const operations = await getCollection('operations');
+const sorted = operations.sort((a, b) => a.data.order - b.data.order);
+---
+
+<section id="operations" class="ops-section relative">
+  <div class="ops-viewport">
+    <div id="ops-track" class="ops-track">
+
+      <!-- intro panel: the archive header -->
+      <div class="ops-panel ops-intro-panel">
+        <div>
+          <div
+            class="font-mono uppercase"
+            style="font-size: 11px; letter-spacing: 0.2em; color: var(--color-fg-low); margin-bottom: 16px;"
+          >
+            // SECTION 03
+          </div>
+          <p
+            class="font-serif"
+            style="font-size: clamp(40px, 6vw, 80px); line-height: 1.05; color: var(--color-fg-high); font-weight: 400; font-style: normal;"
+          >
+            Six operations.<br />
+            <span style="font-style: italic;">Six lessons.</span>
+          </p>
+          <p
+            class="font-mono uppercase"
+            style="font-size: 11px; letter-spacing: 0.15em; color: var(--color-fg-mid); line-height: 2; margin-top: 24px; max-width: 420px;"
+          >
+            &gt; SCROLL HORIZONTALLY TO ENTER THE ARCHIVE.
+          </p>
+        </div>
+      </div>
+
+      <!-- case panels -->
+      {sorted.map((op) => (
+        <div class="ops-panel ops-case-panel">
+          <CaseCard client:visible op={op.data} slug={op.slug} />
+        </div>
+      ))}
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .ops-section {
+    /* height set to 100vh as baseline; GSAP pin adds the scroll distance on top */
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .ops-viewport {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .ops-track {
+    display: flex;
+    height: 100%;
+    will-change: transform;
+  }
+
+  .ops-panel {
+    flex-shrink: 0;
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 80px;
+  }
+
+  .ops-intro-panel {
+    justify-content: flex-start;
+    padding-left: 80px;
+  }
+
+  /* ── mobile: vertical stack ── */
+  @media (max-width: 768px) {
+    .ops-section {
+      height: auto;
+    }
+
+    .ops-viewport {
+      overflow: visible;
+    }
+
+    .ops-track {
+      flex-direction: column;
+      height: auto;
+    }
+
+    .ops-panel {
+      width: 100%;
+      height: auto;
+      min-height: 100vh;
+      padding: 80px 24px;
+      align-items: flex-start;
+    }
+
+    .ops-intro-panel {
+      padding-left: 24px;
+    }
+  }
+</style>
+
+<script>
+  import { initOperationsScroll } from '../scripts/operations-scroll';
+
+  // run after DOM is ready; defer so Lenis/ScrollTrigger are initialized first
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initOperationsScroll);
+  } else {
+    initOperationsScroll();
+  }
+</script>

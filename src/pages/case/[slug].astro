@@ -1,0 +1,101 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const operations = await getCollection('operations');
+  return operations.map((op) => ({
+    params: { slug: op.slug },
+    props: { op },
+  }));
+}
+
+const { op } = Astro.props;
+const { Content } = await op.render();
+---
+
+<BaseLayout title={`OPERATION: ${op.data.codename} // NULL_SECTOR`}>
+  <article
+    class="max-w-[720px] mx-auto prose-dossier"
+    style="padding: 128px 24px 96px;"
+  >
+    <!-- back link -->
+    <a
+      href="/null-sector/"
+      style="
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: var(--tracking-mono-default);
+        color: var(--color-fg-low);
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: color 200ms var(--ease-cinematic);
+      "
+      onmouseover="this.style.color='var(--color-accent)'"
+      onmouseout="this.style.color='var(--color-fg-low)'"
+    >
+      ← BACK TO ARCHIVE
+    </a>
+
+    <!-- case number -->
+    <div
+      style="
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: var(--tracking-mono-wide);
+        color: var(--color-fg-low);
+        text-transform: uppercase;
+        margin-top: 48px;
+        margin-bottom: 8px;
+      "
+    >
+      CASE_FILE_{op.data.caseNumber} //
+    </div>
+
+    <!-- headline -->
+    <h1
+      style="
+        font-family: var(--font-serif);
+        font-size: clamp(48px, 6vw, 80px);
+        line-height: 1.05;
+        font-weight: 400;
+        color: var(--color-fg-high);
+        margin-bottom: 0;
+      "
+    >
+      OPERATION:<br />
+      <span style="font-style: italic; color: var(--color-accent);">
+        {op.data.codename}
+      </span>
+    </h1>
+
+    <!-- metadata block -->
+    <div
+      style="
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: var(--tracking-mono-default);
+        color: var(--color-fg-mid);
+        line-height: 2;
+        text-transform: uppercase;
+        margin-top: 48px;
+        margin-bottom: 48px;
+        border-top: 0.5px solid rgba(255,255,255,0.12);
+        border-bottom: 0.5px solid rgba(255,255,255,0.12);
+        padding: 24px 0;
+      "
+    >
+      <div>REAL NAME:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{op.data.realName}</div>
+      <div>CLASSIFICATION: {op.data.classification}</div>
+      <div>STATUS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{op.data.status}</div>
+      <div>PERIOD:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{op.data.period}</div>
+      <div>ROLE:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{op.data.role}</div>
+      <div>STACK:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{op.data.stack.join(' · ')}</div>
+    </div>
+
+    <!-- MDX body -->
+    <div class="case-body">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

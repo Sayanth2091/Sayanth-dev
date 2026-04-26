@@ -7,7 +7,8 @@ gsap.registerPlugin(ScrollTrigger);
 const cutSections = [
   { id: 'hero', cut: 0 },
   { id: 'dossier', cut: 1 },
-  // step 05 adds cut 2, step 06 adds cut 3, etc.
+  { id: 'operations', cut: 2 },
+  // step 06 adds cut 3, step 07 adds cut 4, etc.
 ];
 
 cutSections.forEach(({ id, cut }) => {
