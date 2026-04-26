@@ -46,7 +46,7 @@ export default function CaseCard({ op, slug }: Props) {
         }}
       >
         <img
-          src={`${import.meta.env.BASE_URL}${op.heroVisual.replace(/^\//, '')}`}
+          src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}${op.heroVisual}`}
           alt=""
           className="w-full h-full object-cover"
           style={{
