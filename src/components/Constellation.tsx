@@ -1,5 +1,5 @@
 // Constellation.tsx — 3D skill graph, separate Canvas from the Shard
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { useRef, useState, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 import { skills } from '../data/skills';
@@ -10,6 +10,9 @@ const CATEGORY_COLORS: Record<string, string> = {
   engineering: '#FFFFFF',
   creative:    '#B7B5FF',
 };
+
+const HOVER_SCALE = 3;    // hovered node grows to 3× its base size
+const LERP_SPEED  = 10;   // scale lerp speed (units/s) — snappy but not instant
 
 // ── line objects built once, deduped by sorted pair key ──────────────────────
 function buildLines() {
@@ -37,18 +40,61 @@ function buildLines() {
   return lines;
 }
 
+// ── single animated node ──────────────────────────────────────────────────────
+function Node({
+  skill,
+  nodeSize,
+  isHovered,
+  onHover,
+}: {
+  skill: (typeof skills)[number];
+  nodeSize: number;
+  isHovered: boolean;
+  onHover: (id: string | null) => void;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null!);
+
+  useFrame((_, dt) => {
+    if (!meshRef.current) return;
+    const target = isHovered ? HOVER_SCALE : 1;
+    const current = meshRef.current.scale.x;
+    const next = current + (target - current) * Math.min(1, dt * LERP_SPEED);
+    meshRef.current.scale.setScalar(next);
+  });
+
+  return (
+    <mesh
+      ref={meshRef}
+      position={skill.position}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        onHover(skill.id);
+        document.getElementById('cursor-ring')?.classList.add('expanded');
+      }}
+      onPointerOut={() => {
+        onHover(null);
+        document.getElementById('cursor-ring')?.classList.remove('expanded');
+      }}
+    >
+      <sphereGeometry args={[nodeSize, 16, 16]} />
+      <meshBasicMaterial color={CATEGORY_COLORS[skill.category]} />
+    </mesh>
+  );
+}
+
 // ── inner scene ──────────────────────────────────────────────────────────────
 function ConstellationScene({
+  hoveredId,
   onHover,
   nodeSize,
 }: {
+  hoveredId: string | null;
   onHover: (id: string | null) => void;
   nodeSize: number;
 }) {
   const groupRef = useRef<THREE.Group>(null!);
   const lineObjects = useMemo(buildLines, []);
 
-  // dispose on unmount
   useEffect(() => {
     return () => {
       lineObjects.forEach(({ obj }) => {
@@ -59,9 +105,7 @@ function ConstellationScene({
   }, [lineObjects]);
 
   useFrame((_, dt) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += dt * 0.05;
-    }
+    if (groupRef.current) groupRef.current.rotation.y += dt * 0.05;
   });
 
   return (
@@ -71,22 +115,13 @@ function ConstellationScene({
       ))}
 
       {skills.map((skill) => (
-        <mesh
+        <Node
           key={skill.id}
-          position={skill.position}
-          onPointerOver={(e) => {
-            e.stopPropagation();
-            onHover(skill.id);
-            document.getElementById('cursor-ring')?.classList.add('expanded');
-          }}
-          onPointerOut={() => {
-            onHover(null);
-            document.getElementById('cursor-ring')?.classList.remove('expanded');
-          }}
-        >
-          <sphereGeometry args={[nodeSize, 16, 16]} />
-          <meshBasicMaterial color={CATEGORY_COLORS[skill.category]} />
-        </mesh>
+          skill={skill}
+          nodeSize={nodeSize}
+          isHovered={hoveredId === skill.id}
+          onHover={onHover}
+        />
       ))}
     </group>
   );
@@ -97,10 +132,9 @@ export default function Constellation() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const hovered = hoveredId ? skills.find((s) => s.id === hoveredId) ?? null : null;
 
-  // mobile: smaller nodes, wider camera
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const nodeSize   = isMobile ? 0.06 : 0.08;
-  const camZ       = isMobile ? 12   : 10;
+  const nodeSize = isMobile ? 0.06 : 0.08;
+  const camZ     = isMobile ? 12   : 10;
 
   return (
     <div className="relative w-full h-full">
@@ -110,7 +144,7 @@ export default function Constellation() {
         dpr={[1, 1.5]}
       >
         <ambientLight intensity={0.3} />
-        <ConstellationScene onHover={setHoveredId} nodeSize={nodeSize} />
+        <ConstellationScene hoveredId={hoveredId} onHover={setHoveredId} nodeSize={nodeSize} />
       </Canvas>
 
       {/* hover tooltip — slides up from below */}
@@ -154,9 +188,7 @@ export default function Constellation() {
       <div className="absolute top-4 right-6 flex flex-col gap-2">
         {Object.entries(CATEGORY_COLORS).map(([cat, color]) => (
           <div key={cat} className="flex items-center gap-2">
-            <div
-              style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: color, flexShrink: 0 }}
-            />
+            <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: color, flexShrink: 0 }} />
             <span
               className="font-mono text-[10px] tracking-[0.15em] uppercase"
               style={{ color: 'rgba(255,255,255,0.35)' }}
