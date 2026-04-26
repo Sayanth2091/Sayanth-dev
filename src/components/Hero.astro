@@ -1,12 +1,13 @@
 ---
 // Hero.astro — Section 01: THE BLOCK
-// "The unread surface." No shard yet. Shard mounts into #shard-mount in step 03.
+// "The unread surface." Shard mounts client:visible into the right column.
+import Shard from './Shard.tsx';
 ---
 
 <section
-  id="section-block"
+  id="hero"
   class="relative min-h-screen w-full grid md:grid-cols-2 grid-cols-1"
-  style="padding: 48px;"
+  style="padding: 48px; height: 100vh;"
 >
   <!-- TOP BAR: mono labels -->
   <div class="absolute top-0 left-0 right-0 flex justify-between items-start" style="padding: 48px 48px 0;">
@@ -87,16 +88,14 @@
     </p>
   </div>
 
-  <!-- RIGHT COLUMN: shard mount (populated in step 03) -->
+  <!-- RIGHT COLUMN: shard mount -->
   <div
     id="shard-mount"
     class="order-1 md:order-2 w-full"
-    style="
-      min-height: 60vh;
-      z-index: 0;
-    "
-    aria-hidden="true"
-  />
+    style="min-height: 60vh; height: 100%; z-index: 0;"
+  >
+    <Shard client:visible />
+  </div>
 </section>
 
 <script>

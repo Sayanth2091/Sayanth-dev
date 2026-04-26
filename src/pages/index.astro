@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Dossier from '../components/Dossier.astro';
 ---
 
 <BaseLayout
@@ -8,4 +9,9 @@ import Hero from '../components/Hero.astro';
   description="SOC analyst, security researcher, interface builder. Six operations. Six lessons."
 >
   <Hero />
+  <Dossier />
 </BaseLayout>
+
+<script>
+  import '../scripts/cuts';
+</script>
