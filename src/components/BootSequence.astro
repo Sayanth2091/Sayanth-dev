@@ -1,0 +1,80 @@
+---
+// BootSequence.astro — first-visit full-viewport boot overlay
+// Skipped on subsequent navigations within the same session.
+---
+
+<div
+  id="boot-sequence"
+  style="
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background-color: var(--color-void);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  "
+>
+  <div
+    style="
+      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: var(--tracking-mono-default);
+      line-height: 2.2;
+      max-width: 480px;
+      width: 100%;
+      padding: 0 24px;
+    "
+  >
+    <div id="boot-line-0" style="color: var(--color-accent);"></div>
+    <div id="boot-line-1" style="color: var(--color-fg-mid);"></div>
+    <div id="boot-line-2" style="color: var(--color-fg-mid);"></div>
+    <div id="boot-line-3" style="color: var(--color-accent);"></div>
+  </div>
+</div>
+
+<script>
+  import { audio } from '../scripts/audio';
+
+  const overlay = document.getElementById('boot-sequence') as HTMLElement;
+
+  if (sessionStorage.getItem('null-sector-booted')) {
+    overlay.style.display = 'none';
+  } else {
+    document.body.style.overflow = 'hidden';
+    runBoot();
+  }
+
+  async function runBoot() {
+    const lines = [
+      '> ESTABLISHING SECURE CHANNEL...',
+      '> AUTHENTICATING REQUEST...',
+      '> CLEARANCE GRANTED.',
+      '> WELCOME TO NULL_SECTOR.',
+    ];
+
+    for (let i = 0; i < lines.length; i++) {
+      const el = document.getElementById(`boot-line-${i}`);
+      if (!el) continue;
+      for (const char of lines[i]) {
+        el.textContent += char;
+        await sleep(25);
+      }
+      await sleep(180);
+    }
+
+    await sleep(600);
+    audio.play('decrypt', { volume: 0.5 });
+
+    overlay.style.transition = 'opacity 800ms cubic-bezier(0.65, 0, 0.35, 1)';
+    overlay.style.opacity = '0';
+    await sleep(820);
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+    sessionStorage.setItem('null-sector-booted', '1');
+  }
+
+  function sleep(ms: number) {
+    return new Promise<void>((r) => setTimeout(r, ms));
+  }
+</script>

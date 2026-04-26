@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="// CLASSIFIED — NULL_SECTOR">
+  <article class="classified-article">
+
+    <a href="/null-sector/" class="classified-back">← BACK TO TRANSMISSION</a>
+
+    <div class="classified-clearance">[ KONAMI CLEARANCE GRANTED ]</div>
+
+    <h1 class="classified-headline">
+      The river was first.
+    </h1>
+
+    <div class="classified-body">
+      <p>Before the alerts. Before the SIEM. Before the screens. There was a river in Kerala that he grew up next to.</p>
+      <p>The homestay sits on its bank. He still runs it. Travelers come and go. The water doesn't notice.</p>
+      <p>This is the part of him the system file doesn't mention.</p>
+    </div>
+
+    <div class="classified-meta">
+      <div>HOMESTAY:&nbsp;&nbsp;&nbsp;&nbsp;KALMAN, MANA — KERALA, IN</div>
+      <div>CHANNELS:&nbsp;&nbsp;&nbsp;&nbsp;AIRBNB, DIRECT</div>
+      <div>STATUS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OPEN</div>
+    </div>
+
+    <p class="classified-close">Every analyst goes home eventually.</p>
+
+  </article>
+</BaseLayout>
+
+<style>
+  .classified-article {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 128px 24px 96px;
+  }
+
+  .classified-back {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: var(--tracking-mono-default);
+    color: var(--color-fg-low);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 200ms var(--ease-cinematic);
+  }
+
+  .classified-back:hover {
+    color: var(--color-accent);
+  }
+
+  .classified-clearance {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: var(--tracking-mono-wide);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    margin-top: 48px;
+    margin-bottom: 8px;
+  }
+
+  .classified-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(40px, 5vw, 68px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-fg-high);
+    margin-bottom: 32px;
+  }
+
+  .classified-body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--color-fg-high);
+  }
+
+  .classified-body p {
+    margin-bottom: 24px;
+  }
+
+  .classified-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: var(--tracking-mono-default);
+    color: var(--color-fg-mid);
+    line-height: 2;
+    text-transform: uppercase;
+    margin-top: 64px;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.12);
+    padding-top: 32px;
+  }
+
+  .classified-close {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 20px;
+    color: var(--color-fg-mid);
+    text-align: center;
+    margin-top: 64px;
+  }
+</style>
