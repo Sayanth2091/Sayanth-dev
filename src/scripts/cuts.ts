@@ -1,6 +1,7 @@
 import './scroll';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { audio } from './audio';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,7 +24,13 @@ cutSections.forEach(({ id, cut }) => {
   });
 });
 
+let lastCut = -1;
+
 function dispatchCut(value: number) {
+  if (value > lastCut && lastCut !== -1) {
+    audio.play('cut', { volume: 0.4 });
+  }
+  lastCut = value;
   window.dispatchEvent(
     new CustomEvent('null-sector:cut-progress', { detail: { value } })
   );

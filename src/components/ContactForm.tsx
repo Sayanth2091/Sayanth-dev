@@ -1,5 +1,6 @@
 // ContactForm.tsx — transmission interface, posts to Formspree
 import { useState } from 'react';
+import { audio } from '../scripts/audio';
 
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/REPLACE_ME';
 
@@ -48,6 +49,7 @@ export default function ContactForm() {
       });
       if (!res.ok) throw new Error();
       setStatus('success');
+      audio.play('transmit', { volume: 0.5 });
       setForm({ name: '', email: '', message: '' });
       setTimeout(() => setStatus('idle'), 3000);
     } catch {

@@ -1,0 +1,60 @@
+---
+// AudioController.astro — opt-in ambient audio toggle, top-right, fixed
+---
+
+<button
+  id="audio-toggle"
+  aria-label="Toggle ambient audio"
+  class="audio-btn"
+>
+  <span id="audio-label">[ AUDIO: OFF ]</span>
+</button>
+
+<style>
+  .audio-btn {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 50;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: var(--tracking-mono-wide);
+    text-transform: uppercase;
+    color: var(--color-fg-low);
+    background: rgba(10, 10, 15, 0.4);
+    border: 0.5px solid rgba(255, 255, 255, 0.12);
+    padding: 8px 12px;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition:
+      color 200ms var(--ease-cinematic),
+      border-color 200ms var(--ease-cinematic);
+  }
+
+  .audio-btn:hover {
+    color: var(--color-accent);
+    border-color: rgba(125, 249, 255, 0.4);
+  }
+</style>
+
+<script>
+  import { audio } from '../scripts/audio';
+  import '../scripts/hover-audio';
+
+  const btn   = document.getElementById('audio-toggle') as HTMLButtonElement | null;
+  const label = document.getElementById('audio-label') as HTMLElement | null;
+
+  if (btn && label) {
+    // hide entirely for reduced-motion users
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      btn.style.display = 'none';
+    }
+
+    btn.addEventListener('click', () => audio.toggle());
+
+    document.addEventListener('null-sector:audio-changed', ((e: CustomEvent) => {
+      label.textContent = e.detail.enabled ? '[ AUDIO: ON ]' : '[ AUDIO: OFF ]';
+    }) as EventListener);
+  }
+</script>
