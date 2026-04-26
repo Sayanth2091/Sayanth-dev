@@ -8,7 +8,7 @@ stack: ["Node.js", "Python", "Express", "React"]
 role: "engineer"
 outcome: "A web app that hides messages inside images and audio. Built to learn the boundary between data and noise."
 period: "2023"
-heroVisual: "/images/cases/vessel-hero.png"
+heroVisual: "/images/vessel-hero.png"
 order: 5
 featured: true
 ---

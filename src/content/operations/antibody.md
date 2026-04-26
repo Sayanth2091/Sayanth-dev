@@ -8,7 +8,7 @@ stack: ["Python", "nmap", "iptables", "Flask", "React"]
 role: "engineer"
 outcome: "An immune system for a VM network. Detects scans and floods, blocks the source, logs the encounter."
 period: "2023 — 2024"
-heroVisual: "/images/cases/antibody-hero.png"
+heroVisual: "/images/antibody-hero.png"
 order: 6
 featured: true
 ---

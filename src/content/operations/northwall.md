@@ -8,7 +8,7 @@ stack: ["Ollama", "Whisper", "Piper TTS", "FastAPI", "SQLite"]
 role: "founder · architect · engineer"
 outcome: "An offline AI assistant that speaks Malayalam, runs without the cloud, and forgets when asked."
 period: "2025 — present"
-heroVisual: "/images/cases/northwall-hero.png"
+heroVisual: "/images/northwall-hero.png"
 order: 2
 featured: true
 ---

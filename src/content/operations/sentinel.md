@@ -8,7 +8,7 @@ stack: ["n8n", "Ollama", "Docker", "Python", "Webhooks"]
 role: "designer · engineer · operator"
 outcome: "Reduced first-tier alert noise by ~70%. Operator now reads structured summaries, not raw events."
 period: "2025"
-heroVisual: "/images/cases/sentinel-hero.png"
+heroVisual: "/images/sentinel-hero.jpeg"
 order: 1
 featured: true
 ---

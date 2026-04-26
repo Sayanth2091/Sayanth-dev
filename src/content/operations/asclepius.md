@@ -8,7 +8,7 @@ stack: ["Wazuh", "DVWA", "Docker", "HIPAA Framework"]
 role: "GRC analyst · detection engineer · pentester"
 outcome: "A three-phase exercise: GRC mapping, SIEM detection engineering, then offensive validation. One project, three lenses."
 period: "2025"
-heroVisual: "/images/cases/asclepius-hero.png"
+heroVisual: "/images/asclepius-hero.png"
 order: 4
 featured: true
 ---

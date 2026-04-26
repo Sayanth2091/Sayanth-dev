@@ -8,7 +8,7 @@ stack: ["Python", "OWASP LLM Top 10", "FastAPI", "Redis"]
 role: "researcher · engineer"
 outcome: "A bouncer for AI. Catches prompt injection, jailbreaks, data exfiltration before they reach your model."
 period: "2025"
-heroVisual: "/images/cases/gatekeeper-hero.png"
+heroVisual: "/images/Gatekeeper.jpeg"
 order: 3
 featured: true
 ---
