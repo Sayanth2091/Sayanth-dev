@@ -3,8 +3,7 @@ import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
-  site: 'https://sayanth2091.github.io',
-  base: '/Sayanth-dev',
+  site: 'https://sayanth-dev.pages.dev',
   integrations: [
     react(),
     tailwind({ applyBaseStyles: false })
