@@ -9,6 +9,7 @@ role: "designer · engineer · operator"
 outcome: "Reduced first-tier alert noise by ~70%. Operator now reads structured summaries, not raw events."
 period: "2025"
 heroVisual: "/images/sentinel-hero.jpeg"
+heroVideo: "/videos/sentinel-video.mp4"
 order: 1
 featured: true
 ---

@@ -9,6 +9,7 @@ role: "engineer"
 outcome: "A web app that hides messages inside images and audio. Built to learn the boundary between data and noise."
 period: "2023"
 heroVisual: "/images/vessel-hero.png"
+heroVideo: "/videos/vessel-video.mp4"
 order: 5
 featured: true
 ---

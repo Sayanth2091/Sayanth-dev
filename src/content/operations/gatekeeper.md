@@ -9,6 +9,7 @@ role: "researcher · engineer"
 outcome: "A bouncer for AI. Catches prompt injection, jailbreaks, data exfiltration before they reach your model."
 period: "2025"
 heroVisual: "/images/Gatekeeper.jpeg"
+heroVideo: "/videos/Gatekeeper-video.mp4"
 order: 3
 featured: true
 ---

@@ -8,9 +8,9 @@ import Constellation from './Constellation.tsx';
 
   <!-- header text block -->
   <div class="arsenal-header">
-    <p class="arsenal-label">&gt; SECTION 04 // THE ARSENAL</p>
-    <h2 class="arsenal-headline">Tools are vocabulary.</h2>
-    <h2 class="arsenal-headline italic">The grammar is what matters.</h2>
+    <p class="arsenal-label arsenal-fade">&gt; SECTION 04 // THE ARSENAL</p>
+    <h2 class="arsenal-headline arsenal-fade">Tools are vocabulary.</h2>
+    <h2 class="arsenal-headline italic arsenal-fade">The grammar is what matters.</h2>
   </div>
 
   <!-- constellation canvas -->
@@ -68,4 +68,82 @@ import Constellation from './Constellation.tsx';
     color: var(--color-fg-low);
     text-transform: uppercase;
   }
+
+  /* entry animation base state — GSAP animates these in */
+  .arsenal-fade,
+  .constellation-mount,
+  .arsenal-caption {
+    opacity: 0;
+    transform: translateY(28px);
+    will-change: opacity, transform;
+  }
+
+  .arsenal-header {
+    /* the header itself stays visible; its lines fade individually */
+    opacity: 1;
+  }
 </style>
+
+<script>
+  import { onLenisReady } from '../scripts/scroll';
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initArsenalTrigger() {
+    setTimeout(() => {
+      onLenisReady(() => {
+        const lines = gsap.utils.toArray<HTMLElement>('.arsenal-fade');
+        lines.forEach((line, i) => {
+          gsap.to(line, {
+            opacity: 1,
+            y: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: '#arsenal',
+              start: `top ${80 - i * 6}%`,
+              end: `top ${50 - i * 6}%`,
+              scrub: 1,
+            },
+          });
+        });
+
+        gsap.to('.constellation-mount', {
+          opacity: 1,
+          y: 0,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '.constellation-mount',
+            start: 'top 90%',
+            end: 'top 50%',
+            scrub: 1,
+            onEnter: () => {
+              window.dispatchEvent(new CustomEvent('null-sector:constellation-visible'));
+            },
+          },
+        });
+
+        gsap.to('.arsenal-caption', {
+          opacity: 1,
+          y: 0,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '.arsenal-caption',
+            start: 'top 95%',
+            end: 'top 70%',
+            scrub: 1,
+          },
+        });
+
+        ScrollTrigger.refresh();
+      });
+    }, 0);
+  }
+
+  if (document.readyState === 'complete') {
+    initArsenalTrigger();
+  } else {
+    window.addEventListener('load', initArsenalTrigger, { once: true });
+  }
+</script>

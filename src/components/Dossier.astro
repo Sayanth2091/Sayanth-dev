@@ -282,7 +282,34 @@
   /* ── blocks: base state (invisible — GSAP animates in) ── */
   .dossier-block {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(40px);
+    will-change: opacity, transform;
+  }
+
+  /* portrait base state — slides in from the left */
+  .portrait-col {
+    opacity: 0;
+    transform: translateX(-40px);
+    will-change: opacity, transform;
+  }
+
+  /* scrubber base state — drawn in as user scrolls */
+  .scrubber-line {
+    transform-origin: left center;
+    transform: scaleX(0);
+  }
+
+  .scrubber-node-group {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  .scrubber-dot {
+    box-shadow: 0 0 0 0 rgba(125, 249, 255, 0);
+  }
+
+  .scrubber-dot.is-active {
+    box-shadow: 0 0 12px 2px rgba(125, 249, 255, 0.6);
   }
 
   /* ── mono readout lines ── */
@@ -519,45 +546,82 @@
 </style>
 
 <script>
-  import '../scripts/scroll';
+  import { onLenisReady } from '../scripts/scroll';
+  import { onBootComplete } from '../scripts/boot-state';
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // entry animation — blocks A–G fade up with 80ms stagger
-  // serif blocks (b, d, f) get 800ms; mono blocks (a, c, e, g) get 400ms
-  const blockOrder = [
-    { sel: '.db-a', serif: false },
-    { sel: '.db-b', serif: true  },
-    { sel: '.db-c', serif: false },
-    { sel: '.db-d', serif: true  },
-    { sel: '.db-e', serif: false },
-    { sel: '.db-f', serif: true  },
-    { sel: '.db-g', serif: false },
-  ];
+  function initDossierTrigger() {
+    onBootComplete(() => onLenisReady(() => {
+        // Portrait — slides in from the left with a long scrub window.
+        gsap.to('.portrait-col', {
+          opacity: 1,
+          x: 0,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '#dossier',
+            start: 'top 85%',
+            end: 'top 30%',
+            scrub: 1,
+          },
+        });
 
-  const STAGGER = 0.08;
-
-  ScrollTrigger.create({
-    trigger: '#dossier',
-    start: 'top 70%',
-    once: true,
-    onEnter: () => {
-      const tl = gsap.timeline();
-
-      blockOrder.forEach(({ sel, serif }, i) => {
-        tl.to(
-          sel,
-          {
+        // Each text block fades + lifts in tied to its own viewport crossing.
+        const blocks = gsap.utils.toArray<HTMLElement>('.dossier-block');
+        blocks.forEach((block) => {
+          gsap.to(block, {
             opacity: 1,
             y: 0,
-            duration: serif ? 0.8 : 0.4,
             ease: 'power2.out',
+            duration: 1,
+            scrollTrigger: {
+              trigger: block,
+              start: 'top 88%',
+              end: 'top 55%',
+              scrub: 1,
+            },
+          });
+        });
+
+        // Scrubber line draws in as the user reaches the timeline.
+        gsap.to('.scrubber-line', {
+          scaleX: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.scrubber-section',
+            start: 'top 85%',
+            end: 'top 40%',
+            scrub: 1,
           },
-          i * STAGGER
-        );
-      });
-    },
-  });
+        });
+
+        // Nodes pop in one by one, then activate (cyan glow) as scroll passes.
+        const nodes = gsap.utils.toArray<HTMLElement>('.scrubber-node-group');
+        nodes.forEach((node, i) => {
+          gsap.to(node, {
+            opacity: 1,
+            y: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: '.scrubber-section',
+              start: `top ${75 - i * 5}%`,
+              end: `top ${50 - i * 5}%`,
+              scrub: 1,
+              onEnter: () => node.querySelector('.scrubber-dot')?.classList.add('is-active'),
+              onLeaveBack: () => node.querySelector('.scrubber-dot')?.classList.remove('is-active'),
+            },
+          });
+        });
+
+        ScrollTrigger.refresh();
+    }));
+  }
+
+  if (document.readyState === 'complete') {
+    initDossierTrigger();
+  } else {
+    window.addEventListener('load', initDossierTrigger, { once: true });
+  }
 </script>

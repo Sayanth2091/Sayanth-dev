@@ -13,6 +13,7 @@ const operations = defineCollection({
     outcome: z.string(),
     period: z.string(),
     heroVisual: z.string(),
+    heroVideo: z.string().optional(),
     order: z.number(),
     featured: z.boolean().default(true),
   }),

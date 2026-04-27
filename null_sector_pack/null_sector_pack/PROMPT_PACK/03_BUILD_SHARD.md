@@ -23,148 +23,168 @@ A React Three Fiber island, mounted via Astro's `client:load` directive into the
 ## The prompt — paste into Sonnet/Haiku
 
 ````
-Build the shard centerpiece for NULL_SECTOR. This is build step 03 of 10 and is the most complex step.
+Build the SHARD centerpiece for NULL_SECTOR. Build step 03, REWRITTEN.
 
-Read 00_NARRATIVE_BIBLE.md first. The shard's behavior IS the site's narrative. Re-read section 3 ("The Excavation") and section 7 ("Visual Spine") before writing code.
+You read the bible. Now read THIS prompt very carefully. Previous attempts at this step misunderstood the geometry. Do not repeat that mistake.
 
-WHAT TO BUILD:
+WHAT THE SHARD IS — read this 3 times before writing any code:
 
-A React Three Fiber scene that mounts into #shard-mount. The component is `src/components/Shard.tsx` and is loaded as an Astro island with client:visible.
+The shard is ONE SOLID OBJECT. Not a container with something inside. Not a cube wrapping a sphere. ONE object — a faceted, gem-like polyhedron — whose SURFACE PROPERTIES change as the user scrolls.
 
-THE SHARD HAS FIVE STATES, controlled by a single `cutProgress` value from 0 to 5:
+Imagine a single block of obsidian. At State 0, its surface is rough and totally opaque — you cannot see through it; it is a black rock. As cuts happen, the SAME block has its surface progressively polished and becomes progressively transparent. By State 5, the block is a clear faceted gem and you can see DEEPLY INTO IT — through the surface, into volumes of light and refraction inside.
 
-State 0 (cutProgress = 0): The Block
-- Geometry: BoxGeometry with 8 segments per axis
-- Surface: displacement via simplex noise, ~0.15 amplitude — looks like rough hewn obsidian
-- Material: MeshPhysicalMaterial, color #1A1A22, roughness 0.9, metalness 0.1, opacity 1, transmission 0
-- Edge highlight: very subtle, accent color at 0.2 opacity
-- The inner scene is invisible (the block is opaque)
+There is NO separate sphere. There is NO cube. There is ONE faceted object, and what changes is: how rough its surface is, how transparent it is, how aggressive its facets are.
 
-State 1 (cutProgress = 1): First Cut
-- The TOP of the block is sliced off cleanly. The geometry now has one flat polished facet.
-- Material transitions: roughness 0.7, transmission 0.15
-- Inner scene: barely visible through the cut facet. Glimpse of code lines.
-- A 600ms animation: the cut "happens" — a thin accent-colored line sweeps across the top, then the noise on that face flattens.
+Whatever appears "inside" the shard at later states is NOT a separate mesh. It is light, refraction, and a procedural pattern rendered through the transparent material itself — like looking into a cut diamond and seeing internal reflections, not like looking into a glass box at a separate object.
 
-State 2 (cutProgress = 2): Second Cut
-- Two side facets are now cut.
-- Material: roughness 0.5, transmission 0.35
-- Inner scene: more visible. The wireframe network topology starts forming.
-- Same 600ms cut animation on each new facet.
+If at any point in your code you find yourself adding a second mesh inside the shard mesh, STOP. You have misunderstood. Refactor.
 
-State 3 (cutProgress = 3): Third Cut
-- All vertical faces cut. Block is becoming an octahedron-ish form.
-- Material: roughness 0.3, transmission 0.55
-- Inner scene: silhouette begins forming inside.
-- Edge highlight grows to 0.5 accent opacity.
+THE GEOMETRY — exactly one mesh:const geometry = new THREE.IcosahedronGeometry(1.5, 1);
+// then we modify it for cut states (see below)
+const material = new THREE.MeshPhysicalMaterial({ /* see below */ });
+const shard = new THREE.Mesh(geometry, material);
 
-State 4 (cutProgress = 4): Fourth Cut
-- Bottom and remaining faces cut. Form is now a faceted gem.
-- Material: roughness 0.1, transmission 0.8
-- Inner scene: fully visible. Code, network, silhouette all rendering.
-- Postprocessing: chromatic aberration on edges activates.
+That is the ONLY mesh in the shard component. There is no inner mesh. Inner detail comes from material properties (transmission, ior, dispersion) and from the postprocessing layer (chromatic aberration, bloom).
 
-State 5 (cutProgress = 5): Final State
-- Pure cut gem. Crystal clear.
-- Material: roughness 0.0, transmission 1.0, ior 1.5
-- Inner scene: at full clarity, slowly rotating opposite the shard.
-- Edge highlight at 1.0 accent opacity.
-- A faint inner glow.
+THE 5 STATES — describe ONE object's appearance, not two objects:
 
-ANIMATION SYSTEM:
+State 0 (cutProgress = 0): "The Block"
+- ONE icosahedron, scaled non-uniformly to look chunky/blocky
+- Per-vertex displacement via simplex noise, amplitude 0.25 — gives it a hewn, irregular, rough-rock surface
+- Material:
+  - color: 0x14141A (very dark, almost black)
+  - roughness: 1.0 (totally rough)
+  - metalness: 0.05
+  - transmission: 0.0 (totally opaque)
+  - opacity: 1.0
+- The shard looks like: a rough black rock. You CANNOT see through it. There is NOTHING visible inside it.
 
-The cutProgress value is driven by GSAP ScrollTrigger. As the user scrolls past each section, cutProgress lerps to the next integer over 1200ms with the cinematic ease.
+State 1 (cutProgress = 1): "First Cut"
+- SAME icosahedron geometry, but the displacement amplitude reduces to 0.18 — surface gets slightly less rough
+- Subtle facet sharpening: increase the geometry's `flatShading` by adjusting normals to be face normals (not vertex normals), making the polygons more visible as flat planes
+- Material:
+  - color: 0x1A1A22
+  - roughness: 0.75
+  - transmission: 0.15 (faint transparency starting)
+  - thickness: 0.8
+  - ior: 1.4
+- The shard looks like: a darkly polished stone. Hints of light passing through. No clear "inner scene" yet — just suggestions of internal depth.
 
-Use a single `useFrame` to interpolate the actual material/geometry properties from the current state toward the target state every frame. Do NOT swap geometries — instead, manage all 5 states by:
-- Pre-computing 5 geometry variants at mount
-- Storing them in a ref
-- Cross-fading via a custom shader that blends two geometries based on the fractional part of cutProgress
-- OR (simpler approach Haiku is more likely to get right): use a single geometry and animate the noise displacement amplitude per-face by sampling cutProgress
+State 2 (cutProgress = 2): "Second Cut"
+- Displacement amplitude drops to 0.10
+- Subdivide the geometry once: `IcosahedronGeometry(1.5, 2)` — creates more facets
+- Material:
+  - roughness: 0.45
+  - transmission: 0.40
+  - thickness: 1.0
+- The shard looks like: a faceted dark crystal. Light visibly bends through it. Cyan accent rim light becomes visible on facet edges.
 
-USE THE SIMPLER APPROACH FOR HAIKU. The simpler approach:
-- Single BoxGeometry with 8 segments
-- A per-vertex attribute "faceIndex" added in onBeforeCompile
-- A uniform uCutProgress passed in
-- In the vertex shader, the displacement amplitude for each face is a function of (faceIndex, uCutProgress) — once cutProgress >= faceIndex, amplitude lerps to 0 (face becomes flat)
-- Material color, transmission, roughness all driven by uniforms that interpolate from state values
+State 3 (cutProgress = 3): "Third Cut"
+- Displacement amplitude drops to 0.04 — almost flat facets now
+- Material:
+  - roughness: 0.20
+  - transmission: 0.65
+  - thickness: 1.2
+  - ior: 1.5
+- The shard looks like: a translucent gem. You see internal refraction patterns. Light splits subtly. The shape is clearly a many-faceted polyhedron now.
 
-THE INNER DATA SCENE:
+State 4 (cutProgress = 4): "Fourth Cut"
+- Displacement amplitude 0.0 — facets are perfectly flat
+- Material:
+  - roughness: 0.05
+  - transmission: 0.85
+  - thickness: 1.4
+  - ior: 1.55
+  - clearcoat: 1.0
+  - dispersion: 0.2 (rainbow refraction at edges)
+- The shard looks like: an almost-clear cut gem. You can see THROUGH it to whatever is behind. Edges show prismatic light splitting. Postprocessing chromatic aberration intensifies.
 
-A separate, smaller Three.js scene rendered to a render target, used as a texture for the shard's `transmission` map. Contents:
-- A vertical scrolling list of mono code lines (real code from your projects — pull 50 lines from a string array)
-- A wireframe sphere with random connecting lines (network topology)
-- A low-poly human silhouette in profile (use a simple extruded shape)
-- All in fg-mid white on void background
-- The inner scene rotates slowly opposite the shard rotation
-- The inner scene is rendered at 512x512
+State 5 (cutProgress = 5): "Final State"
+- Same flat-faceted geometry
+- Material:
+  - roughness: 0.0
+  - transmission: 1.0
+  - thickness: 1.5
+  - ior: 1.55
+  - clearcoat: 1.0
+  - dispersion: 0.4
+  - color: 0xFFFFFF (now neutral; transparency dominates)
+- A subtle pulsing inner glow — implement this NOT with an inner mesh, but with an emissive material property that pulses on a sine wave: `material.emissive = new THREE.Color(0x7DF9FF); material.emissiveIntensity = 0.05 + Math.sin(time) * 0.03;`
+- The shard looks like: a perfect translucent cut gem. Slowly rotating. Light refracts through it. The cyan emissive glow gives a sense of "something within" — but there is NO inner mesh. The "something within" is light, refraction, and color.
 
-CURSOR INTERACTION:
+WHAT YOU SEE THROUGH THE SHARD AT LATE STATES:
 
-- Default: shard slowly auto-rotates (rotation.y += 0.003 per frame, rotation.x += 0.0008)
-- On cursor hover within the canvas bounds: shard tilts toward cursor (parallax — multiply cursor.x and cursor.y by 0.2 and add to rotation, with damped lerp at 0.06)
-- On pointer down + drag: rotation velocity gets the drag delta * 0.005, dampens by 0.94 per frame
-- On scroll: cutProgress advances. Hovering still works during scroll.
+When transmission is high, MeshPhysicalMaterial's transmission renders whatever is behind the shard, distorted by refraction. So at States 4-5, the visitor sees:
+- The void background
+- Whatever ambient lighting hits behind the shard
+- The accent point light (positioned behind+above the shard) creating a focal point of light visible THROUGH the gem
 
+That's it. NO procedural code lines. NO wireframe network. NO silhouette inside. NO render target inner scene. The previous version of this file overcomplicated this — discard those concepts entirely.
+
+The illusion of "depth and life" inside the gem comes from:
+1. transmission + ior + thickness creating real light bending
+2. The pulsing emissive cyan
+3. Postprocessing bloom on the bright spots
+4. Postprocessing chromatic aberration on edges
+
+These four ingredients together make the gem feel alive WITHOUT any inner geometry.
+
+INTERACTION (unchanged from spec):
+
+- Auto-rotate slowly (0.003 rad/frame on Y, 0.0008 on X)
+- Cursor parallax: damped lerp of rotation toward (mouse.x * 0.2, mouse.y * 0.2), lerp factor 0.06
+- Pointer drag: angular velocity gets drag delta * 0.005, dampens by 0.94 per frame
+- prefers-reduced-motion: render State 5 statically, no rotation, no parallax
+
+CUT TRANSITIONS:
+
+The cutProgress value is a FLOAT, lerped over 1200ms with cinematic ease when it changes. Use a SINGLE useFrame to interpolate the displayed material/geometry properties from current toward target every frame. Do not swap geometries; keep one geometry whose displacement amplitude is animated via a uniform, OR rebuild the geometry's position attribute on cutProgress changes (whichever is simpler).
+
+DRIVING cutProgress:
+
+Listen for window event 'null-sector:cut-progress' with detail.value being the target. Internally lerp toward that target.
+
+For testing this step in isolation, add temporary debug buttons in the bottom-right of the canvas: 6 small buttons labeled 0,1,2,3,4,5. Clicking dispatches the event. Guard with `import.meta.env.DEV` so they're stripped in production.
+
+LIGHTING — exactly these lights, no more no less:<ambientLight intensity={0.3} color={0x404060} />
+<pointLight position={[3, 2, 3]} intensity={2} color={0x7DF9FF} distance={10} />
+<pointLight position={[-3, -1, -2]} intensity={0.4} color={0xFFFFFF} distance={10} />
+<pointLight position={[0, 0, -5]} intensity={1.5} color={0xFFFFFF} distance={20} />
+```
+The fourth light (behind the shard) is what you see THROUGH the shard at high transmission. That's how the "internal glow" effect emerges naturally without an inner mesh.
 POSTPROCESSING:
+Use @react-three/postprocessing:
 
-Use @react-three/postprocessing. Add:
-- ChromaticAberration with offset [0.0008, 0.0008] — increases with cutProgress
-- Bloom with intensity 0.4, luminanceThreshold 0.2, radius 0.6
-- Noise overlay at 0.03 opacity (reinforces the page-level grain inside the canvas)
-
-LIGHTING:
-
-- AmbientLight at intensity 0.4, color 0x404060
-- PointLight at position (3, 2, 3), color #7DF9FF (accent), intensity 2, distance 10
-- PointLight at position (-3, -1, -2), color 0xFFFFFF, intensity 0.4, distance 10
-- The accent point light intensifies as cutProgress increases (multiply by 1 + cutProgress * 0.2)
+ChromaticAberration: offset [0.0008 * cutProgress, 0.0008 * cutProgress] — scales with cuts
+Bloom: intensity 0.4, luminanceThreshold 0.2, radius 0.6
+Noise: opacity 0.02 (very subtle film grain inside the canvas)
 
 CAMERA:
-
-- PerspectiveCamera, fov 45, position (0, 0, 6)
-- Camera follows cursor with 0.04 lerp (mouse.x * 0.4, mouse.y * 0.4, fixed z)
-- Always looks at (0, 0, 0)
-
+PerspectiveCamera, fov 45, position [0, 0, 5]. Camera lerps toward (mouse.x * 0.4, mouse.y * 0.4, 5) with 0.04 lerp. Always lookAt(0,0,0).
 PERFORMANCE:
 
-- Cap pixel ratio at min(window.devicePixelRatio, 2)
-- Use `frameloop="demand"` only if the shard is offscreen — when in viewport, render every frame
-- Provide a `prefers-reduced-motion` fallback: if reduced motion is set, the shard renders State 5 immediately, no auto-rotation, no cursor parallax
+Pixel ratio capped at min(devicePixelRatio, 2)
+Cap to 60fps
+transmission requires <meshPhysicalMaterial transmission={value} /> AND the renderer needs gl={{ powerPreference: 'high-performance', antialias: true }} on the Canvas
+For transmission to render correctly, you need a transmission render target. Three.js handles this automatically with MeshPhysicalMaterial when transmission > 0, but the render target needs an envMap or a background to "transmit." Set <color attach="background" args={['#0A0A0F']} /> inside the Canvas.
 
 INTEGRATION:
-
-In `src/components/Hero.astro`, replace the empty shard-mount div with:
-
-```astro
----
-import Shard from './Shard.tsx';
----
-<div id="shard-mount" class="...">
-  <Shard client:visible />
-</div>
-```
-
-A separate React component `src/components/ShardController.tsx` exposes the cutProgress state via a Zustand store (install zustand if needed) so future sections can read/write it. Or, simpler: export a window event "null-sector:cut-progress" that other modules dispatch when scroll triggers fire.
-
-USE THE WINDOW EVENT APPROACH FOR HAIKU. Simpler than Zustand:
-- Shard listens for `window.addEventListener('null-sector:cut-progress', e => setCutProgress(e.detail.value))`
-- The scroll trigger code in step 04 dispatches `window.dispatchEvent(new CustomEvent('null-sector:cut-progress', { detail: { value: 1 } }))` etc.
-
-For THIS step, no scroll trigger exists yet. Instead, add a temporary debug control: a small mono row of buttons in the bottom-right of the shard mount, labeled "0", "1", "2", "3", "4", "5". Clicking each dispatches the event. This lets you verify all 5 states work before wiring scroll. Buttons must be removable in one line — guard with `import.meta.env.DEV`.
-
+Component path: src/components/Shard.tsx. Mount via Astro island in Hero.astro: <Shard client:visible /> inside the existing #shard-mount div.
 DELIVERABLES:
-1. File tree
-2. All component files
-3. The full vertex and fragment shader code, complete and tested
-4. The inner scene's full source
-5. Verification checklist below
-6. Commit message: "step-03: shard — five states, scroll-ready"
 
-DO NOT BUILD:
-- The scroll trigger that drives cutProgress (step 04 or distributed across each section)
-- Any sections beyond hero
-- Audio cues for the cuts (step 08)
+The SINGLE component file src/components/Shard.tsx — complete, runnable
+A short verification checklist
+A commit message: "step-03: shard — corrected, single object, transmission-driven cuts"
 
+DO NOT INCLUDE:
+
+Any second mesh inside the shard
+Any inner sphere, inner cube, inner anything
+A render-to-texture inner scene
+Any procedural code rendering, wireframe networks, or silhouettes
+Anything beyond ONE faceted polyhedron with smart material properties
+
+THE TEST: when you finish writing, re-read your code. Search for the word "Mesh" or "geometry" — there should be EXACTLY ONE mesh declaration in the entire Shard component. If there are two, you have failed and must rewrite.
 Begin.
 ````
 

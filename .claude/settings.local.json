@@ -4,7 +4,21 @@
       "Bash(pnpm --version)",
       "Bash(pnpm install *)",
       "Bash(pnpm build *)",
-      "Bash(pnpm dev *)"
+      "Bash(pnpm dev *)",
+      "Bash(npx tsc *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:4321/)",
+      "Bash(curl -s http://localhost:4322/null-sector/)",
+      "Bash(npx astro *)",
+      "Bash(sed -i 's|heroVisual: \"/images/cases/sentinel-hero.png\"|heroVisual: \"/images/sentinel-hero.jpeg\"|' sentinel.md)",
+      "Bash(sed -i 's|heroVisual: \"/images/cases/northwall-hero.png\"|heroVisual: \"/images/northwall-hero.png\"|' northwall.md)",
+      "Bash(sed -i 's|heroVisual: \"/images/cases/gatekeeper-hero.png\"|heroVisual: \"/images/Gatekeeper.jpeg\"|' gatekeeper.md)",
+      "Bash(sed -i 's|heroVisual: \"/images/cases/asclepius-hero.png\"|heroVisual: \"/images/asclepius-hero.png\"|' asclepius.md)",
+      "Bash(sed -i 's|heroVisual: \"/images/cases/vessel-hero.png\"|heroVisual: \"/images/vessel-hero.png\"|' vessel.md)",
+      "Bash(git -C E:/Projects/portfolio remote -v)",
+      "Bash(git -C E:/Projects/portfolio branch -a)"
     ]
   }
 }

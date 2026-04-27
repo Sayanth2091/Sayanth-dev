@@ -114,10 +114,7 @@ const sorted = operations.sort((a, b) => a.data.order - b.data.order);
 <script>
   import { initOperationsScroll } from '../scripts/operations-scroll';
 
-  // run after DOM is ready; defer so Lenis/ScrollTrigger are initialized first
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initOperationsScroll);
-  } else {
-    initOperationsScroll();
-  }
+  // Astro <script> blocks already defer until DOM is parsed — call immediately
+  // so the pin spacer is inserted before Dossier/Arsenal calculate positions.
+  initOperationsScroll();
 </script>

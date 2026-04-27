@@ -9,6 +9,7 @@ role: "GRC analyst · detection engineer · pentester"
 outcome: "A three-phase exercise: GRC mapping, SIEM detection engineering, then offensive validation. One project, three lenses."
 period: "2025"
 heroVisual: "/images/asclepius-hero.png"
+heroVideo: "/videos/Asclepius-video.mp4"
 order: 4
 featured: true
 ---

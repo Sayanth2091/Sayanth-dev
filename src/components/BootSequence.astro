@@ -40,6 +40,11 @@
 
   if (sessionStorage.getItem('null-sector-booted')) {
     overlay.style.display = 'none';
+    // listeners gating on the boot event resolve immediately via sessionStorage,
+    // but emit the event for any late subscribers as well.
+    queueMicrotask(() =>
+      window.dispatchEvent(new CustomEvent('null-sector:boot-complete')),
+    );
   } else {
     document.body.style.overflow = 'hidden';
     runBoot();
@@ -72,6 +77,7 @@
     overlay.style.display = 'none';
     document.body.style.overflow = '';
     sessionStorage.setItem('null-sector-booted', '1');
+    window.dispatchEvent(new CustomEvent('null-sector:boot-complete'));
   }
 
   function sleep(ms: number) {

@@ -1,495 +1,295 @@
-// src/components/Shard.tsx — step-03 REWRITTEN
-// One icosahedron. One material. Surface properties change with scroll.
-// No inner mesh, no inner object, no second geometry of any kind.
+// src/components/Shard.tsx
+//
+// NULL_SECTOR centerpiece. A single jagged crystal that resolves into focus
+// across 6 cut states (0-5) driven by the window event "null-sector:cut-progress".
+//
+// Geometry concept: an icosahedron whose vertices are displaced via two
+// pre-computed displacement sets ("rough" and "sharp"). cutProgress lerps between
+// them, so the SAME mesh smoothly transitions from rough obsidian rock silhouette
+// to jagged entropy-crystal silhouette without swapping geometries.
+//
+// Material concept: dark crystalline body throughout (NOT glass) with cyan
+// emissive that pulses brighter as cuts progress. Edges drawn as a cyan wireframe
+// outline that fades in. flatShading is non-negotiable — every facet must read sharp.
 
-import { useRef, useEffect, useMemo } from 'react';
-import type { MutableRefObject } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useRef, useEffect, useState, useMemo } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { EffectComposer, Bloom, ChromaticAberration, Noise } from '@react-three/postprocessing';
 import * as THREE from 'three';
 
-// ── GLSL simplex noise — used for vertex displacement ────────────────────────
-const NOISE_GLSL = `
-vec3 _mod289v3(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
-vec4 _mod289v4(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
-vec4 _permute(vec4 x){return _mod289v4(((x*34.0)+10.0)*x);}
-vec4 _taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
-float snoise(vec3 v){
-  const vec2 C=vec2(1.0/6.0,1.0/3.0);
-  const vec4 D=vec4(0.0,0.5,1.0,2.0);
-  vec3 i =floor(v+dot(v,C.yyy));
-  vec3 x0=v-i+dot(i,C.xxx);
-  vec3 g =step(x0.yzx,x0.xyz);
-  vec3 l =1.0-g;
-  vec3 i1=min(g.xyz,l.zxy);
-  vec3 i2=max(g.xyz,l.zxy);
-  vec3 x1=x0-i1+C.xxx;
-  vec3 x2=x0-i2+C.yyy;
-  vec3 x3=x0-D.yyy;
-  i=_mod289v3(i);
-  vec4 p=_permute(_permute(_permute(
-    i.z+vec4(0.0,i1.z,i2.z,1.0))
-    +i.y+vec4(0.0,i1.y,i2.y,1.0))
-    +i.x+vec4(0.0,i1.x,i2.x,1.0));
-  float n_=0.142857142857;
-  vec3 ns=n_*D.wyz-D.xzx;
-  vec4 j=p-49.0*floor(p*ns.z*ns.z);
-  vec4 x_=floor(j*ns.z);
-  vec4 y_=floor(j-7.0*x_);
-  vec4 x=x_*ns.x+ns.yyyy;
-  vec4 y=y_*ns.x+ns.yyyy;
-  vec4 h=1.0-abs(x)-abs(y);
-  vec4 b0=vec4(x.xy,y.xy);
-  vec4 b1=vec4(x.zw,y.zw);
-  vec4 s0=floor(b0)*2.0+1.0;
-  vec4 s1=floor(b1)*2.0+1.0;
-  vec4 sh=-step(h,vec4(0.0));
-  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;
-  vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
-  vec3 p0=vec3(a0.xy,h.x);
-  vec3 p1=vec3(a0.zw,h.y);
-  vec3 p2=vec3(a1.xy,h.z);
-  vec3 p3=vec3(a1.zw,h.w);
-  vec4 norm=_taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
-  p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
-  vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);
-  m=m*m;
-  return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
-}
-`;
-
-// ── Surface config per cut state ─────────────────────────────────────────────
-// These describe ONE object's surface, not two objects.
-// "What's inside" at late states is light + refraction + emissive, not geometry.
-type StateConfig = {
-  displaceAmp: number;
-  roughness:   number;
-  metalness:   number;
-  transmission:number;
-  thickness:   number;
-  ior:         number;
-  clearcoat:   number;
-  dispersion:  number;
-  emissive:    number;
-  color:       [number, number, number];  // linear RGB [0..1]
-  scaleX:      number;
-  scaleY:      number;
-  scaleZ:      number;
-};
-
-// transmission: 0.001 on state 0 ensures the transmission shader variant
-// is compiled from the start, avoiding a 1-frame stall at first cut.
-const STATES: StateConfig[] = [
-  // 0 — The Block: rough opaque obsidian, chunky non-uniform scale
-  { displaceAmp: 0.25, roughness: 1.00, metalness: 0.05, transmission: 0.001, thickness: 0.1, ior: 1.40, clearcoat: 0.0, dispersion: 0.0, emissive: 0.00, color: [0x14/255, 0x14/255, 0x1A/255], scaleX: 1.15, scaleY: 0.85, scaleZ: 1.10 },
-  // 1 — First Cut: surface polishes, light barely enters
-  { displaceAmp: 0.18, roughness: 0.75, metalness: 0.05, transmission: 0.15, thickness: 0.8, ior: 1.40, clearcoat: 0.0, dispersion: 0.0, emissive: 0.00, color: [0x1A/255, 0x1A/255, 0x22/255], scaleX: 1.00, scaleY: 1.00, scaleZ: 1.00 },
-  // 2 — Second Cut: facets sharpen, cyan rim visible, light bends
-  { displaceAmp: 0.10, roughness: 0.45, metalness: 0.05, transmission: 0.40, thickness: 1.0, ior: 1.45, clearcoat: 0.0, dispersion: 0.0, emissive: 0.00, color: [0x16/255, 0x18/255, 0x20/255], scaleX: 1.00, scaleY: 1.00, scaleZ: 1.00 },
-  // 3 — Third Cut: translucent, refraction patterns emerge
-  { displaceAmp: 0.04, roughness: 0.20, metalness: 0.04, transmission: 0.65, thickness: 1.2, ior: 1.50, clearcoat: 0.0, dispersion: 0.1, emissive: 0.02, color: [0x12/255, 0x14/255, 0x1C/255], scaleX: 1.00, scaleY: 1.00, scaleZ: 1.00 },
-  // 4 — Fourth Cut: near-clear, prismatic edges, high clearcoat
-  { displaceAmp: 0.00, roughness: 0.05, metalness: 0.02, transmission: 0.85, thickness: 1.4, ior: 1.55, clearcoat: 1.0, dispersion: 0.2, emissive: 0.04, color: [0x10/255, 0x12/255, 0x18/255], scaleX: 1.00, scaleY: 1.00, scaleZ: 1.00 },
-  // 5 — Final: perfect cut gem, pulsing emissive, full transmission
-  { displaceAmp: 0.00, roughness: 0.00, metalness: 0.00, transmission: 1.00, thickness: 1.5, ior: 1.55, clearcoat: 1.0, dispersion: 0.4, emissive: 0.05, color: [1.00, 1.00, 1.00],            scaleX: 1.00, scaleY: 1.00, scaleZ: 1.00 },
-];
-
-function lerpN(a: number, b: number, t: number): number {
-  return a + (b - a) * t;
+// -------------------- noise (deterministic, no deps) --------------------
+function noise3(x: number, y: number, z: number): number {
+  const s = Math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453;
+  return (s - Math.floor(s)) * 2 - 1;
 }
 
-// ── THE SHARD ── one mesh, one material, full stop ───────────────────────────
-function ShardMesh({ smoothCutRef }: { smoothCutRef: MutableRefObject<number> }) {
+// -------------------- the inner mesh component --------------------
+function ShardMesh({ cutProgress }: { cutProgress: number }) {
   const meshRef = useRef<THREE.Mesh>(null!);
-
-  // Two shader uniforms: displacement amplitude and elapsed time
-  const uniforms = useMemo(() => ({
-    uDisplaceAmp: { value: 0.25 },
-    uTime:        { value: 0.0 },
-  }), []);
-
-  // One geometry — IcosahedronGeometry(1.5, 2). That's it.
-  const geometry = useMemo(() => new THREE.IcosahedronGeometry(1.5, 2), []);
-
-  // One material — MeshPhysicalMaterial. Its surface properties evolve per state.
-  const material = useMemo(() => {
-    const mat = new THREE.MeshPhysicalMaterial({
-      color:             new THREE.Color(0x14141A),
-      roughness:         1.0,
-      metalness:         0.05,
-      transmission:      0.001,   // compile transmission variant from start
-      thickness:         0.1,
-      ior:               1.4,
-      transparent:       true,
-      flatShading:       true,    // flat faces = cut-gem look at low displacement
-      emissive:          new THREE.Color(0x7DF9FF),
-      emissiveIntensity: 0.0,
-    });
-
-    // Inject noise displacement into the vertex shader
-    mat.onBeforeCompile = (shader) => {
-      shader.uniforms.uDisplaceAmp = uniforms.uDisplaceAmp;
-      shader.uniforms.uTime        = uniforms.uTime;
-
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <common>',
-        `#include <common>
-uniform float uDisplaceAmp;
-uniform float uTime;
-${NOISE_GLSL}`
-      );
-
-      // Displace along normal: two octaves of noise, amplitude driven by uniform
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <begin_vertex>',
-        `#include <begin_vertex>
-float _n = snoise(position * 2.2 + vec3(uTime * 0.10))
-         + snoise(position * 5.1 + vec3(0.0, uTime * 0.07, 0.0)) * 0.5;
-transformed += normal * _n * uDisplaceAmp;`
-      );
-    };
-
-    mat.customProgramCacheKey = () => 'shard-v3-single';
-    return mat;
-  }, [uniforms]);
-
-  // Temp colors for lerping — avoid allocation in hot path
-  const _ca = useMemo(() => new THREE.Color(), []);
-  const _cb = useMemo(() => new THREE.Color(), []);
-
-  useFrame(({ clock }) => {
-    const p = smoothCutRef.current;
-    const t = clock.getElapsedTime();
-
-    uniforms.uTime.value = t;
-
-    // Interpolate between the two flanking state configs
-    const i0 = Math.max(0, Math.min(Math.floor(p), 4));
-    const i1 = Math.min(i0 + 1, 5);
-    const f  = Math.max(0, Math.min(p - i0, 1));
-
-    const s0 = STATES[i0];
-    const s1 = STATES[i1];
-
-    uniforms.uDisplaceAmp.value  = lerpN(s0.displaceAmp,  s1.displaceAmp,  f);
-    material.roughness           = lerpN(s0.roughness,     s1.roughness,    f);
-    material.metalness           = lerpN(s0.metalness,     s1.metalness,    f);
-    material.transmission        = lerpN(s0.transmission,  s1.transmission, f);
-    material.thickness           = lerpN(s0.thickness,     s1.thickness,    f);
-    material.ior                 = lerpN(s0.ior,           s1.ior,          f);
-    material.clearcoat           = lerpN(s0.clearcoat,     s1.clearcoat,    f);
-    (material as any).dispersion = lerpN(s0.dispersion,    s1.dispersion,   f);
-
-    // Emissive: base intensity + sine pulse that fades in at state 4→5
-    const baseEmissive = lerpN(s0.emissive, s1.emissive, f);
-    const pulseWeight  = Math.max(0, Math.min(p - 4.0, 1.0));
-    material.emissiveIntensity = baseEmissive + Math.sin(t * 1.2) * 0.03 * pulseWeight;
-
-    // Color: lerp between state colors
-    _ca.setRGB(s0.color[0], s0.color[1], s0.color[2]);
-    _cb.setRGB(s1.color[0], s1.color[1], s1.color[2]);
-    material.color.lerpColors(_ca, _cb, f);
-
-    // Non-uniform scale: chunky at state 0, normalises to 1,1,1 by state 1
-    if (meshRef.current) {
-      meshRef.current.scale.x = lerpN(s0.scaleX, s1.scaleX, f);
-      meshRef.current.scale.y = lerpN(s0.scaleY, s1.scaleY, f);
-      meshRef.current.scale.z = lerpN(s0.scaleZ, s1.scaleZ, f);
-    }
-  });
-
-  // THE SINGLE MESH DECLARATION. If you see a second <mesh> anywhere in this
-  // file, something has gone wrong. Refactor before committing.
-  return <mesh ref={meshRef} geometry={geometry} material={material} />;
-}
-
-// ── Rotation wrapper — auto-rotate, drag, cursor parallax ───────────────────
-function ShardRotator({
-  smoothCutRef,
-  mouseRef,
-  facetDivRef,
-}: {
-  smoothCutRef: MutableRefObject<number>;
-  mouseRef:     MutableRefObject<{ x: number; y: number }>;
-  facetDivRef:  MutableRefObject<HTMLDivElement | null>;
-}) {
+  const edgesRef = useRef<THREE.LineSegments>(null!);
   const groupRef = useRef<THREE.Group>(null!);
+  const matRef = useRef<THREE.MeshPhysicalMaterial>(null!);
+  const edgesMatRef = useRef<THREE.LineBasicMaterial>(null!);
 
-  // Rotation accumulators kept as refs to avoid re-renders
-  const rot = useRef({
-    autoY: 0, autoX: 0,
-    offY: 0,  offX: 0,
-    velY: 0,  velX: 0,
-    dragging: false, lx: 0, ly: 0,
-  });
+  const dragRotVel = useRef({ x: 0, y: 0 });
+  const isDragging = useRef(false);
+  const lastPointer = useRef({ x: 0, y: 0 });
+  const mouse = useRef({ x: 0, y: 0 });
+  const targetRot = useRef({ x: 0, y: 0 });
+  const lastEdgesBucket = useRef(-1);
+  const displayedCut = useRef(0);
 
-  const reduced = useMemo(
-    () => typeof window !== 'undefined' &&
-          window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    []
-  );
+  const SHARD_RADIUS = 1.1;
 
-  useEffect(() => {
-    const onMove = (e: PointerEvent) => {
-      const r = rot.current;
-      if (!r.dragging) return;
-      const dx = (e.clientX - r.lx) * 0.005;
-      const dy = (e.clientY - r.ly) * 0.005;
-      r.velY = dx; r.velX = dy;
-      r.autoY += dx; r.autoX += dy;
-      r.lx = e.clientX; r.ly = e.clientY;
-    };
-    const onUp = () => { rot.current.dragging = false; };
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup',   onUp);
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup',   onUp);
-    };
+  // build geometry once and keep references to base + displacement arrays
+  const { geometry, basePositions, roughDisp, sharpDisp } = useMemo(() => {
+    const geo = new THREE.IcosahedronGeometry(SHARD_RADIUS, 1);
+    const positions = geo.attributes.position;
+    const count = positions.count;
+    const base = new Float32Array(positions.array.length);
+    base.set(positions.array as Float32Array);
+
+    const rough = new Float32Array(count);
+    const sharp = new Float32Array(count);
+
+    for (let i = 0; i < count; i++) {
+      const x = base[i * 3];
+      const y = base[i * 3 + 1];
+      const z = base[i * 3 + 2];
+
+      const nRough = noise3(x * 1.4, y * 1.4, z * 1.4);
+      rough[i] = 0.25 + nRough * 0.35;
+
+      const nSharp = noise3(x * 2.2 + 100, y * 2.2 + 100, z * 2.2 + 100);
+      if (nSharp > 0.15) sharp[i] = 0.6 + Math.random() * 0.7;
+      else if (nSharp < -0.3) sharp[i] = -0.2 - Math.random() * 0.15;
+      else sharp[i] = 0.05 + Math.random() * 0.1;
+    }
+
+    return { geometry: geo, basePositions: base, roughDisp: rough, sharpDisp: sharp };
   }, []);
 
-  useFrame(() => {
-    if (!groupRef.current) return;
-    const r = rot.current;
+  // initial edges geometry
+  const initialEdgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry, 1), [geometry]);
 
-    if (!reduced) {
-      r.autoY += 0.003;
-      r.autoX += 0.0008;
+  // -------- pointer handling on the canvas (parented in the parent component) --------
+  const { gl } = useThree();
+  useEffect(() => {
+    const dom = gl.domElement;
+
+    const onPointerDown = (e: PointerEvent) => {
+      isDragging.current = true;
+      lastPointer.current = { x: e.clientX, y: e.clientY };
+      dom.setPointerCapture(e.pointerId);
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      const rect = dom.getBoundingClientRect();
+      mouse.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.current.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      if (isDragging.current) {
+        const dx = e.clientX - lastPointer.current.x;
+        const dy = e.clientY - lastPointer.current.y;
+        dragRotVel.current.y += dx * 0.005;
+        dragRotVel.current.x += dy * 0.005;
+        lastPointer.current = { x: e.clientX, y: e.clientY };
+      }
+    };
+    const onPointerUp = () => { isDragging.current = false; };
+
+    dom.addEventListener('pointerdown', onPointerDown);
+    dom.addEventListener('pointermove', onPointerMove);
+    dom.addEventListener('pointerup', onPointerUp);
+    dom.addEventListener('pointerleave', onPointerUp);
+    return () => {
+      dom.removeEventListener('pointerdown', onPointerDown);
+      dom.removeEventListener('pointermove', onPointerMove);
+      dom.removeEventListener('pointerup', onPointerUp);
+      dom.removeEventListener('pointerleave', onPointerUp);
+    };
+  }, [gl]);
+
+  // -------- per-frame update --------
+  useFrame((state, delta) => {
+    if (!matRef.current || !edgesMatRef.current || !groupRef.current) return;
+
+    // smoothly lerp displayed cut toward target
+    displayedCut.current += (cutProgress - displayedCut.current) * 0.06;
+    if (Math.abs(cutProgress - displayedCut.current) < 0.001) displayedCut.current = cutProgress;
+
+    const cut = displayedCut.current;
+    const t = cut / 5;
+    const tCurved = t * t * (3 - 2 * t); // smoothstep
+
+    // -------- geometry update --------
+    const positions = geometry.attributes.position;
+    for (let i = 0; i < positions.count; i++) {
+      const bx = basePositions[i * 3];
+      const by = basePositions[i * 3 + 1];
+      const bz = basePositions[i * 3 + 2];
+      const len = Math.sqrt(bx * bx + by * by + bz * bz);
+      const d = roughDisp[i] * (1 - tCurved) + sharpDisp[i] * tCurved;
+      positions.array[i * 3]     = bx + (bx / len) * d;
+      positions.array[i * 3 + 1] = by + (by / len) * d;
+      positions.array[i * 3 + 2] = bz + (bz / len) * d;
+    }
+    positions.needsUpdate = true;
+    geometry.computeVertexNormals();
+
+    // -------- material update --------
+    const m = matRef.current;
+    m.roughness = 0.95 - tCurved * 0.78;
+    m.metalness = 0.15 + tCurved * 0.3;
+    m.transmission = tCurved * 0.45;
+    m.thickness = 0.5 + tCurved * 0.5;
+    m.clearcoat = tCurved;
+
+    const baseEmissive = tCurved * 0.18;
+    const pulse = Math.sin(state.clock.elapsedTime * 1.6) * baseEmissive * 0.4;
+    m.emissiveIntensity = baseEmissive + pulse;
+
+    const cr = 0x14 + Math.floor(tCurved * 6);
+    const cg = 0x14 + Math.floor(tCurved * 6);
+    const cb = 0x18 + Math.floor(tCurved * 14);
+    m.color.setRGB(cr / 255, cg / 255, cb / 255);
+
+    // -------- edges update --------
+    const edgesT = Math.min(1, Math.max(0, (t - 0.3) / 0.7));
+    edgesMatRef.current.opacity = edgesT * 0.85;
+
+    // rebuild edges geometry every ~30 buckets across the transition
+    const bucket = Math.floor(t * 30);
+    if (bucket !== lastEdgesBucket.current && edgesRef.current) {
+      lastEdgesBucket.current = bucket;
+      edgesRef.current.geometry.dispose();
+      edgesRef.current.geometry = new THREE.EdgesGeometry(geometry, 1);
     }
 
-    r.offY = THREE.MathUtils.lerp(r.offY, (mouseRef.current?.x ?? 0) * 0.2, 0.06);
-    r.offX = THREE.MathUtils.lerp(r.offX, (mouseRef.current?.y ?? 0) * 0.2, 0.06);
+    // -------- rotation: auto + drag inertia + cursor parallax --------
+    targetRot.current.y += 0.0035 + dragRotVel.current.y;
+    targetRot.current.x += 0.001 + dragRotVel.current.x;
+    dragRotVel.current.x *= 0.94;
+    dragRotVel.current.y *= 0.94;
+    const parallaxRotY = mouse.current.x * 0.18;
+    const parallaxRotX = mouse.current.y * 0.18;
+    groupRef.current.rotation.y += (targetRot.current.y + parallaxRotY - groupRef.current.rotation.y) * 0.06;
+    groupRef.current.rotation.x += (targetRot.current.x + parallaxRotX - groupRef.current.rotation.x) * 0.06;
 
-    if (!r.dragging) {
-      r.velY *= 0.94;
-      r.velX *= 0.94;
-    }
-
-    groupRef.current.rotation.y = reduced ? 0 : r.autoY + r.offY;
-    groupRef.current.rotation.x = reduced ? 0 : r.autoX + r.offX;
+    // camera follows cursor
+    state.camera.position.x += (mouse.current.x * 0.3 - state.camera.position.x) * 0.04;
+    state.camera.position.y += (mouse.current.y * 0.3 - state.camera.position.y) * 0.04;
+    state.camera.lookAt(0, 0, 0);
   });
 
   return (
-    <group
-      ref={groupRef}
-      onPointerDown={(e) => {
-        rot.current.dragging = true;
-        rot.current.lx = e.clientX;
-        rot.current.ly = e.clientY;
-      }}
-      onPointerMove={(e) => {
-        const fi = ((e.faceIndex ?? 0) % 20) + 1;
-        if (facetDivRef.current) {
-          facetDivRef.current.textContent = `[ FACET ${String(fi).padStart(2, '0')} / 20 ]`;
-          facetDivRef.current.style.opacity = '1';
-        }
-      }}
-      onPointerLeave={() => {
-        if (facetDivRef.current) facetDivRef.current.style.opacity = '0';
-      }}
-    >
-      <ShardMesh smoothCutRef={smoothCutRef} />
+    <group ref={groupRef}>
+      <mesh ref={meshRef} geometry={geometry}>
+        <meshPhysicalMaterial
+          ref={matRef}
+          color={0x141418}
+          roughness={0.95}
+          metalness={0.15}
+          transmission={0}
+          thickness={0.5}
+          ior={1.6}
+          clearcoat={0}
+          emissive={0x7DF9FF}
+          emissiveIntensity={0}
+          flatShading
+          side={THREE.DoubleSide}
+        />
+        <lineSegments ref={edgesRef} geometry={initialEdgesGeometry}>
+          <lineBasicMaterial ref={edgesMatRef} color={0x7DF9FF} transparent opacity={0} />
+        </lineSegments>
+      </mesh>
     </group>
   );
 }
 
-// ── Scene — camera, lights, postprocessing ───────────────────────────────────
-function ShardScene({
-  targetCutRef,
-  smoothCutRef,
-  facetDivRef,
-}: {
-  targetCutRef: MutableRefObject<number>;
-  smoothCutRef: MutableRefObject<number>;
-  facetDivRef:  MutableRefObject<HTMLDivElement | null>;
-}) {
-  const mouseRef    = useRef({ x: 0, y: 0 });
-  // Mutable Vector2 updated each frame — ChromaticAberration reads it by reference
-  const chromaOff   = useMemo(() => new THREE.Vector2(0.0, 0.0), []);
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      const el   = document.getElementById('shard-mount');
-      const rect = el?.getBoundingClientRect();
-      if (!rect) return;
-      mouseRef.current.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
-      mouseRef.current.y = -((e.clientY - rect.top)  / rect.height) * 2 - 1;
-    };
-    window.addEventListener('mousemove', onMove);
-    return () => window.removeEventListener('mousemove', onMove);
-  }, []);
-
-  useFrame(({ camera }, delta) => {
-    // Cinematic lerp: ~1200ms transition (time constant ~0.31s)
-    const lf = 1 - Math.exp(-delta * 3.25);
-    smoothCutRef.current = THREE.MathUtils.lerp(
-      smoothCutRef.current, targetCutRef.current, lf
-    );
-
-    const p = smoothCutRef.current;
-
-    // Chromatic aberration grows with each cut
-    const ca = 0.0008 * p;
-    chromaOff.x = ca;
-    chromaOff.y = ca;
-
-    // Camera parallax — lerp position toward mouse offset
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, mouseRef.current.x * 0.4, 0.04);
-    camera.position.y = THREE.MathUtils.lerp(camera.position.y, mouseRef.current.y * 0.4, 0.04);
-    camera.lookAt(0, 0, 0);
-  });
-
+// -------------------- the scene wrapper --------------------
+function Scene({ cutProgress }: { cutProgress: number }) {
   return (
     <>
-      {/* Background: the void. Transmission renders this through the gem. */}
       <color attach="background" args={['#0A0A0F']} />
+      <ambientLight intensity={0.4} color={0x303040} />
+      <pointLight position={[3, 2.5, 3]} intensity={5} color={0x7DF9FF} distance={18} />
+      <pointLight position={[-3, -1, -2]} intensity={1.0} color={0xFFFFFF} distance={12} />
+      <pointLight position={[0, 0, -6]} intensity={3.0} color={0x7DF9FF} distance={20} />
+      <pointLight position={[-2, 3, 2]} intensity={2} color={0xFFFFFF} distance={10} />
 
-      {/* Exact lights from spec — no more, no less */}
-      <ambientLight intensity={0.3} color={0x404060} />
-      {/* Cyan key — visible as rim light on facets */}
-      <pointLight position={[3, 2, 3]}    color={0x7DF9FF} intensity={2}   distance={10} />
-      {/* White fill */}
-      <pointLight position={[-3, -1, -2]} color={0xFFFFFF} intensity={0.4} distance={10} />
-      {/* White back — positioned BEHIND the shard; visible THROUGH it at high transmission */}
-      <pointLight position={[0, 0, -5]}   color={0xFFFFFF} intensity={1.5} distance={20} />
+      <ShardMesh cutProgress={cutProgress} />
 
-      <ShardRotator
-        smoothCutRef={smoothCutRef}
-        mouseRef={mouseRef}
-        facetDivRef={facetDivRef}
-      />
-
-      <EffectComposer multisampling={0}>
-        <Bloom intensity={0.4} luminanceThreshold={0.2} radius={0.6} />
-        <ChromaticAberration offset={chromaOff} radialModulation={false} modulationOffset={0.5} />
-        <Noise opacity={0.02} />
+      <EffectComposer>
+        <ChromaticAberration offset={[0.0008 * (cutProgress / 5), 0.0008 * (cutProgress / 5)] as any} />
+        <Bloom intensity={0.5} luminanceThreshold={0.15} radius={0.7} />
+        <Noise opacity={0.025} />
       </EffectComposer>
     </>
   );
 }
 
-// ── Root export ───────────────────────────────────────────────────────────────
+// -------------------- exported component --------------------
 export default function Shard() {
-  const targetCutRef = useRef<number>(0);
-  const smoothCutRef = useRef<number>(0);
-  const facetDivRef  = useRef<HTMLDivElement | null>(null);
-  const sweepDivRef  = useRef<HTMLDivElement | null>(null);
-  const lastCutFloor = useRef(0);
+  const [cutProgress, setCutProgress] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
-  // Listen for scroll-driven cut progress from the page
+  // listen for the cut-progress window event
   useEffect(() => {
     const handler = (e: Event) => {
-      targetCutRef.current = (e as CustomEvent<{ value: number }>).detail.value;
-    };
-    window.addEventListener('null-sector:cut-progress', handler);
-    return () => window.removeEventListener('null-sector:cut-progress', handler);
-  }, []);
-
-  // Fire the sweep line whenever smoothCut crosses an integer
-  useEffect(() => {
-    let raf: number;
-    const tick = () => {
-      raf = requestAnimationFrame(tick);
-      const p   = smoothCutRef.current;
-      const cur = Math.floor(p);
-      if (cur > lastCutFloor.current && p - cur < 0.15) {
-        lastCutFloor.current = cur;
-        sweep();
+      const detail = (e as CustomEvent).detail;
+      if (detail && typeof detail.value === 'number') {
+        setCutProgress(detail.value);
       }
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    window.addEventListener('null-sector:cut-progress', handler);
+
+    // honor prefers-reduced-motion
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq.matches) {
+      setReducedMotion(true);
+      setCutProgress(5);
+    }
+    const mqHandler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener('change', mqHandler);
+
+    return () => {
+      window.removeEventListener('null-sector:cut-progress', handler);
+      mq.removeEventListener('change', mqHandler);
+    };
   }, []);
 
-  function sweep() {
-    const div = sweepDivRef.current;
-    if (!div) return;
-    div.style.transition  = 'none';
-    div.style.opacity     = '0.85';
-    div.style.transform   = 'scaleX(0)';
-    requestAnimationFrame(() => {
-      div.style.transition = 'transform 480ms cubic-bezier(0.65,0,0.35,1)';
-      div.style.transform  = 'scaleX(1)';
-      setTimeout(() => {
-        if (!sweepDivRef.current) return;
-        sweepDivRef.current.style.transition = 'opacity 200ms ease';
-        sweepDivRef.current.style.opacity    = '0';
-      }, 500);
-    });
-  }
-
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative', minHeight: '60vh' }}>
+    <div className="w-full h-full relative">
+      <Canvas
+        camera={{ position: [0, 0, 5.5], fov: 45 }}
+        gl={{ powerPreference: 'high-performance', antialias: true }}
+        dpr={[1, 2]}
+      >
+        <Scene cutProgress={cutProgress} />
+      </Canvas>
 
-      {/* Cyan sweep line — fires across the shard face on each integer cut */}
-      <div
-        ref={sweepDivRef}
-        style={{
-          position: 'absolute', left: 0, right: 0, height: '1px',
-          background: 'linear-gradient(90deg, transparent, #7DF9FF 15%, #7DF9FF 85%, transparent)',
-          top: '42%', opacity: 0, pointerEvents: 'none', zIndex: 15,
-          transform: 'scaleX(0)', transformOrigin: 'left center',
-          boxShadow: '0 0 8px #7DF9FF, 0 0 24px rgba(125,249,255,0.4)',
-        }}
-      />
-
-      {/* Facet readout overlay */}
-      <div
-        ref={facetDivRef}
-        style={{
-          position: 'absolute', top: 14, right: 14, zIndex: 10,
-          fontFamily: '"JetBrains Mono", monospace',
-          fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.35)', pointerEvents: 'none',
-          opacity: 0, transition: 'opacity 200ms',
-        }}
-      />
-
-      {/* DEV: cut state buttons — stripped in production builds */}
-      {import.meta.env.DEV && (
-        <div
-          style={{
-            position: 'absolute', bottom: 12, right: 12, zIndex: 20,
-            display: 'flex', gap: 6,
-          }}
-        >
+      {/* DEV-ONLY debug controls */}
+      {import.meta.env.DEV && !reducedMotion && (
+        <div className="absolute bottom-4 right-4 flex gap-1.5 font-mono">
           {[0, 1, 2, 3, 4, 5].map((n) => (
             <button
               key={n}
-              onClick={() =>
+              onClick={() => {
                 window.dispatchEvent(
                   new CustomEvent('null-sector:cut-progress', { detail: { value: n } })
-                )
-              }
-              style={{
-                fontFamily: '"JetBrains Mono", monospace', fontSize: '10px',
-                color: 'rgba(255,255,255,0.6)', background: 'transparent',
-                border: '1px solid rgba(255,255,255,0.2)',
-                padding: '3px 8px', cursor: 'pointer', letterSpacing: '0.1em',
+                );
               }}
+              className={`px-2.5 py-1 text-[11px] border transition-colors ${
+                Math.round(cutProgress) === n
+                  ? 'bg-[#7DF9FF] text-[#0A0A0F] border-[#7DF9FF]'
+                  : 'bg-[#7DF9FF]/5 text-white/60 border-[#7DF9FF]/30 hover:text-[#7DF9FF]'
+              }`}
+              style={{ letterSpacing: '0.1em' }}
             >
               {n}
             </button>
           ))}
         </div>
       )}
-
-      <Canvas
-        dpr={[1, typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 2) : 1]}
-        camera={{ fov: 45, position: [0, 0, 5] }}
-        gl={{
-          antialias:         true,
-          alpha:             false,      // needed for correct transmission rendering
-          powerPreference:   'high-performance',
-        }}
-        style={{ width: '100%', height: '100%' }}
-      >
-        <ShardScene
-          targetCutRef={targetCutRef}
-          smoothCutRef={smoothCutRef}
-          facetDivRef={facetDivRef}
-        />
-      </Canvas>
     </div>
   );
 }
