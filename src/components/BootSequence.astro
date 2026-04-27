@@ -29,7 +29,8 @@
     <div id="boot-line-0" style="color: var(--color-accent);"></div>
     <div id="boot-line-1" style="color: var(--color-fg-mid);"></div>
     <div id="boot-line-2" style="color: var(--color-fg-mid);"></div>
-    <div id="boot-line-3" style="color: var(--color-accent);"></div>
+    <div id="boot-line-3" style="color: var(--color-fg-low);"></div>
+    <div id="boot-line-4" style="color: var(--color-accent);"></div>
   </div>
 </div>
 
@@ -51,9 +52,15 @@
   }
 
   async function runBoot() {
+    const tz = (() => {
+      try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UNKNOWN'; }
+      catch { return 'UNKNOWN'; }
+    })().toUpperCase();
+
     const lines = [
       '> ESTABLISHING SECURE CHANNEL...',
       '> AUTHENTICATING REQUEST...',
+      `> ORIGIN: ${tz} // ROUTE: SECURE`,
       '> CLEARANCE GRANTED.',
       '> WELCOME TO NULL_SECTOR.',
     ];

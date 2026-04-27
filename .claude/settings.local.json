@@ -19,7 +19,8 @@
       "Bash(sed -i 's|heroVisual: \"/images/cases/vessel-hero.png\"|heroVisual: \"/images/vessel-hero.png\"|' vessel.md)",
       "Bash(git -C E:/Projects/portfolio remote -v)",
       "Bash(git -C E:/Projects/portfolio branch -a)",
-      "Bash(git -C E:/Projects/portfolio remote set-url origin https://github.com/Sayanth2091/Sayanth-dev.git)"
+      "Bash(git -C E:/Projects/portfolio remote set-url origin https://github.com/Sayanth2091/Sayanth-dev.git)",
+      "WebFetch(domain:main.sayanth-dev.pages.dev)"
     ]
   }
 }

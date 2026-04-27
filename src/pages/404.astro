@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="// ROUTE NOT FOUND — NULL_SECTOR">
+  <section class="four-oh-four">
+    <div class="four-oh-four-inner">
+      <p class="fof-mono">&gt; ERROR 404 // ROUTE NOT FOUND</p>
+      <h1 class="fof-headline">The subject has no record of this path.</h1>
+      <p class="fof-mono fof-mono-low">&gt; RETURNING TO TRANSMISSION IN <span id="fof-countdown">5</span>...</p>
+      <a href={import.meta.env.BASE_URL} class="fof-back">// MANUAL OVERRIDE — RETURN NOW</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .four-oh-four {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .four-oh-four-inner {
+    max-width: 560px;
+    text-align: left;
+  }
+  .fof-mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: var(--tracking-mono-default);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .fof-mono-low {
+    color: var(--color-fg-low);
+    margin-top: 32px;
+    margin-bottom: 24px;
+  }
+  .fof-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 4vw, 44px);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-fg-high);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .fof-back {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: var(--tracking-mono-default);
+    color: var(--color-fg-mid);
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 200ms var(--ease-cinematic);
+  }
+  .fof-back:hover {
+    color: var(--color-accent);
+  }
+</style>
+
+<script>
+  const el = document.getElementById('fof-countdown');
+  const base = import.meta.env.BASE_URL;
+  let n = 5;
+  const tick = () => {
+    n -= 1;
+    if (el) el.textContent = String(n);
+    if (n <= 0) window.location.href = base;
+    else setTimeout(tick, 1000);
+  };
+  setTimeout(tick, 1000);
+</script>

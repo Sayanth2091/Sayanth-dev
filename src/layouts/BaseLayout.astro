@@ -37,6 +37,20 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:image" content={ogImage} />
     <meta property="og:type" content="website" />
 
+    <!-- structured data: Person schema -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: 'Sayanth Sreekanth',
+      alternateName: 'skywalkr_2091',
+      jobTitle: 'SOC Analyst, Security Researcher',
+      url: canonicalURL.toString(),
+      sameAs: [
+        'https://github.com/Sayanth2091',
+        'https://www.linkedin.com/in/sayanth-sreekanth-289950188',
+      ],
+    })} />
+
     <!-- fonts: Google Fonts CDN (self-hosted in step 10) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -63,5 +77,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
   <script>
     import '../scripts/konami';
+    import '../scripts/tab-title';
   </script>
 </html>

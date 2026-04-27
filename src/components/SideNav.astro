@@ -51,20 +51,31 @@ const sections = [
 </nav>
 
 <script>
-  // wire IntersectionObserver to highlight active dot
+  // SideNav is the single source of truth for "active section." It dispatches
+  // null-sector:section-active events that other modules (shard journey, etc.)
+  // can subscribe to instead of duplicating IntersectionObserver logic.
   const dots = document.querySelectorAll<HTMLAnchorElement>('.nav-dot');
+  let activeId: string | null = null;
+
+  function setActive(id: string) {
+    if (id === activeId) return;
+    activeId = id;
+    dots.forEach((dot) => {
+      const isActive = dot.dataset.section === id;
+      dot.style.backgroundColor = isActive
+        ? 'var(--color-accent)'
+        : 'rgba(255, 255, 255, 0.25)';
+    });
+    window.dispatchEvent(
+      new CustomEvent('null-sector:section-active', { detail: { id } }),
+    );
+  }
 
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-        const id = entry.target.id;
-        dots.forEach((dot) => {
-          const isActive = dot.dataset.section === id;
-          dot.style.backgroundColor = isActive
-            ? 'var(--color-accent)'
-            : 'rgba(255, 255, 255, 0.25)';
-        });
+        setActive(entry.target.id);
       });
     },
     { threshold: 0.5 }

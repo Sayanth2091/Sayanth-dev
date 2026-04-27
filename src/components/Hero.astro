@@ -1,7 +1,8 @@
 ---
 // Hero.astro — Section 01: THE BLOCK
-// "The unread surface." Shard mounts client:visible into the right column.
-import Shard from './Shard.tsx';
+// "The unread surface." The shard is now a fixed-position companion mounted
+// at the page level (see ShardCompanion.astro). The right column reserves
+// visual space for it on desktop.
 ---
 
 <section
@@ -88,14 +89,13 @@ import Shard from './Shard.tsx';
     </p>
   </div>
 
-  <!-- RIGHT COLUMN: shard mount -->
+  <!-- RIGHT COLUMN: reserved space — shard floats over this via ShardCompanion -->
   <div
     id="shard-mount"
     class="order-1 md:order-2 w-full"
     style="min-height: 60vh; height: 100%; z-index: 0;"
-  >
-    <Shard client:visible />
-  </div>
+    aria-hidden="true"
+  ></div>
 </section>
 
 <script>

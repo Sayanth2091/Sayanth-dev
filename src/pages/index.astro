@@ -6,12 +6,14 @@ import Operations from '../components/Operations.astro';
 import Arsenal from '../components/Arsenal.astro';
 import Transmission from '../components/Transmission.astro';
 import Signoff from '../components/Signoff.astro';
+import ShardCompanion from '../components/ShardCompanion.astro';
 ---
 
 <BaseLayout
   title="SAYANTH SREEKANTH // NULL_SECTOR"
   description="SOC analyst, security researcher, interface builder. Six operations. Six lessons."
 >
+  <ShardCompanion />
   <Hero />
   <Dossier />
   <Operations />
@@ -22,4 +24,6 @@ import Signoff from '../components/Signoff.astro';
 
 <script>
   import '../scripts/cuts';
+  import { initShardJourney } from '../scripts/shard-journey';
+  initShardJourney();
 </script>

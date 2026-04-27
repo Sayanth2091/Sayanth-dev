@@ -14,8 +14,8 @@
 
 import { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { EffectComposer, Bloom, ChromaticAberration, Noise } from '@react-three/postprocessing';
 import * as THREE from 'three';
+import { audio } from '../scripts/audio';
 
 // -------------------- noise (deterministic, no deps) --------------------
 function noise3(x: number, y: number, z: number): number {
@@ -38,6 +38,11 @@ function ShardMesh({ cutProgress }: { cutProgress: number }) {
   const targetRot = useRef({ x: 0, y: 0 });
   const lastEdgesBucket = useRef(-1);
   const displayedCut = useRef(0);
+
+  // explosion state — fired 7s after cut=5 reaches signoff
+  const exploding = useRef(false);
+  const explosionT = useRef(0);
+  const velocities = useRef<Float32Array | null>(null);
 
   const SHARD_RADIUS = 1.1;
 
@@ -71,6 +76,43 @@ function ShardMesh({ cutProgress }: { cutProgress: number }) {
 
   // initial edges geometry
   const initialEdgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry, 1), [geometry]);
+
+  // -------- explosion: 7s after cut hits 5, scatter the vertices --------
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const onCut = (e: Event) => {
+      const v = (e as CustomEvent).detail?.value;
+      if (v === 5 && !exploding.current && !timer) {
+        timer = setTimeout(() => {
+          const positions = geometry.attributes.position;
+          const vels = new Float32Array(positions.array.length);
+          for (let i = 0; i < positions.count; i++) {
+            const x = positions.array[i * 3];
+            const y = positions.array[i * 3 + 1];
+            const z = positions.array[i * 3 + 2];
+            const len = Math.sqrt(x * x + y * y + z * z) || 1;
+            const speed = 2.6 + Math.random() * 2.4;
+            vels[i * 3]     = (x / len) * speed + (Math.random() - 0.5) * 1.0;
+            vels[i * 3 + 1] = (y / len) * speed + (Math.random() - 0.5) * 1.0;
+            vels[i * 3 + 2] = (z / len) * speed + (Math.random() - 0.5) * 1.0;
+          }
+          velocities.current = vels;
+          explosionT.current = 0;
+          exploding.current = true;
+          audio.play('cut', { volume: 0.75 });
+          // Tell the companion container to expand to full viewport so the
+          // fragments cover the screen instead of being clipped to the
+          // 50vw × 80vh canvas rect.
+          window.dispatchEvent(new CustomEvent('null-sector:shard-explode'));
+        }, 7000);
+      }
+    };
+    window.addEventListener('null-sector:cut-progress', onCut);
+    return () => {
+      window.removeEventListener('null-sector:cut-progress', onCut);
+      if (timer) clearTimeout(timer);
+    };
+  }, [geometry]);
 
   // -------- pointer handling on the canvas (parented in the parent component) --------
   const { gl } = useThree();
@@ -112,13 +154,41 @@ function ShardMesh({ cutProgress }: { cutProgress: number }) {
   useFrame((state, delta) => {
     if (!matRef.current || !edgesMatRef.current || !groupRef.current) return;
 
+    // ---- explosion override: vertices fly outward, opacity fades ----
+    if (exploding.current && velocities.current) {
+      explosionT.current += delta;
+      const t = explosionT.current;
+      const positions = geometry.attributes.position;
+      const arr = positions.array as Float32Array;
+      const vels = velocities.current;
+      for (let i = 0; i < arr.length; i++) {
+        arr[i] += vels[i] * delta;
+      }
+      positions.needsUpdate = true;
+
+      const fade = Math.max(0, 1 - t / 2.6);
+      matRef.current.transparent = true;
+      matRef.current.opacity = fade;
+      matRef.current.emissiveIntensity = Math.max(0, 0.6 - t * 0.25);
+      edgesMatRef.current.opacity = fade * 0.85;
+
+      groupRef.current.rotation.y += delta * (3 + t * 1.2);
+      groupRef.current.rotation.x += delta * 1.4;
+
+      return;
+    }
+
     // smoothly lerp displayed cut toward target
     displayedCut.current += (cutProgress - displayedCut.current) * 0.06;
     if (Math.abs(cutProgress - displayedCut.current) < 0.001) displayedCut.current = cutProgress;
 
     const cut = displayedCut.current;
     const t = cut / 5;
-    const tCurved = t * t * (3 - 2 * t); // smoothstep
+    // Ease-in curve so the visual reveal is back-loaded — at cut=2 the shard
+    // is only ~19% open, at cut=4 it's ~68%, with the dramatic completion
+    // reserved for cut=5 (signoff). Linear/smoothstep made it feel "done" by
+    // the third section.
+    const tCurved = Math.pow(t, 1.8);
 
     // -------- geometry update --------
     const positions = geometry.attributes.position;
@@ -209,7 +279,6 @@ function ShardMesh({ cutProgress }: { cutProgress: number }) {
 function Scene({ cutProgress }: { cutProgress: number }) {
   return (
     <>
-      <color attach="background" args={['#0A0A0F']} />
       <ambientLight intensity={0.4} color={0x303040} />
       <pointLight position={[3, 2.5, 3]} intensity={5} color={0x7DF9FF} distance={18} />
       <pointLight position={[-3, -1, -2]} intensity={1.0} color={0xFFFFFF} distance={12} />
@@ -217,12 +286,6 @@ function Scene({ cutProgress }: { cutProgress: number }) {
       <pointLight position={[-2, 3, 2]} intensity={2} color={0xFFFFFF} distance={10} />
 
       <ShardMesh cutProgress={cutProgress} />
-
-      <EffectComposer>
-        <ChromaticAberration offset={[0.0008 * (cutProgress / 5), 0.0008 * (cutProgress / 5)] as any} />
-        <Bloom intensity={0.5} luminanceThreshold={0.15} radius={0.7} />
-        <Noise opacity={0.025} />
-      </EffectComposer>
     </>
   );
 }
@@ -261,35 +324,15 @@ export default function Shard() {
     <div className="w-full h-full relative">
       <Canvas
         camera={{ position: [0, 0, 5.5], fov: 45 }}
-        gl={{ powerPreference: 'high-performance', antialias: true }}
+        gl={{ powerPreference: 'high-performance', antialias: true, alpha: true, premultipliedAlpha: false }}
         dpr={[1, 2]}
+        onCreated={({ gl }) => {
+          gl.setClearColor(0x000000, 0);
+          gl.setClearAlpha(0);
+        }}
       >
         <Scene cutProgress={cutProgress} />
       </Canvas>
-
-      {/* DEV-ONLY debug controls */}
-      {import.meta.env.DEV && !reducedMotion && (
-        <div className="absolute bottom-4 right-4 flex gap-1.5 font-mono">
-          {[0, 1, 2, 3, 4, 5].map((n) => (
-            <button
-              key={n}
-              onClick={() => {
-                window.dispatchEvent(
-                  new CustomEvent('null-sector:cut-progress', { detail: { value: n } })
-                );
-              }}
-              className={`px-2.5 py-1 text-[11px] border transition-colors ${
-                Math.round(cutProgress) === n
-                  ? 'bg-[#7DF9FF] text-[#0A0A0F] border-[#7DF9FF]'
-                  : 'bg-[#7DF9FF]/5 text-white/60 border-[#7DF9FF]/30 hover:text-[#7DF9FF]'
-              }`}
-              style={{ letterSpacing: '0.1em' }}
-            >
-              {n}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

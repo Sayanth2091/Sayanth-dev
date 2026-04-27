@@ -1,13 +1,24 @@
 import './scroll';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { audio } from './audio';
 
-gsap.registerPlugin(ScrollTrigger);
+// Cuts are driven by SideNav's section-active event so the shard cut state
+// stays exactly in sync with the dot indicator. Independent ScrollTriggers
+// fired incorrectly during Operations' pinned horizontal scroll because
+// downstream section triggers crossed before the user actually reached them.
+
+const SECTION_TO_CUT: Record<string, number> = {
+  hero:         0,
+  dossier:      1,
+  operations:   2,
+  arsenal:      3,
+  transmission: 4,
+  signoff:      5,
+};
 
 let lastCut = -1;
 
 function dispatchCut(value: number) {
+  if (value === lastCut) return;
   if (value > lastCut && lastCut !== -1) {
     audio.play('cut', { volume: 0.4 });
   }
@@ -17,21 +28,9 @@ function dispatchCut(value: number) {
   );
 }
 
-const cutSections = [
-  { id: 'hero', cut: 0 },
-  { id: 'dossier', cut: 1 },
-  { id: 'operations', cut: 2 },
-  { id: 'arsenal',      cut: 3 },
-  { id: 'transmission', cut: 4 },
-  { id: 'signoff',      cut: 5 },
-];
-
-cutSections.forEach(({ id, cut }) => {
-  ScrollTrigger.create({
-    trigger: `#${id}`,
-    start: 'top 60%',
-    end: 'bottom 40%',
-    onEnter: () => dispatchCut(cut),
-    onEnterBack: () => dispatchCut(cut),
-  });
+window.addEventListener('null-sector:section-active', (e: Event) => {
+  const id = (e as CustomEvent).detail?.id as string | undefined;
+  if (!id) return;
+  const cut = SECTION_TO_CUT[id];
+  if (cut !== undefined) dispatchCut(cut);
 });

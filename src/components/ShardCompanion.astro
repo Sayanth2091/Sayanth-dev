@@ -1,0 +1,62 @@
+---
+import Shard from './Shard.tsx';
+---
+
+<div id="shard-companion" class="shard-companion" aria-hidden="true">
+  <div class="shard-companion-inner">
+    <Shard client:load />
+  </div>
+</div>
+
+<style>
+  .shard-companion {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 5;
+    will-change: transform, opacity;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .shard-companion-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50vw;
+    height: 80vh;
+    /* margin-based centering so GSAP fully owns `transform` without
+       conflicting with a baseline translate(-50%, -50%). */
+    margin-left: -25vw;
+    margin-top: -40vh;
+    pointer-events: auto;
+    will-change: transform, opacity;
+  }
+
+  .shard-companion-inner :global(canvas) {
+    background: transparent !important;
+    display: block;
+    border: none;
+    outline: none;
+    /* Radial mask: shard sits center so it stays fully rendered, but the
+       canvas rectangle dissolves to transparent before reaching its edges.
+       Aggressive feather (50→85) erases any visible bounding box and reads
+       as fragments dispersing into the void during explosion. */
+    -webkit-mask-image: radial-gradient(ellipse at center, black 50%, transparent 85%);
+    mask-image: radial-gradient(ellipse at center, black 50%, transparent 85%);
+  }
+
+  @media (max-width: 767px) {
+    .shard-companion {
+      position: absolute;
+      height: 60vh;
+    }
+    .shard-companion-inner {
+      width: 90vw;
+      height: 50vh;
+      pointer-events: none;
+    }
+  }
+</style>

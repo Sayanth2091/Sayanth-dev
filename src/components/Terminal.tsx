@@ -15,9 +15,16 @@ const COMMANDS: Record<string, () => string | null> = {
   about         go to dossier
   projects      go to operations
   contact       go to transmission
+  ls            list sections
+  pwd           print working directory
+  date          print system time
   easter        ???
   clear         clear screen
-  exit          close terminal`,
+  exit          close terminal
+
+  ↑ / ↓         navigate command history
+  tab           autocomplete command
+  esc           close terminal`,
 
   whoami: () =>
     `subject:        sayanth sreekanth
@@ -41,6 +48,10 @@ status:         active`,
   clear: () => null,
   exit:  () => null,
   easter: () => 'ACCESS GRANTED. SCROLL DOWN. THE BLOCK CRACKS DEEPER.',
+  sudo:  () => 'permission denied. nice try.',
+  ls:    () => 'dossier  operations  arsenal  transmission  signoff  classified',
+  pwd:   () => '/null_sector/skywalkr_2091',
+  date:  () => new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC',
 };
 
 const INITIAL_HISTORY: Line[] = [
@@ -59,6 +70,8 @@ export default function Terminal() {
   const [history, setHistory] = useState<Line[]>(INITIAL_HISTORY);
   const inputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const cmdHistory = useRef<string[]>([]);
+  const cmdCursor  = useRef<number>(-1);
 
   // open on `/`, close on Esc
   useEffect(() => {
@@ -89,6 +102,11 @@ export default function Terminal() {
     const next: Line[] = [...history, { type: 'input', text: raw }];
     audio.play('keystroke', { volume: 0.3 });
 
+    if (cmd !== '') {
+      cmdHistory.current.push(raw);
+      cmdCursor.current = cmdHistory.current.length;
+    }
+
     if (cmd === '') { setHistory(next); return; }
     if (cmd === 'clear') { setHistory([]); return; }
     if (cmd === 'exit')  { setOpen(false); return; }
@@ -97,6 +115,13 @@ export default function Terminal() {
     const out = fn ? fn() : `command not found: ${cmd}`;
     if (out !== null) next.push({ type: 'output', text: out });
     setHistory(next);
+  }
+
+  function autocomplete(partial: string): string {
+    const lower = partial.toLowerCase();
+    const matches = Object.keys(COMMANDS).filter((c) => c.startsWith(lower));
+    if (matches.length === 1) return matches[0];
+    return partial;
   }
 
   if (!open) return null;
@@ -192,6 +217,23 @@ export default function Terminal() {
               if (e.key === 'Enter') {
                 execute(input);
                 setInput('');
+              } else if (e.key === 'Tab') {
+                e.preventDefault();
+                setInput(autocomplete(input));
+              } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (cmdCursor.current > 0) cmdCursor.current -= 1;
+                const v = cmdHistory.current[cmdCursor.current];
+                if (v !== undefined) setInput(v);
+              } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (cmdCursor.current < cmdHistory.current.length - 1) {
+                  cmdCursor.current += 1;
+                  setInput(cmdHistory.current[cmdCursor.current]);
+                } else {
+                  cmdCursor.current = cmdHistory.current.length;
+                  setInput('');
+                }
               }
             }}
             style={{
