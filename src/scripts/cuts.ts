@@ -5,6 +5,18 @@ import { audio } from './audio';
 
 gsap.registerPlugin(ScrollTrigger);
 
+let lastCut = -1;
+
+function dispatchCut(value: number) {
+  if (value > lastCut && lastCut !== -1) {
+    audio.play('cut', { volume: 0.4 });
+  }
+  lastCut = value;
+  window.dispatchEvent(
+    new CustomEvent('null-sector:cut-progress', { detail: { value } })
+  );
+}
+
 const cutSections = [
   { id: 'hero', cut: 0 },
   { id: 'dossier', cut: 1 },
@@ -23,15 +35,3 @@ cutSections.forEach(({ id, cut }) => {
     onEnterBack: () => dispatchCut(cut),
   });
 });
-
-let lastCut = -1;
-
-function dispatchCut(value: number) {
-  if (value > lastCut && lastCut !== -1) {
-    audio.play('cut', { volume: 0.4 });
-  }
-  lastCut = value;
-  window.dispatchEvent(
-    new CustomEvent('null-sector:cut-progress', { detail: { value } })
-  );
-}
