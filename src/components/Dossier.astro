@@ -244,26 +244,9 @@
   .portrait-frame {
     aspect-ratio: 4 / 5;
     background-color: #1a1a22;
-    border-bottom: 0.5px solid rgba(212, 184, 106, 0.2);
+    border-bottom: 1px solid rgba(212, 184, 106, 0.12);
     position: relative;
     overflow: hidden;
-  }
-
-  /* scanlines overlay */
-  .portrait-frame::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: repeating-linear-gradient(
-      to bottom,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.3) 2px,
-      rgba(0, 0, 0, 0.3) 3px
-    );
-    opacity: 0.06;
-    z-index: 1;
   }
 
   .portrait-img {
@@ -331,6 +314,16 @@
     color: var(--color-fg-mid);
     line-height: 2;
     text-transform: uppercase;
+  }
+
+  /* Block A and G: soften to sans sentence-case to break mono fatigue */
+  .db-a .readout-line,
+  .db-g .readout-line {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    color: var(--color-fg-mid);
   }
 
   /* ── readout table with dot leader ── */

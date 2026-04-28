@@ -97,7 +97,7 @@ export default function CaseCard({ op, slug }: Props) {
         style={{
           aspectRatio: '4 / 5',
           backgroundColor: '#1A1A22',
-          border: '0.5px solid rgba(255,255,255,0.12)',
+          border: '1px solid rgba(255,255,255,0.07)',
           zIndex: 2,
           // a soft shadow on the right edge sells the "folder cover" depth
           boxShadow: '8px 0 24px -8px rgba(0,0,0,0.6)',

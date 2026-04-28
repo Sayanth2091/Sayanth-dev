@@ -146,7 +146,7 @@ export default function Terminal() {
         style={{
           width: 480, height: 360,
           backgroundColor: VOID,
-          border: `0.5px solid ${ACCENT}66`,
+          border: `1px solid ${ACCENT}40`,
           fontFamily: 'var(--font-mono)',
           fontSize: 12,
           display: 'flex', flexDirection: 'column',
@@ -155,7 +155,7 @@ export default function Terminal() {
       >
         {/* title bar */}
         <div style={{
-          borderBottom: `0.5px solid ${BORDER_DIM}`,
+          borderBottom: `1px solid rgba(255,255,255,0.06)`,
           padding: '8px 12px',
           fontSize: 10,
           letterSpacing: '0.15em',
@@ -201,7 +201,7 @@ export default function Terminal() {
 
         {/* input bar */}
         <div style={{
-          borderTop: `0.5px solid ${BORDER_DIM}`,
+          borderTop: `1px solid rgba(255,255,255,0.06)`,
           padding: '8px 12px',
           display: 'flex', alignItems: 'center', gap: 8,
         }}>

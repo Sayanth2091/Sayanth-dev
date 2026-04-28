@@ -101,7 +101,7 @@ export default function ContactForm() {
               onChange={(e) => setForm({ ...form, [key]: e.target.value })}
               onFocus={() => setFocused(key)}
               onBlur={() => setFocused(null)}
-              style={{ ...inputBase, borderBottom: `0.5px solid ${borderColor(key)}`, display: 'block' }}
+              style={{ ...inputBase, borderBottom: `1px solid ${borderColor(key)}`, display: 'block' }}
             />
           ) : (
             <input
@@ -112,7 +112,7 @@ export default function ContactForm() {
               onChange={(e) => setForm({ ...form, [key]: e.target.value })}
               onFocus={() => setFocused(key)}
               onBlur={() => setFocused(null)}
-              style={{ ...inputBase, borderBottom: `0.5px solid ${borderColor(key)}` }}
+              style={{ ...inputBase, borderBottom: `1px solid ${borderColor(key)}` }}
             />
           )}
         </div>
@@ -130,7 +130,7 @@ export default function ContactForm() {
           letterSpacing: '0.2em',
           textTransform: 'uppercase',
           color: current.red ? '#f87171' : 'var(--color-accent)',
-          border: `0.5px solid ${current.red ? '#f87171' : 'var(--color-accent)'}`,
+          border: `1px solid ${current.red ? '#f87171' : 'var(--color-accent)'}`,
           background: 'transparent',
           cursor: busy ? 'default' : 'pointer',
           opacity: busy ? 0.6 : 1,
