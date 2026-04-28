@@ -1,6 +1,7 @@
 ---
 // Signoff.astro — Section 06: THE FINAL CUT
 // The gem is complete. The visitor has seen everything.
+const year = new Date().getFullYear();
 ---
 
 <section id="signoff" class="signoff-section relative flex flex-col items-center justify-center">
@@ -20,7 +21,7 @@
 
   <!-- footer bar -->
   <div class="signoff-footer">
-    <div class="signoff-credit">SAYANTH SREEKANTH · 2026</div>
+    <div class="signoff-credit">SAYANTH SREEKANTH · {year}</div>
     <div class="signoff-links">
       <a
         href="https://github.com/Sayanth2091/Sayanth-dev"
@@ -124,10 +125,12 @@
   if (target) {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        entries.forEach(async (entry) => {
           if (entry.isIntersecting && !target.dataset.played) {
             target.dataset.played = '1';
             observer.disconnect();
+            // hold the shard at its final state for 800ms before text begins
+            await new Promise<void>((r) => setTimeout(r, 800));
             typeLines(target, [
               '> END OF TRANSMISSION.',
               '> CONNECTION CLOSING IN 03... 02... 01...',
