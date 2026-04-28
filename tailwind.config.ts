@@ -5,8 +5,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        void: '#0A0A0F',
-        accent: '#7DF9FF',
+        void: 'oklch(0.08 0.008 195)',
+        accent: 'oklch(0.82 0.11 85)',
         'fg-high': 'rgba(255, 255, 255, 0.92)',
         'fg-mid': 'rgba(255, 255, 255, 0.60)',
         'fg-low': 'rgba(255, 255, 255, 0.35)',

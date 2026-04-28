@@ -127,16 +127,16 @@ export default function Terminal() {
   if (!open) return null;
 
   const BORDER_DIM   = 'rgba(255,255,255,0.1)';
-  const ACCENT       = '#7DF9FF';
-  const ACCENT_BG    = 'rgba(10,10,15,0.6)';
-  const VOID         = '#0A0A0F';
+  const ACCENT       = 'oklch(0.82 0.11 85)';
+  const ACCENT_BG    = 'rgba(8,16,14,0.6)';
+  const VOID         = 'oklch(0.08 0.008 195)';
 
   return (
     <div
       style={{
         position: 'fixed', inset: 0, zIndex: 90,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: 'rgba(10,10,15,0.5)',
+        background: 'rgba(8,16,14,0.5)',
         backdropFilter: 'blur(4px)',
         WebkitBackdropFilter: 'blur(4px)',
       }}

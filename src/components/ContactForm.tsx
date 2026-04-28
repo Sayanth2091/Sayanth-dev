@@ -136,7 +136,7 @@ export default function ContactForm() {
           opacity: busy ? 0.6 : 1,
           transition: 'background 200ms var(--ease-cinematic), opacity 200ms',
         }}
-        onMouseEnter={(e) => { if (!busy) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(125,249,255,0.08)'; }}
+        onMouseEnter={(e) => { if (!busy) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(212,184,106,0.08)'; }}
         onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
       >
         {current.label}

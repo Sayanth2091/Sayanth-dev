@@ -138,12 +138,12 @@ export default function CaseCard({ op, slug }: Props) {
         {/* gradient overlay */}
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'linear-gradient(transparent 50%, rgba(10,10,15,0.8))' }}
+          style={{ background: 'linear-gradient(transparent 50%, rgba(8,16,14,0.8))' }}
         />
         {/* placeholder label */}
         <div
           className="absolute bottom-3 left-3 font-mono text-[10px] tracking-[0.2em] uppercase"
-          style={{ color: 'rgba(125,249,255,0.6)' }}
+          style={{ color: 'rgba(212,184,106,0.6)' }}
         >
           [ {showVideo ? 'HERO_FEED' : 'HERO_VISUAL'} ]
         </div>
@@ -173,7 +173,7 @@ export default function CaseCard({ op, slug }: Props) {
           }}
         >
           OPERATION:{' '}
-          <span style={{ color: '#7DF9FF', fontStyle: 'italic' }}>{op.codename}</span>
+          <span style={{ color: 'var(--color-accent)', fontStyle: 'italic' }}>{op.codename}</span>
         </h3>
 
         {/* metadata readout */}
@@ -200,11 +200,10 @@ export default function CaseCard({ op, slug }: Props) {
           href={`${base}/case/${slug}`}
           className="inline-block mt-6 font-mono text-[11px] tracking-[0.2em] uppercase"
           style={{
-            color: '#7DF9FF',
-            border: '0.5px solid rgba(125,249,255,0.4)',
+            color: 'var(--color-accent)',
             padding: '8px 16px',
             transition: 'background-color 200ms cubic-bezier(0.65, 0, 0.35, 1)',
-            backgroundColor: hovered ? 'rgba(125,249,255,0.08)' : 'transparent',
+            backgroundColor: hovered ? 'rgba(212,184,106,0.1)' : 'transparent',
             alignSelf: 'flex-start',
           }}
         >

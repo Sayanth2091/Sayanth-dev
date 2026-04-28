@@ -262,13 +262,13 @@ function ShardMesh({ cutProgress }: { cutProgress: number }) {
           thickness={0.5}
           ior={1.6}
           clearcoat={0}
-          emissive={0x7DF9FF}
+          emissive={0xD4B86A}
           emissiveIntensity={0}
           flatShading
           side={THREE.DoubleSide}
         />
         <lineSegments ref={edgesRef} geometry={initialEdgesGeometry}>
-          <lineBasicMaterial ref={edgesMatRef} color={0x7DF9FF} transparent opacity={0} />
+          <lineBasicMaterial ref={edgesMatRef} color={0xD4B86A} transparent opacity={0} />
         </lineSegments>
       </mesh>
     </group>
@@ -280,9 +280,9 @@ function Scene({ cutProgress }: { cutProgress: number }) {
   return (
     <>
       <ambientLight intensity={0.4} color={0x303040} />
-      <pointLight position={[3, 2.5, 3]} intensity={5} color={0x7DF9FF} distance={18} />
+      <pointLight position={[3, 2.5, 3]} intensity={5} color={0xD4B86A} distance={18} />
       <pointLight position={[-3, -1, -2]} intensity={1.0} color={0xFFFFFF} distance={12} />
-      <pointLight position={[0, 0, -6]} intensity={3.0} color={0x7DF9FF} distance={20} />
+      <pointLight position={[0, 0, -6]} intensity={3.0} color={0xD4B86A} distance={20} />
       <pointLight position={[-2, 3, 2]} intensity={2} color={0xFFFFFF} distance={10} />
 
       <ShardMesh cutProgress={cutProgress} />

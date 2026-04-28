@@ -28,7 +28,16 @@ html {
 body {
   min-height: 100vh;
   overflow-x: hidden;
-  cursor: none; /* replaced by custom cursor */
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none; /* replaced by custom cursor */
+  }
+}
+
+input, textarea, select, button {
+  cursor: auto;
 }
 
 /* — custom cursor — */
@@ -133,9 +142,19 @@ body {
     animation: none;
   }
 
-  * {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+  /* reveal scroll-animated elements immediately without transform */
+  .dossier-block,
+  .portrait-col,
+  .scrubber-node-group,
+  .arsenal-fade,
+  .constellation-mount,
+  .arsenal-caption {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .scrubber-line {
+    transform: scaleX(1) !important;
   }
 }
 

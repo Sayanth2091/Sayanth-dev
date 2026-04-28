@@ -3,10 +3,10 @@
 
 :root {
   /* canvas */
-  --color-void: #0A0A0F;
+  --color-void: oklch(0.08 0.008 195);
 
   /* single accent */
-  --color-accent: #7DF9FF;
+  --color-accent: oklch(0.82 0.11 85);
 
   /* foreground tiers */
   --color-fg-high: rgba(255, 255, 255, 0.92);

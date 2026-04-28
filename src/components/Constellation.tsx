@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { skills } from '../data/skills';
 
 const CATEGORY_COLORS: Record<string, string> = {
-  defense:     '#7DF9FF',
+  defense:     '#D4B86A',
   offense:     '#FF6B6B',
   engineering: '#FFFFFF',
   creative:    '#B7B5FF',
