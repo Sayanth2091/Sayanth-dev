@@ -1,11 +1,24 @@
 ---
 // Operations.astro — Section 03: THE SECOND CUT
-// Six case files. Horizontal-scroll archive. Shard → State 2 on enter.
+// Six case files. Horizontal-scroll archive. Three of the six diverge from
+// the standard layout so the scroll rewards continued movement instead of
+// repeating the same composition. Shard → State 2 on enter.
 import { getCollection } from 'astro:content';
-import CaseCard from './CaseCard.tsx';
+import CaseCard, { type CaseVariant } from './CaseCard.tsx';
 
 const operations = await getCollection('operations');
 const sorted = operations.sort((a, b) => a.data.order - b.data.order);
+
+// Variant per scroll position. Standard panels bracket the unusual ones so
+// the divergence reads as deliberate, not chaotic.
+const VARIANT_BY_ORDER: Record<number, CaseVariant> = {
+  1: 'standard',  // SENTINEL — control
+  2: 'overprint', // NORTHWALL — full-bleed media
+  3: 'standard',  // GATEKEEPER — control
+  4: 'strip',     // ASCLEPIUS — text-dominant
+  5: 'standard',  // VESSEL — control
+  6: 'oversize',  // ANTIBODY — typographic dominance
+};
 ---
 
 <section id="operations" class="ops-section relative">
@@ -44,7 +57,12 @@ const sorted = operations.sort((a, b) => a.data.order - b.data.order);
       <!-- case panels -->
       {sorted.map((op) => (
         <div class="ops-panel ops-case-panel">
-          <CaseCard client:visible op={op.data} slug={op.slug} />
+          <CaseCard
+            client:visible
+            op={op.data}
+            slug={op.slug}
+            variant={VARIANT_BY_ORDER[op.data.order] ?? 'standard'}
+          />
         </div>
       ))}
 

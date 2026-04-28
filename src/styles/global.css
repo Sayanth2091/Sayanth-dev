@@ -158,6 +158,39 @@ input, textarea, select, button {
   }
 }
 
+/* — shard facet readout: floats next to cursor when hovering the shard — */
+.shard-facet-readout {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10001; /* above cursor and grain — must remain legible at all times */
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: var(--tracking-mono-wide);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: rgba(8, 12, 18, 0.72);
+  border: 1px solid rgba(212, 184, 106, 0.25);
+  padding: 5px 9px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 160ms var(--ease-cinematic);
+  will-change: transform, opacity;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.shard-facet-readout[data-visible] {
+  opacity: 1;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .shard-facet-readout {
+    display: none;
+  }
+}
+
 /* — prose: case detail pages — */
 .prose-dossier {}
 

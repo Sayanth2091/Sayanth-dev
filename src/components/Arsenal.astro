@@ -1,58 +1,117 @@
 ---
 // Arsenal.astro — Section 04: THE THIRD CUT
-// Skills as constellation. No bars. No percentages. Shard → State 3 on enter.
+// Composed as a single poster frame: top meta bar, broadsheet headline,
+// hairline-ruled canvas plate, bottom meta bar. Skills as constellation,
+// no bars, no percentages. Shard → State 3 on enter.
 import Constellation from './Constellation.tsx';
 ---
 
-<section id="arsenal" class="arsenal-section relative flex flex-col items-center">
+<section id="arsenal" class="arsenal-section relative">
 
-  <!-- header text block -->
-  <div class="arsenal-header">
-    <p class="arsenal-label arsenal-fade">&gt; SECTION 04 // THE ARSENAL</p>
+  <!-- top meta bar -->
+  <div class="arsenal-meta arsenal-meta-top">
+    <span class="arsenal-meta-key">// SECTION 04 // THE ARSENAL</span>
+    <span class="arsenal-meta-key arsenal-meta-key--right">[ FOLIO 04 / 06 ]</span>
+  </div>
+
+  <!-- broadsheet headline (left-aligned, breaks the centered grammar) -->
+  <header class="arsenal-header">
     <h2 class="arsenal-headline arsenal-fade">He doesn't collect tools.</h2>
-    <h2 class="arsenal-headline arsenal-fade">He learns what they cost.</h2>
+    <h2 class="arsenal-headline arsenal-headline--italic arsenal-fade">He learns what they cost.</h2>
+  </header>
+
+  <!-- canvas plate -->
+  <div class="arsenal-plate">
+    <div class="arsenal-rule arsenal-rule-top" aria-hidden="true"></div>
+
+    <div class="constellation-mount">
+      <Constellation client:visible />
+    </div>
+
+    <div class="arsenal-rule arsenal-rule-bottom" aria-hidden="true"></div>
   </div>
 
-  <!-- constellation canvas -->
-  <div class="constellation-mount">
-    <Constellation client:visible />
+  <!-- bottom meta bar -->
+  <div class="arsenal-meta arsenal-meta-bottom">
+    <span class="arsenal-caption">[ HOVER A NODE TO READ ]</span>
+    <span class="arsenal-meta-key arsenal-meta-key--right">PLATE 04 — THE ARSENAL // N=14 / G=23</span>
   </div>
-
-  <!-- footer instruction -->
-  <p class="arsenal-caption">[ HOVER A NODE TO READ ]</p>
 
 </section>
 
 <style>
   .arsenal-section {
     min-height: 100vh;
-    padding: 96px 0 48px;
+    padding: 80px 64px 64px;
     background-color: var(--color-void);
-    justify-content: center;
   }
 
-  .arsenal-header {
-    text-align: center;
-    max-width: 720px;
-    padding: 0 24px;
-    margin-bottom: 48px;
+  /* ── meta bars: hairline-ruled mono labels at top and bottom ── */
+  .arsenal-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
   }
 
-  .arsenal-label {
+  .arsenal-meta-top {
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .arsenal-meta-bottom {
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .arsenal-meta-key {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: var(--tracking-mono-wide);
     color: var(--color-fg-low);
     text-transform: uppercase;
-    margin-bottom: 24px;
+    white-space: nowrap;
+  }
+
+  .arsenal-meta-key--right {
+    text-align: right;
+  }
+
+  /* ── broadsheet headline ── */
+  .arsenal-header {
+    text-align: left;
+    max-width: 1080px;
+    margin: 64px 0 48px;
   }
 
   .arsenal-headline {
     font-family: var(--font-serif);
-    font-size: clamp(40px, 6vw, 72px);
+    font-size: clamp(40px, 6vw, 88px);
     font-weight: 400;
-    line-height: 1.05;
+    line-height: 1.02;
     color: var(--color-fg-high);
+    letter-spacing: -0.015em;
+  }
+
+  .arsenal-headline--italic {
+    font-style: italic;
+    color: var(--color-fg-mid);
+  }
+
+  /* ── canvas plate ── */
+  .arsenal-plate {
+    display: block;
+  }
+
+  .arsenal-rule {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.14) 8%,
+      rgba(255, 255, 255, 0.14) 92%,
+      rgba(255, 255, 255, 0.04)
+    );
   }
 
   .constellation-mount {
@@ -60,27 +119,49 @@ import Constellation from './Constellation.tsx';
     height: 70vh;
   }
 
+  @media (min-width: 1280px) {
+    .constellation-mount {
+      height: 72vh;
+    }
+  }
+
   .arsenal-caption {
-    margin-top: 32px;
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: var(--tracking-mono-wide);
     color: var(--color-fg-low);
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
-  /* entry animation base state — GSAP animates these in */
+  /* GSAP entry state */
   .arsenal-fade,
-  .constellation-mount,
-  .arsenal-caption {
+  .constellation-mount {
     opacity: 0;
     transform: translateY(28px);
     will-change: opacity, transform;
   }
 
-  .arsenal-header {
-    /* the header itself stays visible; its lines fade individually */
-    opacity: 1;
+  /* ── mobile ── */
+  @media (max-width: 768px) {
+    .arsenal-section {
+      padding: 48px 24px;
+    }
+
+    .arsenal-header {
+      margin: 40px 0 32px;
+    }
+
+    .arsenal-meta-key,
+    .arsenal-caption {
+      font-size: 9px;
+      letter-spacing: 0.16em;
+    }
+
+    .arsenal-meta-bottom {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
   }
 </style>
 
@@ -121,18 +202,6 @@ import Constellation from './Constellation.tsx';
             onEnter: () => {
               window.dispatchEvent(new CustomEvent('null-sector:constellation-visible'));
             },
-          },
-        });
-
-        gsap.to('.arsenal-caption', {
-          opacity: 1,
-          y: 0,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: '.arsenal-caption',
-            start: 'top 95%',
-            end: 'top 70%',
-            scrub: 1,
           },
         });
 

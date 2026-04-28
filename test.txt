@@ -1,0 +1,31 @@
+ What I'd ship to push to 8.5+
+
+  I'd commit to one fix per gap. None of these are full rewrites; all sit inside the existing system.
+
+  A. Break section grammar — Dossier becomes a column-rule editorial spread.
+  Replace the seven A–G stacked text blocks with a two-column ruled spread: portrait left, but the text column splits
+  into a typographic field — oversized drop-numeral on each "truth" line (B/D/F), the readout tables become
+  hairline-ruled marginalia in the gutter. One section that visibly isn't a stack of fade-ups breaks the loop.
+
+  B. Operations panels diverge.
+  Three of the six case panels keep the current layout. The other three each commit to a different topology: one
+  full-bleed image with metadata overlaid as an overprint, one with text dominant and image as a narrow vertical strip,
+  one with the case name as oversize background type and metadata floating in its negative space. Now the horizontal
+  scroll rewards continued scrolling.
+
+  C. Shard inertia + facet readout.
+  Velocity-decay rotation on release + raycast-driven [ FACET 0X / 20 ] mono badge near the cursor on hover. ~120 lines
+  full-bleed image with metadata overlaid as an overprint, one with text dominant and image as a narrow vertical strip,
+  one with the case name as oversize background type and metadata floating in its negative space. Now the horizontal
+  scroll rewards continued scrolling.
+
+  D. Arsenal as a poster.
+  The constellation already has the bones. Wrap it with a serif title set in a wide measure across the top + a small
+  mono legend bottom-right ([ N=14 NODES // EDGES=23 // HOVER TO READ ]). Now the section composes as a single poster
+  frame.
+
+  I'd skip OG image / custom domain / lazy-loading three for this pass — they're real but they're polish-tier and your
+  Future.md already tracks them. The four above move the score; the rest move shipping readiness.
+
+  ---
+  Pick the order. A and C are the two highest-leverage. B is biggest in scope. D is a quick win.

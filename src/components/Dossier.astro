@@ -1,6 +1,8 @@
 ---
 // Dossier.astro — Section 02: THE FIRST CUT
-// The human is revealed. Shard transitions from State 0 → State 1 on enter.
+// Editorial spread. Portrait left, vertical column rule, three chapters with
+// hanging serif numerals and hairline-ruled marginalia. Shard transitions
+// from State 0 → State 1 on enter.
 ---
 
 <section
@@ -13,7 +15,7 @@
     <span class="mono-dim">SUBJECT FILE</span>
   </div>
 
-  <!-- two-column grid -->
+  <!-- editorial spread: portrait | rule | text column -->
   <div class="dossier-grid">
 
     <!-- LEFT: portrait -->
@@ -34,33 +36,33 @@
       </span>
     </div>
 
-    <!-- RIGHT: text blocks A–G -->
+    <!-- vertical column rule -->
+    <div class="dossier-rule" aria-hidden="true"></div>
+
+    <!-- RIGHT: editorial column -->
     <div class="text-col">
 
-      <!-- Block A: mono header -->
-      <div class="dossier-block db-mono db-a">
-        <p class="readout-line">&gt; SUBJECT FILE OPENED</p>
-        <p class="readout-line">&gt; CLEARANCE: GRANTED</p>
-        <p class="readout-line">&gt; READ TIME: ~90 SECONDS</p>
+      <!-- open: file header -->
+      <div class="dossier-block file-header">
+        <p class="header-line">&gt; SUBJECT FILE OPENED</p>
+        <p class="header-line">&gt; CLEARANCE: GRANTED</p>
+        <p class="header-line">&gt; READ TIME: ~90 SECONDS</p>
       </div>
 
-      <!-- Block B: serif -->
-      <div class="dossier-block db-serif db-b">
-        <p class="serif-truth">He grew up next to a river in Kerala.</p>
-      </div>
-
-      <!-- Block C: mono readout -->
-      <div class="dossier-block db-mono db-c">
-        <div class="readout-table">
+      <!-- chapter I: origin -->
+      <article class="dossier-chapter dossier-block">
+        <span class="chapter-numeral" aria-hidden="true">I</span>
+        <p class="chapter-truth">He grew up next to a river in Kerala.</p>
+        <div class="chapter-marginalia">
           <div class="readout-row">
             <span class="readout-label">LOCATION</span>
             <span class="readout-leader" aria-hidden="true"></span>
             <span class="readout-value">KL/IN</span>
           </div>
           <div class="readout-row">
-            <span class="readout-label">YEARS_ACTIVE</span>
+            <span class="readout-label">EDUCATION</span>
             <span class="readout-leader" aria-hidden="true"></span>
-            <span class="readout-value">02</span>
+            <span class="readout-value">M.TECH / VIT BHOPAL</span>
           </div>
           <div class="readout-row">
             <span class="readout-label">SPECIALTY</span>
@@ -68,21 +70,18 @@
             <span class="readout-value">DETECTION_ENGINEERING</span>
           </div>
           <div class="readout-row">
-            <span class="readout-label">EDUCATION</span>
+            <span class="readout-label">YEARS_ACTIVE</span>
             <span class="readout-leader" aria-hidden="true"></span>
-            <span class="readout-value">M.TECH / VIT BHOPAL</span>
+            <span class="readout-value">02</span>
           </div>
         </div>
-      </div>
+      </article>
 
-      <!-- Block D: serif -->
-      <div class="dossier-block db-serif db-d">
-        <p class="serif-truth">He noticed patterns most people miss.</p>
-      </div>
-
-      <!-- Block E: mono readout -->
-      <div class="dossier-block db-mono db-e">
-        <div class="readout-table">
+      <!-- chapter II: cadence -->
+      <article class="dossier-chapter dossier-block">
+        <span class="chapter-numeral" aria-hidden="true">II</span>
+        <p class="chapter-truth">He noticed patterns most people miss.</p>
+        <div class="chapter-marginalia">
           <div class="readout-row">
             <span class="readout-label">STATUS</span>
             <span class="readout-leader" aria-hidden="true"></span>
@@ -104,17 +103,18 @@
             <span class="readout-value">EN, ML</span>
           </div>
         </div>
-      </div>
+      </article>
 
-      <!-- Block F: serif -->
-      <div class="dossier-block db-serif db-f">
-        <p class="serif-truth">He builds things that watch other things.</p>
-      </div>
+      <!-- chapter III: declaration -->
+      <article class="dossier-chapter dossier-chapter--declaration dossier-block">
+        <span class="chapter-numeral" aria-hidden="true">III</span>
+        <p class="chapter-truth chapter-truth--italic">He builds things that watch other things.</p>
+      </article>
 
-      <!-- Block G: mono close -->
-      <div class="dossier-block db-mono db-g">
-        <p class="readout-line">&gt; END OF FILE PREVIEW.</p>
-        <p class="readout-line">&gt; DEEPER ACCESS REQUIRES TRANSMISSION.</p>
+      <!-- close: file footer -->
+      <div class="dossier-block file-footer">
+        <p class="header-line">&gt; END OF FILE PREVIEW.</p>
+        <p class="header-line">&gt; DEEPER ACCESS REQUIRES TRANSMISSION.</p>
       </div>
 
     </div>
@@ -202,12 +202,25 @@
     text-transform: uppercase;
   }
 
-  /* ── two-column grid ── */
+  /* ── editorial spread: 3-column grid with hairline rule ── */
   .dossier-grid {
     display: grid;
-    grid-template-columns: 40% 1fr;
-    gap: 64px;
+    grid-template-columns: 36% 1px 1fr;
+    gap: 56px;
     margin-top: 96px;
+    align-items: start;
+  }
+
+  .dossier-rule {
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(255, 255, 255, 0.09) 8%,
+      rgba(255, 255, 255, 0.09) 92%,
+      transparent
+    );
+    align-self: stretch;
+    width: 1px;
   }
 
   @media (max-width: 768px) {
@@ -222,6 +235,10 @@
     .dossier-grid {
       grid-template-columns: 1fr;
       gap: 48px;
+    }
+
+    .dossier-rule {
+      display: none;
     }
   }
 
@@ -256,96 +273,113 @@
     display: block;
   }
 
-  /* ── text column ── */
+  /* ── editorial column ── */
   .text-col {
     display: flex;
     flex-direction: column;
   }
 
-  /* ── blocks: base state (invisible — GSAP animates in) ── */
+  /* GSAP entry state — every block lifts in on its own scroll-trigger */
   .dossier-block {
     opacity: 0;
     transform: translateY(40px);
     will-change: opacity, transform;
   }
 
-  /* portrait base state — slides in from the left */
   .portrait-col {
     opacity: 0;
     transform: translateX(-40px);
     will-change: opacity, transform;
   }
 
-  /* scrubber base state — drawn in as user scrolls */
-  .scrubber-line {
-    transform-origin: left center;
-    transform: scaleX(0);
+  /* ── file header / footer (open + close mono blocks) ── */
+  .file-header {
+    margin-bottom: 24px;
   }
 
-  .scrubber-node-group {
-    opacity: 0;
-    transform: translateY(12px);
+  .file-footer {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .scrubber-dot {
-    box-shadow: 0 0 0 0 rgba(212, 184, 106, 0);
-  }
-
-  .scrubber-dot.is-active {
-    box-shadow: 0 0 12px 2px rgba(212, 184, 106, 0.6);
-  }
-
-  /* ── mono readout lines ── */
-  .db-a,
-  .db-g {
-    margin-bottom: 48px;
-  }
-
-  .db-c,
-  .db-e {
-    margin-top: 32px;
-    margin-bottom: 48px;
-  }
-
-  .readout-line {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: var(--tracking-mono-default);
-    color: var(--color-fg-mid);
-    line-height: 2;
-    text-transform: uppercase;
-  }
-
-  /* Block A and G: soften to sans sentence-case to break mono fatigue */
-  .db-a .readout-line,
-  .db-g .readout-line {
+  .header-line {
     font-family: var(--font-sans);
     font-size: 13px;
-    letter-spacing: 0.01em;
-    text-transform: none;
+    font-weight: 300;
+    line-height: 2;
     color: var(--color-fg-mid);
+    letter-spacing: 0.01em;
   }
 
-  /* ── readout table with dot leader ── */
-  .readout-table {
+  /* ── chapters: hanging numeral + truth + marginalia ── */
+  .dossier-chapter {
+    position: relative;
+    padding: 56px 0 56px 96px;
+  }
+
+  .dossier-chapter + .dossier-chapter {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* hanging serif italic numeral — sits in the gutter to the left of the truth */
+  .chapter-numeral {
+    position: absolute;
+    left: 0;
+    top: 52px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(56px, 5.4vw, 88px);
+    line-height: 0.85;
+    color: rgba(212, 184, 106, 0.45);
+    user-select: none;
+    letter-spacing: -0.02em;
+  }
+
+  .chapter-truth {
+    font-family: var(--font-serif);
+    font-style: normal;
+    font-weight: 400;
+    font-size: clamp(28px, 3.2vw, 44px);
+    line-height: 1.15;
+    color: var(--color-fg-high);
+    letter-spacing: -0.01em;
+  }
+
+  .chapter-truth--italic {
+    font-style: italic;
+  }
+
+  .chapter-marginalia {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    max-width: 520px;
   }
 
+  /* declaration chapter is bare — no marginalia, slightly more breathing room */
+  .dossier-chapter--declaration {
+    padding-bottom: 64px;
+  }
+
+  /* ── readout rows (now used inside chapter-marginalia) ── */
   .readout-row {
     display: flex;
     align-items: baseline;
     gap: 8px;
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 11.5px;
     letter-spacing: var(--tracking-mono-default);
-    line-height: 2.2;
+    line-height: 2.1;
     text-transform: uppercase;
   }
 
   .readout-label {
-    color: var(--color-fg-mid);
+    color: var(--color-fg-low);
     white-space: nowrap;
     flex-shrink: 0;
   }
@@ -365,25 +399,43 @@
     flex-shrink: 0;
   }
 
-  /* ── serif truth blocks ── */
-  .db-b,
-  .db-d,
-  .db-f {
-    margin-bottom: 32px;
-  }
+  /* mobile: tighter chapter padding, smaller numeral */
+  @media (max-width: 768px) {
+    .dossier-chapter {
+      padding: 40px 0 40px 56px;
+    }
 
-  .serif-truth {
-    font-family: var(--font-serif);
-    font-style: normal;
-    font-weight: 400;
-    font-size: clamp(28px, 3.2vw, 44px);
-    line-height: 1.2;
-    color: var(--color-fg-high);
+    .chapter-numeral {
+      top: 38px;
+      font-size: 48px;
+    }
+
+    .chapter-marginalia {
+      max-width: none;
+    }
   }
 
   /* ── scrubber timeline ── */
   .scrubber-section {
     margin-top: 96px;
+  }
+
+  .scrubber-line {
+    transform-origin: left center;
+    transform: scaleX(0);
+  }
+
+  .scrubber-node-group {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  .scrubber-dot {
+    box-shadow: 0 0 0 0 rgba(212, 184, 106, 0);
+  }
+
+  .scrubber-dot.is-active {
+    box-shadow: 0 0 12px 2px rgba(212, 184, 106, 0.6);
   }
 
   .scrubber-wrap {
@@ -395,7 +447,7 @@
     position: absolute;
     left: 4px;
     right: 4px;
-    top: calc(50% - 1px); /* vertically centered in the node strip */
+    top: calc(50% - 1px);
     height: 0.5px;
     background-color: var(--color-fg-low);
     z-index: 0;
@@ -455,7 +507,6 @@
     height: 12px;
   }
 
-  /* tooltip */
   .scrubber-tooltip {
     position: absolute;
     bottom: calc(100% + 14px);
@@ -481,7 +532,6 @@
     opacity: 1;
   }
 
-  /* ── mobile: vertical scrubber on left ── */
   @media (max-width: 768px) {
     .scrubber-section {
       margin-top: 64px;
@@ -548,7 +598,6 @@
 
   function initDossierTrigger() {
     onBootComplete(() => onLenisReady(() => {
-        // Portrait — slides in from the left with a long scrub window.
         gsap.to('.portrait-col', {
           opacity: 1,
           x: 0,
@@ -561,7 +610,6 @@
           },
         });
 
-        // Each text block fades + lifts in tied to its own viewport crossing.
         const blocks = gsap.utils.toArray<HTMLElement>('.dossier-block');
         blocks.forEach((block) => {
           gsap.to(block, {
@@ -578,7 +626,6 @@
           });
         });
 
-        // Scrubber line draws in as the user reaches the timeline.
         gsap.to('.scrubber-line', {
           scaleX: 1,
           ease: 'none',
@@ -590,7 +637,6 @@
           },
         });
 
-        // Nodes pop in one by one, then activate (cyan glow) as scroll passes.
         const nodes = gsap.utils.toArray<HTMLElement>('.scrubber-node-group');
         nodes.forEach((node, i) => {
           gsap.to(node, {
