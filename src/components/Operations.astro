@@ -1,24 +1,29 @@
 ---
 // Operations.astro — Section 03: THE SECOND CUT
-// Six case files. Horizontal-scroll archive. Three of the six diverge from
-// the standard layout so the scroll rewards continued movement instead of
-// repeating the same composition. Shard → State 2 on enter.
+// Six case files. Vertical archive — each card reveals on scroll with a
+// per-variant entrance. Three of the six diverge from the standard layout
+// so the sequence rewards continued scrolling rather than repeating the
+// same composition. Shard → State 2 on enter.
 import { getCollection } from 'astro:content';
 import CaseCard, { type CaseVariant } from './CaseCard.tsx';
 
 const operations = await getCollection('operations');
 const sorted = operations.sort((a, b) => a.data.order - b.data.order);
 
-// Variant per scroll position. Standard panels bracket the unusual ones so
-// the divergence reads as deliberate, not chaotic.
-const VARIANT_BY_ORDER: Record<number, CaseVariant> = {
-  1: 'standard',  // SENTINEL — control
-  2: 'overprint', // NORTHWALL — full-bleed media
-  3: 'standard',  // GATEKEEPER — control
-  4: 'strip',     // ASCLEPIUS — text-dominant
-  5: 'standard',  // VESSEL — control
-  6: 'oversize',  // ANTIBODY — typographic dominance
-};
+// Variant sequence cycles automatically so new operations beyond the
+// initial six receive a layout without manual mapping.
+// Pattern: standard · overprint · standard · strip · standard · oversize · repeat
+const VARIANT_SEQUENCE: CaseVariant[] = [
+  'standard',   // positions 1, 7, 13 …
+  'overprint',  // positions 2, 8, 14 …
+  'standard',   // positions 3, 9, 15 …
+  'strip',      // positions 4, 10, 16 …
+  'standard',   // positions 5, 11, 17 …
+  'oversize',   // positions 6, 12, 18 …
+];
+
+const getVariant = (order: number): CaseVariant =>
+  VARIANT_SEQUENCE[(order - 1) % VARIANT_SEQUENCE.length];
 ---
 
 <section id="operations" class="ops-section relative">
@@ -49,19 +54,19 @@ const VARIANT_BY_ORDER: Record<number, CaseVariant> = {
             class="font-mono uppercase"
             style="font-size: 11px; letter-spacing: 0.15em; color: var(--color-fg-mid); line-height: 2; margin-top: 24px; max-width: 420px;"
           >
-            &gt; SCROLL HORIZONTALLY TO ENTER THE ARCHIVE.
+            &gt; SCROLL TO ENTER THE ARCHIVE.
           </p>
         </div>
       </div>
 
       <!-- case panels -->
       {sorted.map((op) => (
-        <div class="ops-panel ops-case-panel">
+        <div class="ops-panel ops-case-panel" data-variant={getVariant(op.data.order)}>
           <CaseCard
             client:visible
             op={op.data}
             slug={op.slug}
-            variant={VARIANT_BY_ORDER[op.data.order] ?? 'standard'}
+            variant={getVariant(op.data.order)}
           />
         </div>
       ))}
@@ -72,7 +77,6 @@ const VARIANT_BY_ORDER: Record<number, CaseVariant> = {
 
 <style>
   .ops-section {
-    /* height set to 100vh as baseline; GSAP pin adds the scroll distance on top */
     height: 100vh;
     overflow: hidden;
   }
@@ -104,10 +108,10 @@ const VARIANT_BY_ORDER: Record<number, CaseVariant> = {
     padding-left: 80px;
   }
 
-  /* ── mobile: vertical stack ── */
   @media (max-width: 768px) {
     .ops-section {
       height: auto;
+      overflow: visible;
     }
 
     .ops-viewport {

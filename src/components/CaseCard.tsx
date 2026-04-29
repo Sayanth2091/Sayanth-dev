@@ -330,7 +330,7 @@ function OverprintLayout({ op, slug, base, imgSrc, videoSrc, showVideo, videoRef
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* full-bleed visual */}
+      {/* full-bleed visual — .ops-overprint-visual is targeted by scroll script */}
       <Visual
         imgSrc={imgSrc}
         videoSrc={videoSrc}
@@ -338,8 +338,8 @@ function OverprintLayout({ op, slug, base, imgSrc, videoSrc, showVideo, videoRef
         videoRef={videoRef}
         onVideoFail={onVideoFail}
         hovered={hovered}
-        className="absolute inset-0"
-        style={{ width: '100%', height: '100%' }}
+        className="ops-overprint-visual absolute inset-0"
+        style={{ width: '100%', height: '100%', willChange: 'clip-path' }}
         showLabel={false}
       />
       {/* darken for legibility — top-left and bottom corners deeper */}
@@ -359,7 +359,7 @@ function OverprintLayout({ op, slug, base, imgSrc, videoSrc, showVideo, videoRef
       />
 
       {/* top-left: case number + title */}
-      <div className="absolute" style={{ top: 32, left: 40, right: 40, maxWidth: 720 }}>
+      <div className="ops-overprint-title absolute" style={{ top: 32, left: 40, right: 40, maxWidth: 720, willChange: 'transform, opacity' }}>
         <div className="font-mono text-[10px] tracking-[0.2em] uppercase mb-3" style={{ color: 'rgba(212,184,106,0.7)' }}>
           CASE_FILE_{op.caseNumber} // OVERPRINT
         </div>
@@ -385,7 +385,7 @@ function OverprintLayout({ op, slug, base, imgSrc, videoSrc, showVideo, videoRef
       </div>
 
       {/* bottom-left: outcome */}
-      <div className="absolute" style={{ bottom: 32, left: 40, maxWidth: 480 }}>
+      <div className="ops-overprint-body absolute" style={{ bottom: 32, left: 40, maxWidth: 480, willChange: 'transform, opacity' }}>
         <p className="font-sans text-[15px] leading-[1.65]" style={{ color: 'rgba(255,255,255,0.78)', fontWeight: 300 }}>
           {op.outcome}
         </p>
@@ -524,7 +524,7 @@ function OversizeLayout({ op, slug, base, imgSrc, videoSrc, showVideo, videoRef,
       {/* oversize codename, sits behind everything else */}
       <h3
         aria-hidden="true"
-        className="font-serif absolute pointer-events-none select-none"
+        className="ops-oversize-bg font-serif absolute pointer-events-none select-none"
         style={{
           top: '50%',
           left: '50%',
@@ -537,6 +537,7 @@ function OversizeLayout({ op, slug, base, imgSrc, videoSrc, showVideo, videoRef,
           letterSpacing: '-0.04em',
           whiteSpace: 'nowrap',
           zIndex: 0,
+          willChange: 'transform, opacity',
         }}
       >
         {op.codename}
@@ -578,7 +579,7 @@ function OversizeLayout({ op, slug, base, imgSrc, videoSrc, showVideo, videoRef,
       </div>
 
       {/* mid-left: operation label, real title */}
-      <div className="absolute" style={{ top: '38%', left: 56, maxWidth: 540, zIndex: 3 }}>
+      <div className="ops-oversize-info absolute" style={{ top: '38%', left: 56, maxWidth: 540, zIndex: 3, willChange: 'transform, opacity' }}>
         <div className="font-mono text-[11px] tracking-[0.2em] uppercase" style={{ color: 'rgba(255,255,255,0.45)' }}>
           OPERATION
         </div>
